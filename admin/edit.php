@@ -54,17 +54,17 @@ if (isset($_POST['update'])) {
         $remarks = text_input($_POST['remarks']);
         $total_freight = text_input($_POST['total_freight']);
         $courier = text_input($_POST['courier']);
-        $departure_time = text_input($_POST['departure_time']);
-        $pickup_time = text_input($_POST['pickup_time']);
-        $comments = text_input($_POST['comments']);
-        $datetimepicker = text_input($_POST['datetimepicker']);
-        $type_of_shipment = text_input($_POST['type_of_shipment']);
-        $total_volumetric_weight = text_input($_POST['total_volumetric_weight']);
-        $total_actual_weight = text_input($_POST['total_actual_weight']);
+        $departure_time = text_input($_POST['departure_time'] ?? '');
+        $pickup_time = text_input($_POST['pickup_time'] ?? '');
+        $comments = text_input($_POST['comments'] ?? '');
+        $datetimepicker = text_input($_POST['datetimepicker'] ?? '');
+        $type_of_shipment = text_input($_POST['type_of_shipment'] ?? '');
+        $total_volumetric_weight = text_input($_POST['total_volumetric_weight'] ?? '');
+        $total_actual_weight = text_input($_POST['total_actual_weight'] ?? '');
         $published = isset($_POST['publish']) ? 1 : 0;
 
         $stmt = mysqli_prepare($con, "UPDATE addtracking SET sender_name=?, sender_contact=?, sender_email=?, sender_address=?, status=?, dispatch_location=?, carrier=?, carrier_refrence_number=?, weight=?, payment_mode=?, receiver_name=?, receiver_contact=?, receiver_email=?, receiver_address=?, destination=?, package_discription=?, dispach_date=?, estimated_delivery_date=?, shipment_mode=?, quantity=?, delivery_time=?, remarks=?, total_freight=?, courier=?, departure_time=?, pickup_time=?, comments=?, datetimepicker=?, type_of_shipment=?, total_volumetric_weight=?, total_actual_weight=?, published=? WHERE tracking_id=?");
-        mysqli_stmt_bind_param($stmt, "ssssssssssssssssssssssssssssssssis", $sender_name, $sender_contact, $sender_email, $sender_address, $status, $dispatch_location, $carrier, $carrier_refrence_number, $weight, $payment_mode, $receiver_name, $receiver_contact, $receiver_email, $receiver_address, $destination, $package_discription, $dispach_date, $estimated_delivery_date, $shipment_mode, $quantity, $delivery_time, $remarks, $total_freight, $courier, $departure_time, $pickup_time, $comments, $datetimepicker, $type_of_shipment, $total_volumetric_weight, $total_actual_weight, $published, $edit_id);
+        mysqli_stmt_bind_param($stmt, "ssssssssssssssssssssssssssssssis", $sender_name, $sender_contact, $sender_email, $sender_address, $status, $dispatch_location, $carrier, $carrier_refrence_number, $weight, $payment_mode, $receiver_name, $receiver_contact, $receiver_email, $receiver_address, $destination, $package_discription, $dispach_date, $estimated_delivery_date, $shipment_mode, $quantity, $delivery_time, $remarks, $total_freight, $courier, $departure_time, $pickup_time, $comments, $datetimepicker, $type_of_shipment, $total_volumetric_weight, $total_actual_weight, $published, $edit_id);
         $update = mysqli_stmt_execute($stmt);
 
         if ($update) {
