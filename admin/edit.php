@@ -153,9 +153,7 @@ if (isset($_POST['update'])) {
             $msg = "Updated successfully";
 
         } catch (Exception $e) {
-            if ($con->autocommit) {
-                mysqli_rollback($con);
-            }
+            mysqli_rollback($con);
             $err = "DATABASE ERROR: " . $e->getMessage() . " (Line: " . $e->getLine() . ")";
         }
     }

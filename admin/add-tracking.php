@@ -148,9 +148,7 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
             sendMail($receiver_email, $subject, $body);
 
         } catch (Exception $e) {
-            if ($con->autocommit) {
-                mysqli_rollback($con);
-            }
+            mysqli_rollback($con);
             $error = "DATABASE ERROR: " . $e->getMessage() . " (Line: " . $e->getLine() . ")";
         }
     }
