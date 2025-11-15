@@ -1,25 +1,20 @@
 <?php 
 include 'header.php';
- 
 
+// Enable mysqli exceptions
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 $error = "";
 $msg = "";
 
+// Generate a default tracking number for display
 $tnumbs = "12345678900987654321";
 $tnumbs = str_shuffle($tnumbs);
 $track_prefix = "CL";
-$tnumbs = substr($tnumbs, 0,7);
-$tnumbs = $track_prefix.date('m').$tnumbs;
+$tnumbs = substr($tnumbs, 0, 7);
+$tnumbs = $track_prefix . date('m') . $tnumbs;
 
-$tracking = $sender_name = $sender_contact = $sender_email = $sender_address = $status =
-$dispatch_location = $carrier  = $carrier_refrence_number = $weight = $payment_mode = $package_image =
-$receiver_name  = $receiver_contact = $receiver_email = $receiver_address = $destination =
-$package_discription = $dispach_date = $estimated_delivery_date = $shipment_mode = $quantity = 
-$delivery_time  =  "";
-$tracking_err = ""; 
 $date_added = date('d-m-y h:i:sa');
-  
 
 if (isset($_POST['add']) || isset($_POST['publish'])) {
 
@@ -29,139 +24,137 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
     $required_fields = ['sendername', 'sendercontact', 'senderemail', 'senderaddress', 'dispatchlocation', 'carrier', 'carrierreferencenumber', 'weight', 'paymentmode', 'receivername', 'receiver_email', 'receivercontact', 'receiveraddress', 'destination', 'packagedescription', 'dispatch_date', 'estimateddeliverydate', 'shipmentmethod', 'quantity', 'deliverytime'];
     foreach ($required_fields as $field) {
         if (empty($_POST[$field])) {
-            $error = "Please fill in all required fields.";
+            $error = "Please fill in all required fields. Missing: $field";
             break;
         }
     }
 
+    // Image Upload Validation
+    if (empty($error) && (!isset($_FILES["image"]) || $_FILES["image"]["error"] != 0)) {
+        $error = "A package image is required.";
+    }
+
     if (empty($error)) {
-        $sender_name = text_input($_POST['sendername']);
-        $sender_contact = text_input($_POST['sendercontact']);
-        $sender_email = text_input($_POST['senderemail']);
-        $sender_address = text_input($_POST['senderaddress']);
-        $dispatch_location = text_input($_POST['dispatchlocation']);
-        $carrier = text_input($_POST['carrier']);
-        $carrier_refrence_number = text_input($_POST['carrierreferencenumber']);
-        $weight = text_input($_POST['weight']);
-        $payment_mode = text_input($_POST['paymentmode']);
-        $receiver_name = text_input($_POST['receivername']);
-        $receiver_email = text_input($_POST['receiver_email']);
-        $receiver_contact = text_input($_POST['receivercontact']);
-        $receiver_address = text_input($_POST['receiveraddress']);
-        $destination = text_input($_POST['destination']);
-        $package_discription = text_input($_POST['packagedescription']);
-        $dispatch_date = text_input($_POST['dispatch_date']);
-        $estimated_delivery_date = text_input($_POST['estimateddeliverydate']);
-        $shipment_mode = text_input($_POST['shipmentmethod']);
-        $quantity = text_input($_POST['quantity']);
-        $delivery_time = text_input($_POST['deliverytime']);
-        $total_freight = text_input($_POST['total_freight']);
-        $courier = text_input($_POST['courier']);
-        $departure_time = text_input($_POST['departure_time']);
-        $pickup_time = text_input($_POST['pickup_time']);
-        $comments = text_input($_POST['comments']);
-        $datetimepicker = text_input($_POST['datetimepicker']);
-        $type_of_shipment = text_input($_POST['type_of_shipment']);
-        $total_volumetric_weight = text_input($_POST['total_volumetric_weight']);
-        $total_actual_weight = text_input($_POST['total_actual_weight']);
+        try {
+            $sender_name = text_input($_POST['sendername']);
+            $sender_contact = text_input($_POST['sendercontact']);
+            $sender_email = text_input($_POST['senderemail']);
+            $sender_address = text_input($_POST['senderaddress']);
+            $dispatch_location = text_input($_POST['dispatchlocation']);
+            $carrier = text_input($_POST['carrier']);
+            $carrier_refrence_number = text_input($_POST['carrierreferencenumber']);
+            $weight = text_input($_POST['weight']);
+            $payment_mode = text_input($_POST['paymentmode']);
+            $receiver_name = text_input($_POST['receivername']);
+            $receiver_email = text_input($_POST['receiver_email']);
+            $receiver_contact = text_input($_POST['receivercontact']);
+            $receiver_address = text_input($_POST['receiveraddress']);
+            $destination = text_input($_POST['destination']);
+            $package_discription = text_input($_POST['packagedescription']);
+            $dispatch_date = text_input($_POST['dispatch_date']);
+            $estimated_delivery_date = text_input($_POST['estimateddeliverydate']);
+            $shipment_mode = text_input($_POST['shipmentmethod']);
+            $quantity = text_input($_POST['quantity']);
+            $delivery_time = text_input($_POST['deliverytime']);
+            $total_freight = text_input($_POST['total_freight'] ?? '');
+            $courier = text_input($_POST['courier'] ?? '');
+            $departure_time = text_input($_POST['departure_time'] ?? '');
+            $pickup_time = text_input($_POST['pickup_time'] ?? '');
+            $comments = text_input($_POST['comments'] ?? '');
+            $type_of_shipment = text_input($_POST['type_of_shipment'] ?? '');
+            $total_volumetric_weight = text_input($_POST['total_volumetric_weight'] ?? '');
+            $total_actual_weight = text_input($_POST['total_actual_weight'] ?? '');
 
-        // Tracking number generation
-        $get_prefix = mysqli_prepare($con, "SELECT tracking_num FROM setting");
-        mysqli_stmt_execute($get_prefix);
-        $result = mysqli_stmt_get_result($get_prefix);
-        $track_prefix = mysqli_fetch_assoc($result)['tracking_num'];
-        $tnumbs = "12345678900987654321";
-        $tnumbs = str_shuffle($tnumbs);
-        $tnumbs = substr($tnumbs, 0, 7);
-        $tnumbs = $track_prefix . date('m') . $tnumbs;
-
-        // Image upload
-        $packageImage = "";
-        if (isset($_FILES["image"])) {
+            // Image upload
+            $packageImage = "";
             $extensions = array("jpeg", "jpg", "png");
             $location = "../uploads/";
             $filename1 = $_FILES["image"]["name"];
             $tempname1 = $_FILES["image"]["tmp_name"];
             $file_ext1 = @strtolower(end(explode('.', $filename1)));
-            if (in_array($file_ext1, $extensions) === false) {
-                $error = "Extension not allowed, please choose a JPEG or PNG file.";
-            } else {
-                $packageImage = time() . date('d') . ".png";
-                move_uploaded_file($tempname1, $location . $packageImage);
+            if (!in_array($file_ext1, $extensions)) {
+                throw new Exception("Extension not allowed, please choose a JPEG or PNG file.");
             }
-        } else {
-            $error = "Pick a package image";
-        }
+            $packageImage = time() . date('d') . ".png";
+            if (!move_uploaded_file($tempname1, $location . $packageImage)) {
+                throw new Exception("Failed to upload image.");
+            }
 
-        if (empty($error)) {
-            $status = 'Pending';
-            if (isset($_POST['history_status'])) {
-                $status = end($_POST['history_status']);
-            }
+            // Tracking number generation
+            $get_prefix_stmt = mysqli_prepare($con, "SELECT tracking_num FROM setting");
+            mysqli_stmt_execute($get_prefix_stmt);
+            $result = mysqli_stmt_get_result($get_prefix_stmt);
+            $track_prefix = mysqli_fetch_assoc($result)['tracking_num'];
+            $tnumbs_rand = "12345678900987654321";
+            $tnumbs_rand = str_shuffle($tnumbs_rand);
+            $tnumbs_rand = substr($tnumbs_rand, 0, 7);
+            $tnumbs_final = $track_prefix . date('m') . $tnumbs_rand;
+
+            // Start Transaction
+            mysqli_begin_transaction($con);
 
             $stmt = mysqli_prepare($con, "INSERT INTO addtracking ( tracking_id, sender_name, sender_contact, sender_email, sender_address, dispatch_location, carrier, carrier_refrence_number, weight, payment_mode, image,  receiver_name, receiver_contact, receiver_email, receiver_address, destination, package_discription, dispatch_date ,estimated_delivery_date ,shipment_mode,  quantity , delivery_time, date_added, total_freight, courier, departure_time, pickup_time, comments, type_of_shipment, total_volumetric_weight, total_actual_weight, published ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            mysqli_stmt_bind_param($stmt, "ssssssssssssssssssssssssssssssi", $tnumbs, $sender_name, $sender_contact, $sender_email, $sender_address, $dispatch_location, $carrier, $carrier_refrence_number, $weight, $payment_mode, $packageImage, $receiver_name, $receiver_contact, $receiver_email, $receiver_address, $destination, $package_discription, $dispatch_date, $estimated_delivery_date, $shipment_mode, $quantity, $delivery_time, $date_added, $total_freight, $courier, $departure_time, $pickup_time, $comments, $type_of_shipment, $total_volumetric_weight, $total_actual_weight, $published);
+            mysqli_stmt_bind_param($stmt, "ssssssssssssssssssssssssssssssi", $tnumbs_final, $sender_name, $sender_contact, $sender_email, $sender_address, $dispatch_location, $carrier, $carrier_refrence_number, $weight, $payment_mode, $packageImage, $receiver_name, $receiver_contact, $receiver_email, $receiver_address, $destination, $package_discription, $dispatch_date, $estimated_delivery_date, $shipment_mode, $quantity, $delivery_time, $date_added, $total_freight, $courier, $departure_time, $pickup_time, $comments, $type_of_shipment, $total_volumetric_weight, $total_actual_weight, $published);
+            mysqli_stmt_execute($stmt);
 
-            if (!mysqli_stmt_execute($stmt)) {
-                $error = "Error creating shipment: " . mysqli_stmt_error($stmt);
-            } else {
-                // Process package items
-                if (isset($_POST['package_quantity'])) {
-                    $stmt_items = mysqli_prepare($con, "INSERT INTO package_items (tracking_id, quantity, piece_type, description, length, width, height, weight) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-                    for ($i = 0; $i < count($_POST['package_quantity']); $i++) {
-                        $package_quantity = text_input($_POST['package_quantity'][$i]);
-                        $package_piece_type = text_input($_POST['package_piece_type'][$i]);
-                        $package_description = text_input($_POST['package_description'][$i]);
-                        $package_length = text_input($_POST['package_length'][$i]);
-                        $package_width = text_input($_POST['package_width'][$i]);
-                        $package_height = text_input($_POST['package_height'][$i]);
-                        $package_weight = text_input($_POST['package_weight'][$i]);
-                        mysqli_stmt_bind_param($stmt_items, "sissdddd", $tnumbs, $package_quantity, $package_piece_type, $package_description, $package_length, $package_width, $package_height, $package_weight);
-                        if (!mysqli_stmt_execute($stmt_items)) {
-                            $error .= " Error saving package item: " . mysqli_stmt_error($stmt_items);
-                        }
-                    }
-                }
-
-                // Process shipment history
-                if (isset($_POST['history_date'])) {
-                    $stmt_history = mysqli_prepare($con, "INSERT INTO shipment_history (tracking_id, date, time, location, status, updated_by, remarks) VALUES (?, ?, ?, ?, ?, ?, ?)");
-                    for ($i = 0; $i < count($_POST['history_date']); $i++) {
-                        $history_date = text_input($_POST['history_date'][$i]);
-                        $history_time = text_input($_POST['history_time'][$i]);
-                        $history_location = text_input($_POST['history_location'][$i]);
-                        $history_status = text_input($_POST['history_status'][$i]);
-                        $history_updated_by = text_input($_POST['history_updated_by'][$i]);
-                        $history_remarks = text_input($_POST['history_remarks'][$i]);
-                        mysqli_stmt_bind_param($stmt_history, "sssssss", $tnumbs, $history_date, $history_time, $history_location, $history_status, $history_updated_by, $history_remarks);
-                        if (!mysqli_stmt_execute($stmt_history)) {
-                            $error .= " Error saving shipment history: " . mysqli_stmt_error($stmt_history);
-                        }
-                    }
-                }
-
-                // Auto-log status change
-                $status = 'Pending';
-                if (isset($_POST['history_status']) && !empty($_POST['history_status'])) {
-                    $status = end($_POST['history_status']);
-                }
-                $stmt_log = mysqli_prepare($con, "INSERT INTO shipment_history (tracking_id, date, time, location, status, updated_by, remarks) VALUES (?, CURDATE(), CURTIME(), ?, ?, 'System', 'Shipment Created')");
-                mysqli_stmt_bind_param($stmt_log, "sss", $tnumbs, $dispatch_location, $status);
-                if (!mysqli_stmt_execute($stmt_log)) {
-                    $error .= " Error creating initial history log: " . mysqli_stmt_error($stmt_log);
-                }
-
-                if(empty($error)){
-                    $msg = "Created successfully";
-                    // Send mail
-                    $subject = "Registered Shipment";
-                    $body = "<p>Dear $receiver_name</p> <p>We are pleased to inform you that your shipment has been registered with us at <strong>$sitename</strong>.</p>  <center>Tracking Information</center> <p> <strong>Tracking Number - $tnumbs </strong> </p> <p> <strong>Status - $status </strong> </p> <p> <strong>Package - $package_discription </strong> </p> <p> <strong>Dispatch Location - $dispatch_location </strong> </p> <p> <strong>Estimated Delivery Date - $destination </strong> </p> <p>For more information visit the <a href='$site_url/tracking.php'>Tracking Page</a> </p> ";
-                    sendMail($receiver_email, $subject, $body);
+            // Process package items
+            if (!empty($_POST['package_quantity']) && is_array($_POST['package_quantity'])) {
+                $stmt_items = mysqli_prepare($con, "INSERT INTO package_items (tracking_id, quantity, piece_type, description, length, width, height, weight) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                for ($i = 0; $i < count($_POST['package_quantity']); $i++) {
+                    $package_quantity = text_input($_POST['package_quantity'][$i]);
+                    $package_piece_type = text_input($_POST['package_piece_type'][$i]);
+                    $package_description = text_input($_POST['package_description'][$i]);
+                    $package_length = text_input($_POST['package_length'][$i]);
+                    $package_width = text_input($_POST['package_width'][$i]);
+                    $package_height = text_input($_POST['package_height'][$i]);
+                    $package_weight = text_input($_POST['package_weight'][$i]);
+                    mysqli_stmt_bind_param($stmt_items, "sissdddd", $tnumbs_final, $package_quantity, $package_piece_type, $package_description, $package_length, $package_width, $package_height, $package_weight);
+                    mysqli_stmt_execute($stmt_items);
                 }
             }
+
+            // Process shipment history
+            if (!empty($_POST['history_date']) && is_array($_POST['history_date'])) {
+                $stmt_history = mysqli_prepare($con, "INSERT INTO shipment_history (tracking_id, date, time, location, status, updated_by, remarks) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                for ($i = 0; $i < count($_POST['history_date']); $i++) {
+                    $history_date = text_input($_POST['history_date'][$i]);
+                    $history_time = text_input($_POST['history_time'][$i]);
+                    $history_location = text_input($_POST['history_location'][$i]);
+                    $history_status = text_input($_POST['history_status'][$i]);
+                    $history_updated_by = text_input($_POST['history_updated_by'][$i]);
+                    $history_remarks = text_input($_POST['history_remarks'][$i]);
+                    mysqli_stmt_bind_param($stmt_history, "sssssss", $tnumbs_final, $history_date, $history_time, $history_location, $history_status, $history_updated_by, $history_remarks);
+                    mysqli_stmt_execute($stmt_history);
+                }
+            }
+
+            // Auto-log status change
+            $status = 'Pending';
+            if (isset($_POST['history_status']) && !empty($_POST['history_status'])) {
+                $status = end($_POST['history_status']);
+            }
+            $stmt_log = mysqli_prepare($con, "INSERT INTO shipment_history (tracking_id, date, time, location, status, updated_by, remarks) VALUES (?, CURDATE(), CURTIME(), ?, ?, 'System', 'Shipment Created')");
+            mysqli_stmt_bind_param($stmt_log, "sss", $tnumbs_final, $dispatch_location, $status);
+            mysqli_stmt_execute($stmt_log);
+
+            // Commit Transaction
+            mysqli_commit($con);
+
+            $msg = "Shipment created successfully with Tracking ID: " . htmlspecialchars($tnumbs_final);
+
+            // Send mail
+            $subject = "Registered Shipment";
+            $body = "<p>Dear $receiver_name</p> <p>We are pleased to inform you that your shipment has been registered with us at <strong>$sitename</strong>.</p>  <center>Tracking Information</center> <p> <strong>Tracking Number - $tnumbs_final </strong> </p> <p> <strong>Status - $status </strong> </p> <p> <strong>Package - $package_discription </strong> </p> <p> <strong>Dispatch Location - $dispatch_location </strong> </p> <p> <strong>Estimated Delivery Date - $destination </strong> </p> <p>For more information visit the <a href='$site_url/tracking.php'>Tracking Page</a> </p> ";
+            sendMail($receiver_email, $subject, $body);
+
+        } catch (Exception $e) {
+            if ($con->autocommit) {
+                mysqli_rollback($con);
+            }
+            $error = "DATABASE ERROR: " . $e->getMessage() . " (Line: " . $e->getLine() . ")";
         }
     }
-}    
+}
  ?>
 
 <span></span>
