@@ -211,73 +211,48 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
         </div>
       </div>
       <div class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-6">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Shipment History</h5>
-              <table class="table" id="shipment_history_table">
-                <thead>
-                  <tr>
-                    <th scope="col">Date</th>
-                    <th scope="col">Time</th>
-                    <th scope="col">Location</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Updated By</th>
-                    <th scope="col">Remarks</th>
-                    <th scope="col"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                </tbody>
-              </table>
-              <button type="button" class="btn btn-primary" id="add_history_row">Add Row</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-lg-12">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Package Items</h5>
-              <table class="table" id="package_items_table">
-                <thead>
-                  <tr>
-                    <th scope="col">Quantity</th>
-                    <th scope="col">Piece Type</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">Length (cm)</th>
-                    <th scope="col">Width (cm)</th>
-                    <th scope="col">Height (cm)</th>
-                    <th scope="col">Weight (kg)</th>
-                    <th scope="col"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                </tbody>
-              </table>
-              <button type="button" class="btn btn-primary" id="add_package_row">Add Row</button>
-              <div class="row mt-3">
-                <div class="col-md-4">
-                  <label for="total_volumetric_weight" class="form-label">Total Volumetric Weight</label>
-                  <input type="text" class="form-control" id="total_volumetric_weight" name="total_volumetric_weight" readonly>
-                </div>
-                <div class="col-md-4">
-                  <label for="total_actual_weight" class="form-label">Total Actual Weight</label>
-                  <input type="text" class="form-control" id="total_actual_weight" name="total_actual_weight" readonly>
-                </div>
+              <h5 class="card-title">Shipper Details</h5>
+              <div class="mb-3">
+                <label for="shipper_name" class="form-label">Shipper Name</label>
+                <input type="text" class="form-control" id="shipper_name" name="sendername">
+              </div>
+              <div class="mb-3">
+                <label for="shipper_phone" class="form-label">Phone Number</label>
+                <input type="text" class="form-control" id="shipper_phone" name="sendercontact">
+              </div>
+              <div class="mb-3">
+                <label for="shipper_address" class="form-label">Address</label>
+                <input type="text" class="form-control" id="shipper_address" name="senderaddress">
+              </div>
+              <div class="mb-3">
+                <label for="shipper_email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="shipper_email" name="senderemail">
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-6">
           <div class="card">
             <div class="card-body">
-              <div class="d-flex justify-content-end">
-                <button type="submit" name="add" class="btn btn-primary">Save</button>
-                <button type="submit" name="publish" class="btn btn-secondary ms-2">Publish</button>
+              <h5 class="card-title">Receiver Details</h5>
+              <div class="mb-3">
+                <label for="receiver_name" class="form-label">Receiver Name</label>
+                <input type="text" class="form-control" id="receiver_name" name="receivername">
+              </div>
+              <div class="mb-3">
+                <label for="receiver_phone" class="form-label">Phone Number</label>
+                <input type="text" class="form-control" id="receiver_phone" name="receviercontact">
+              </div>
+              <div class="mb-3">
+                <label for="receiver_address" class="form-label">Address</label>
+                <input type="text" class="form-control" id="receiver_address" name="recevieraddress">
+              </div>
+              <div class="mb-3">
+                <label for="receiver_email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="receiver_email" name="recevieremail">
               </div>
             </div>
           </div>
@@ -400,48 +375,73 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
         </div>
       </div>
       <div class="row">
-        <div class="col-lg-6">
+        <div class="col-lg-12">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Shipper Details</h5>
-              <div class="mb-3">
-                <label for="shipper_name" class="form-label">Shipper Name</label>
-                <input type="text" class="form-control" id="shipper_name" name="sendername">
-              </div>
-              <div class="mb-3">
-                <label for="shipper_phone" class="form-label">Phone Number</label>
-                <input type="text" class="form-control" id="shipper_phone" name="sendercontact">
-              </div>
-              <div class="mb-3">
-                <label for="shipper_address" class="form-label">Address</label>
-                <input type="text" class="form-control" id="shipper_address" name="senderaddress">
-              </div>
-              <div class="mb-3">
-                <label for="shipper_email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="shipper_email" name="senderemail">
+              <h5 class="card-title">Package Items</h5>
+              <table class="table" id="package_items_table">
+                <thead>
+                  <tr>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Piece Type</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Length (cm)</th>
+                    <th scope="col">Width (cm)</th>
+                    <th scope="col">Height (cm)</th>
+                    <th scope="col">Weight (kg)</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+              <button type="button" class="btn btn-primary" id="add_package_row">Add Row</button>
+              <div class="row mt-3">
+                <div class="col-md-4">
+                  <label for="total_volumetric_weight" class="form-label">Total Volumetric Weight</label>
+                  <input type="text" class="form-control" id="total_volumetric_weight" name="total_volumetric_weight" readonly>
+                </div>
+                <div class="col-md-4">
+                  <label for="total_actual_weight" class="form-label">Total Actual Weight</label>
+                  <input type="text" class="form-control" id="total_actual_weight" name="total_actual_weight" readonly>
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="col-lg-6">
+      </div>
+      <div class="row">
+        <div class="col-lg-12">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Receiver Details</h5>
-              <div class="mb-3">
-                <label for="receiver_name" class="form-label">Receiver Name</label>
-                <input type="text" class="form-control" id="receiver_name" name="receivername">
-              </div>
-              <div class="mb-3">
-                <label for="receiver_phone" class="form-label">Phone Number</label>
-                <input type="text" class="form-control" id="receiver_phone" name="receviercontact">
-              </div>
-              <div class="mb-3">
-                <label for="receiver_address" class="form-label">Address</label>
-                <input type="text" class="form-control" id="receiver_address" name="recevieraddress">
-              </div>
-              <div class="mb-3">
-                <label for="receiver_email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="receiver_email" name="recevieremail">
+              <h5 class="card-title">Shipment History</h5>
+              <table class="table" id="shipment_history_table">
+                <thead>
+                  <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Time</th>
+                    <th scope="col">Location</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Updated By</th>
+                    <th scope="col">Remarks</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+              <button type="button" class="btn btn-primary" id="add_history_row">Add Row</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex justify-content-end">
+                <button type="submit" name="add" class="btn btn-primary">Save</button>
+                <button type="submit" name="publish" class="btn btn-secondary ms-2">Publish</button>
               </div>
             </div>
           </div>

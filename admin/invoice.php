@@ -3,45 +3,27 @@ include '../db.php';
 include '../functions.php';
 
 if (isset($_GET['num']) &&  $_GET['num'] !="") {
-    $post_id = $_GET['num'];
+    $post_id = text_input($_GET['num']);
 
-    $sql = mysqli_query($con, "SELECT * FROM addtracking WHERE tracking_id = '$post_id' ");
-    if (mysqli_num_rows($sql) > 0 ) {
-        $row = mysqli_fetch_assoc($sql);
-        $tracking_id = $row['tracking_id'];
-        $sender_name = $row['sender_name'];
-        $sender_contact = $row ['sender_contact'];
-        $sender_email = $row['sender_email'];
-        $sender_address = $row['sender_address'];  
-        $status = $row['status'];
-        $dispatch_location = $row['dispatch_location'];                     
-        $carrier = $row['carrier'];
-        $carrier_refrence_number = $row['carrier_refrence_number'];
-        $weight = $row['weight'];
-        $payment_mode = $row['payment_mode'];
-        $image = $row['image'];
-        $receiver_name = $row['receiver_name'];
-        $receiver_contact = $row['receiver_contact'];
-        $receiver_email = $row['receiver_email'];
-        $receiver_address = $row['receiver_address'];
-        $package_discription = $row['package_discription'];
-        $dispach_date = $row['dispach_date'];
-        $destination = $row['destination'];
-        $estimated_delivery_date = $row['estimated_delivery_date'];
-        $shipment_mode = $row['shipment_mode'];
-        $quantity = $row['quantity'];
-        $delivery_time = $row ['delivery_time'];
-        $date_added = $row['date_added'];
+    $stmt = mysqli_prepare($con, "SELECT * FROM addtracking WHERE tracking_id = ?");
+    mysqli_stmt_bind_param($stmt, "s", $post_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    if (mysqli_num_rows($result) > 0 ) {
+        $row = mysqli_fetch_assoc($result);
     }
 
-    $sqls = mysqli_query($con, "SELECT * FROM track_update  WHERE track_num = '$post_id' ORDER BY id DESC LIMIT 1  ");
-    if (mysqli_num_rows($sqls) > 0 ) {
-        $rows = mysqli_fetch_assoc($sqls);
-        $invoice_sub_total = $rows['invoice_sub_total'];
-        $discounts = $rows['discount'];
-        $tax = $rows['tax'];
-        $invoice_total = $rows['invoice_total'];
-    }
+    $stmt = mysqli_prepare($con, "SELECT * FROM package_items WHERE tracking_id = ?");
+    mysqli_stmt_bind_param($stmt, "s", $post_id);
+    mysqli_stmt_execute($stmt);
+    $package_items_result = mysqli_stmt_get_result($stmt);
+    $package_items = mysqli_fetch_all($package_items_result, MYSQLI_ASSOC);
+
+    $stmt = mysqli_prepare($con, "SELECT * FROM shipment_history WHERE tracking_id = ?");
+    mysqli_stmt_bind_param($stmt, "s", $post_id);
+    mysqli_stmt_execute($stmt);
+    $shipment_history_result = mysqli_stmt_get_result($stmt);
+    $shipment_history = mysqli_fetch_all($shipment_history_result, MYSQLI_ASSOC);
 }
 
 ?>
@@ -119,56 +101,139 @@ if (isset($_GET['num']) &&  $_GET['num'] !="") {
 							<table class="invoice-table agency-table">
 								<thead>
 									<tr class="invo-tb-header bg-black">
-										<th class="serv-wid pl-10 font-md">Name of Package</th>
-										<th class="pric-wid font-md">Date created</th>
-										<th class="tota-wid pr-10 font-md text-right ">Date of Dispach</th>
-										<th class="tota-wid pr-10 font-md text-right ">Time of Arrival</th>
+										<th class="serv-wid pl-10 font-md">Description</th>
+										<th class="pric-wid font-md">Value</th>
 									</tr>
 								</thead>
 								<tbody class="invo-tb-body">
 									<tr class="invo-tb-row">
-										<td class="font-sm pl-10"><?php echo $package_discription  ?></td>
-										<td class="font-sm pl-10"><?php echo $date_added ?></td>
-										<td class="font-sm pl-10"><?php echo $dispach_date ?></td>
-										<td class="font-sm text-right pr-10"><?php echo $delivery_time ?></td>
+										<td class="font-sm pl-10">Type of Shipment</td>
+										<td class="font-sm pl-10"><?php echo $row['type_of_shipment']; ?></td>
+									</tr>
+									<tr class="invo-tb-row">
+										<td class="font-sm pl-10">Payment Mode</td>
+										<td class="font-sm pl-10"><?php echo $row['payment_mode']; ?></td>
+									</tr>
+									<tr class="invo-tb-row">
+										<td class="font-sm pl-10">Carrier</td>
+										<td class="font-sm pl-10"><?php echo $row['carrier']; ?></td>
+									</tr>
+									<tr class="invo-tb-row">
+										<td class="font-sm pl-10">Courier</td>
+										<td class="font-sm pl-10"><?php echo $row['courier']; ?></td>
+									</tr>
+									<tr class="invo-tb-row">
+										<td class="font-sm pl-10">Mode</td>
+										<td class="font-sm pl-10"><?php echo $row['shipment_mode']; ?></td>
+									</tr>
+									<tr class="invo-tb-row">
+										<td class="font-sm pl-10">Origin</td>
+										<td class="font-sm pl-10"><?php echo $row['dispatch_location']; ?></td>
+									</tr>
+									<tr class="invo-tb-row">
+										<td class="font-sm pl-10">Destination</td>
+										<td class="font-sm pl-10"><?php echo $row['destination']; ?></td>
+									</tr>
+									<tr class="invo-tb-row">
+										<td class="font-sm pl-10">Weight</td>
+										<td class="font-sm pl-10"><?php echo $row['weight']; ?></td>
+									</tr>
+									<tr class="invo-tb-row">
+										<td class="font-sm pl-10">Packages count</td>
+										<td class="font-sm pl-10"><?php echo $row['quantity']; ?></td>
+									</tr>
+									<tr class="invo-tb-row">
+										<td class="font-sm pl-10">Product description</td>
+										<td class="font-sm pl-10"><?php echo $row['package_discription']; ?></td>
+									</tr>
+									<tr class="invo-tb-row">
+										<td class="font-sm pl-10">Total Freight</td>
+										<td class="font-sm pl-10"><?php echo $row['total_freight']; ?></td>
+									</tr>
+									<tr class="invo-tb-row">
+										<td class="font-sm pl-10">Carrier Reference No.</td>
+										<td class="font-sm pl-10"><?php echo $row['carrier_refrence_number']; ?></td>
+									</tr>
+									<tr class="invo-tb-row">
+										<td class="font-sm pl-10">Departure Time</td>
+										<td class="font-sm pl-10"><?php echo $row['departure_time']; ?></td>
+									</tr>
+									<tr class="invo-tb-row">
+										<td class="font-sm pl-10">Pickup Date</td>
+										<td class="font-sm pl-10"><?php echo $row['dispach_date']; ?></td>
+									</tr>
+									<tr class="invo-tb-row">
+										<td class="font-sm pl-10">Pickup Time</td>
+										<td class="font-sm pl-10"><?php echo $row['delivery_time']; ?></td>
+									</tr>
+									<tr class="invo-tb-row">
+										<td class="font-sm pl-10">Expected Delivery Date</td>
+										<td class="font-sm pl-10"><?php echo $row['estimated_delivery_date']; ?></td>
 									</tr>
 								</tbody>
 							</table>
 						</div>
 						<!--Invoice table data end here -->
-						<!--Invoice additional info start here -->
-						<div class="invo-addition-wrap pt-20">
-							<div class="invo-add-info-content">
-								<!-- <h3 class="font-md color-light-black">Additional Information:</h3>
-								<p class="font-sm pt-10">This is computer generated receipt and does not require physical signature.</p> -->
-							</div>
-							<div class="invo-bill-total width-30">
-								<table class="invo-total-table">
-									<tbody>
-										<tr>
-											<td class="font-md color-light-black ">Shipping Cost</td>
-											<td class="font-md-grey color-grey text-right pr-10 ">$<?php echo $invoice_sub_total  ?></td>
+						<!--Invoice table data start here -->
+						<div class="table-wrapper agency-service-table pt-32">
+							<h3 class="font-md color-light-black">Package Items</h3>
+							<table class="invoice-table agency-table">
+								<thead>
+									<tr class="invo-tb-header bg-black">
+										<th class="serv-wid pl-10 font-md">Quantity</th>
+										<th class="pric-wid font-md">Piece Type</th>
+										<th class="tota-wid pr-10 font-md text-right ">Description</th>
+										<th class="tota-wid pr-10 font-md text-right ">Length (cm)</th>
+										<th class="tota-wid pr-10 font-md text-right ">Width (cm)</th>
+										<th class="tota-wid pr-10 font-md text-right ">Height (cm)</th>
+										<th class="tota-wid pr-10 font-md text-right ">Weight (kg)</th>
+									</tr>
+								</thead>
+								<tbody class="invo-tb-body">
+									<?php foreach ($package_items as $item) : ?>
+										<tr class="invo-tb-row">
+											<td class="font-sm pl-10"><?php echo $item['quantity']; ?></td>
+											<td class="font-sm pl-10"><?php echo $item['piece_type']; ?></td>
+											<td class="font-sm pl-10"><?php echo $item['description']; ?></td>
+											<td class="font-sm text-right pr-10"><?php echo $item['length']; ?></td>
+											<td class="font-sm text-right pr-10"><?php echo $item['width']; ?></td>
+											<td class="font-sm text-right pr-10"><?php echo $item['height']; ?></td>
+											<td class="font-sm text-right pr-10"><?php echo $item['weight']; ?></td>
 										</tr>
-										<tr>
-											<td class="font-md color-light-black">Clearance Cost </td>
-											<td class="font-md-grey color-grey text-right pr-10 ">$<?php echo $discounts  ?></td>
-										</tr>
-
-										<tr>
-											<td class="font-md color-light-black">Tax</td>
-											<td class="font-md-grey color-grey text-right pr-10 ">$<?php echo $tax ?> </td>
-										</tr>
-									 
-										
-                                     
-                                        <tr class="invo-grand-total">
-											<td class="font-18-700 padding">Invoice total</td>
-											<td class="font-18-500 text-right pr-10 ">$<?php echo $invoice_total ?></td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
+									<?php endforeach; ?>
+								</tbody>
+							</table>
 						</div>
+						<!--Invoice table data end here -->
+						<!--Invoice table data start here -->
+						<div class="table-wrapper agency-service-table pt-32">
+							<h3 class="font-md color-light-black">Shipment History</h3>
+							<table class="invoice-table agency-table">
+								<thead>
+									<tr class="invo-tb-header bg-black">
+										<th class="serv-wid pl-10 font-md">Date</th>
+										<th class="pric-wid font-md">Time</th>
+										<th class="tota-wid pr-10 font-md text-right ">Location</th>
+										<th class="tota-wid pr-10 font-md text-right ">Status</th>
+										<th class="tota-wid pr-10 font-md text-right ">Updated By</th>
+										<th class="tota-wid pr-10 font-md text-right ">Remarks</th>
+									</tr>
+								</thead>
+								<tbody class="invo-tb-body">
+									<?php foreach ($shipment_history as $history) : ?>
+										<tr class="invo-tb-row">
+											<td class="font-sm pl-10"><?php echo $history['date']; ?></td>
+											<td class="font-sm pl-10"><?php echo $history['time']; ?></td>
+											<td class="font-sm pl-10"><?php echo $history['location']; ?></td>
+											<td class="font-sm text-right pr-10"><?php echo $history['status']; ?></td>
+											<td class="font-sm text-right pr-10"><?php echo $history['updated_by']; ?></td>
+											<td class="font-sm text-right pr-10"><?php echo $history['remarks']; ?></td>
+										</tr>
+									<?php endforeach; ?>
+								</tbody>
+							</table>
+						</div>
+						<!--Invoice table data end here -->
 						<!--Invoice additional info end here -->
 					</div> <br> <br>
 					<!--Contact details start here -->
