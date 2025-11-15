@@ -104,7 +104,7 @@ if (isset($_POST['update'])) {
             // Start Transaction
             mysqli_begin_transaction($con);
 
-            $stmt_update = mysqli_prepare($con, "UPDATE addtracking SET sender_name=?, sender_contact=?, sender_email=?, sender_address=?, dispatch_location=?, carrier=?, carrier_refrence_number=?, weight=?, payment_mode=?, receiver_name=?, receiver_contact=?, receiver_email=?, receiver_address=?, destination=?, package_discription=?, dispatch_date=?, estimated_delivery_date=?, shipment_mode=?, quantity=?, delivery_time=?, total_freight=?, courier=?, departure_time=?, pickup_time=?, comments=?, type_of_shipment=?, total_volumetric_weight=?, total_actual_weight=?, published=?, image=? WHERE tracking_id=?");
+            $stmt_update = mysqli_prepare($con, "UPDATE addtracking SET sender_name=?, sender_contact=?, sender_email=?, sender_address=?, dispatch_location=?, carrier=?, carrier_refrence_number=?, weight=?, payment_mode=?, receiver_name=?, receiver_contact=?, receiver_email=?, receiver_address=?, destination=?, package_discription=?, pickup_date=?, estimated_delivery_date=?, shipment_mode=?, quantity=?, delivery_time=?, total_freight=?, courier=?, departure_time=?, pickup_time=?, comments=?, type_of_shipment=?, total_volumetric_weight=?, total_actual_weight=?, published=?, image=? WHERE tracking_id=?");
             mysqli_stmt_bind_param($stmt_update, "sssssssssssssssssssssssssssssis", $sender_name, $sender_contact, $sender_email, $sender_address, $dispatch_location, $carrier, $carrier_refrence_number, $weight, $payment_mode, $receiver_name, $receiver_contact, $receiver_email, $receiver_address, $destination, $package_discription, $dispatch_date, $estimated_delivery_date, $shipment_mode, $quantity, $delivery_time, $total_freight, $courier, $departure_time, $pickup_time, $comments, $type_of_shipment, $total_volumetric_weight, $total_actual_weight, $published, $packageImage, $edit_id);
             mysqli_stmt_execute($stmt_update);
 
@@ -296,7 +296,7 @@ if (isset($_POST['update'])) {
                                                             </div>
                                                             <div class="col-md-4">
                                                                 <label for="pickup_date" class="form-label">Pickup Date</label>
-                                                                <input type="date" class="form-control" id="pickup_date" name="dispatch_date" value="<?php echo htmlspecialchars($row['dispach_date'] ?? ''); ?>">
+                                                                <input type="date" class="form-control" id="pickup_date" name="dispatch_date" value="<?php echo htmlspecialchars($row['pickup_date'] ?? ''); ?>">
                                                             </div>
                                                         </div>
                                                         <div class="row mt-3">
