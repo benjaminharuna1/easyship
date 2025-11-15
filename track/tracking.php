@@ -213,26 +213,20 @@ if (isset($_POST['search'])) {
                   </strong><br /><br />
 
                   <?php
-                  $select = mysqli_query($con, "SELECT * FROM track_update  WHERE track_num = '$tracking_pr' ORDER BY id DESC ");
-                  if (mysqli_num_rows($select) > 0) {
-                      while ($row = mysqli_fetch_assoc($select)) {
-                  
-                  switch ($row['status']) {
-                      case 'active':
-                          $class = "delivered-grid-box";
-                          break;
-                      default:
-                          $class = "";
-                          break;
-                   }
-?>
+                  $stmt = mysqli_prepare($con, "SELECT * FROM shipment_history WHERE tracking_id = ? ORDER BY date DESC, time DESC");
+                  mysqli_stmt_bind_param($stmt, "s", $tracking_pr);
+                  mysqli_stmt_execute($stmt);
+                  $result = mysqli_stmt_get_result($stmt);
+                  if (mysqli_num_rows($result) > 0) {
+                      while ($row = mysqli_fetch_assoc($result)) {
+                  ?>
                   <ul class="delivered-grid-box">
                     <li>
                       <div class="delivered-left"> <span><strong><?php  echo date('F dS, Y', strtotime($row['date'])); ?></strong>,<br> <?php echo date("G:i A", strtotime($row['time'])); ?></span></div>
                       <span class="d-bulte"><i class="current"></i></span>
-                      <div class="delivered-right"> <strong><?php echo $row['note'] ?></strong>
-                        <br>Customer<br>
-                        <?php echo $row['current_location'] ?><br> <span id="order-status" class="default"><?php echo $row['status'] ?></span>
+                      <div class="delivered-right"> <strong><?php echo $row['remarks'] ?></strong>
+                        <br><?php echo $row['updated_by'] ?><br>
+                        <?php echo $row['location'] ?><br> <span id="order-status" class="default"><?php echo $row['status'] ?></span>
                       </div>
                     </li><br><br>
                   </ul>
