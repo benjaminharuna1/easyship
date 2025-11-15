@@ -26,7 +26,7 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
     $published = isset($_POST['publish']) ? 1 : 0;
 
     // Validation
-    $required_fields = ['sendername', 'sendercontact', 'senderemail', 'senderaddress', 'status', 'dispatchlocation', 'carrier', 'carrierreferencenumber', 'weight', 'paymentmode', 'receivername', 'receiver_email', 'receivercontact', 'receiveraddress', 'destination', 'packagedescription', 'dispatch_date', 'estimateddeliverydate', 'shipmentmethod', 'quantity', 'deliverytime'];
+    $required_fields = ['sendername', 'sendercontact', 'senderemail', 'senderaddress', 'dispatchlocation', 'carrier', 'carrierreferencenumber', 'weight', 'paymentmode', 'receivername', 'receiver_email', 'receivercontact', 'receiveraddress', 'destination', 'packagedescription', 'dispatch_date', 'estimateddeliverydate', 'shipmentmethod', 'quantity', 'deliverytime'];
     foreach ($required_fields as $field) {
         if (empty($_POST[$field])) {
             $error = "Please fill in all required fields.";
@@ -39,7 +39,6 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
         $sender_contact = text_input($_POST['sendercontact']);
         $sender_email = text_input($_POST['senderemail']);
         $sender_address = text_input($_POST['senderaddress']);
-        $status = text_input($_POST['status']);
         $dispatch_location = text_input($_POST['dispatchlocation']);
         $carrier = text_input($_POST['carrier']);
         $carrier_refrence_number = text_input($_POST['carrierreferencenumber']);
@@ -56,7 +55,6 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
         $shipment_mode = text_input($_POST['shipmentmethod']);
         $quantity = text_input($_POST['quantity']);
         $delivery_time = text_input($_POST['deliverytime']);
-        $remarks = text_input($_POST['remarks']);
         $total_freight = text_input($_POST['total_freight']);
         $courier = text_input($_POST['courier']);
         $departure_time = text_input($_POST['departure_time']);
@@ -96,8 +94,13 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
         }
 
         if (empty($error)) {
-            $stmt = mysqli_prepare($con, "INSERT INTO addtracking ( tracking_id, sender_name, sender_contact, sender_email, sender_address, status, dispatch_location, carrier, carrier_refrence_number, weight, payment_mode, image,  receiver_name, receiver_contact, receiver_email, receiver_address, destination, package_discription, dispatch_date ,estimated_delivery_date ,shipment_mode,  quantity , delivery_time, date_added, remarks, total_freight, courier, departure_time, pickup_time, comments, datetimepicker, type_of_shipment, total_volumetric_weight, total_actual_weight, published ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            mysqli_stmt_bind_param($stmt, "ssssssssssssssssssssssssssssssssssi", $tnumbs, $sender_name, $sender_contact, $sender_email, $sender_address, $status, $dispatch_location, $carrier, $carrier_refrence_number, $weight, $payment_mode, $packageImage, $receiver_name, $receiver_contact, $receiver_email, $receiver_address, $destination, $package_discription, $dispatch_date, $estimated_delivery_date, $shipment_mode, $quantity, $delivery_time, $date_added, $remarks, $total_freight, $courier, $departure_time, $pickup_time, $comments, $datetimepicker, $type_of_shipment, $total_volumetric_weight, $total_actual_weight, $published);
+            $status = 'Pending';
+            if (isset($_POST['history_status'])) {
+                $status = end($_POST['history_status']);
+            }
+
+            $stmt = mysqli_prepare($con, "INSERT INTO addtracking ( tracking_id, sender_name, sender_contact, sender_email, sender_address, status, dispatch_location, carrier, carrier_refrence_number, weight, payment_mode, image,  receiver_name, receiver_contact, receiver_email, receiver_address, destination, package_discription, dispatch_date ,estimated_delivery_date ,shipment_mode,  quantity , delivery_time, date_added, total_freight, courier, departure_time, pickup_time, comments, type_of_shipment, total_volumetric_weight, total_actual_weight, published ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            mysqli_stmt_bind_param($stmt, "ssssssssssssssssssssssssssssssi", $tnumbs, $sender_name, $sender_contact, $sender_email, $sender_address, $status, $dispatch_location, $carrier, $carrier_refrence_number, $weight, $payment_mode, $packageImage, $receiver_name, $receiver_contact, $receiver_email, $receiver_address, $destination, $package_discription, $dispatch_date, $estimated_delivery_date, $shipment_mode, $quantity, $delivery_time, $date_added, $total_freight, $courier, $departure_time, $pickup_time, $comments, $type_of_shipment, $total_volumetric_weight, $total_actual_weight, $published);
             $insert = mysqli_stmt_execute($stmt);
 
             if ($insert) {
@@ -179,31 +182,9 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
             <div class="card-body">
               <h5 class="card-title">Basic Info</h5>
               <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-12">
                   <label for="tracking_number" class="form-label">Tracking Code</label>
                   <input type="text" readonly="" value="<?php echo $tnumbs ?>" name="tracking_number" class="form-control" id="tracking_number">
-                </div>
-                <div class="col-md-6">
-                  <label for="shipment_status" class="form-label">Shipment Status</label>
-                  <select class="form-control" id="shipment_status" name="status">
-                    <option>Draft</option>
-                    <option>Pending</option>
-                    <option>In Transit</option>
-                    <option>Delivered</option>
-                    <option>Cancelled</option>
-                  </select>
-                </div>
-              </div>
-              <div class="row mt-3">
-                <div class="col-md-12">
-                  <label for="remarks" class="form-label">Remarks</label>
-                  <textarea class="form-control" id="remarks" name="remarks" rows="3"></textarea>
-                </div>
-              </div>
-              <div class="row mt-3">
-                <div class="col-md-6">
-                  <label for="datetimepicker" class="form-label">Date & Time</label>
-                  <input type="datetime-local" class="form-control" id="datetimepicker" name="datetimepicker">
                 </div>
               </div>
             </div>
@@ -396,6 +377,7 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
                 </tbody>
               </table>
               <button type="button" class="btn btn-primary" id="add_package_row">Add Row</button>
+              <button type="submit" name="add" class="btn btn-primary">Update</button>
               <div class="row mt-3">
                 <div class="col-md-4">
                   <label for="total_volumetric_weight" class="form-label">Total Volumetric Weight</label>
@@ -431,6 +413,7 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
                 </tbody>
               </table>
               <button type="button" class="btn btn-primary" id="add_history_row">Add Row</button>
+              <button type="submit" name="add" class="btn btn-primary">Update</button>
             </div>
           </div>
         </div>
@@ -457,7 +440,14 @@ document.addEventListener('DOMContentLoaded', function() {
       <td><input type="date" class="form-control" name="history_date[]"></td>
       <td><input type="time" class="form-control" name="history_time[]"></td>
       <td><input type="text" class="form-control" name="history_location[]"></td>
-      <td><input type="text" class="form-control" name="history_status[]"></td>
+      <td>
+        <select class="form-control" name="history_status[]">
+          <option>Pending</option>
+          <option>In Transit</option>
+          <option>Delivered</option>
+          <option>Cancelled</option>
+        </select>
+      </td>
       <td><input type="text" class="form-control" name="history_updated_by[]"></td>
       <td><input type="text" class="form-control" name="history_remarks[]"></td>
       <td><button type="button" class="btn btn-danger remove_row">Delete</button></td>
