@@ -21,7 +21,7 @@ if (isset($_GET['edit'])) {
 
 if (isset($_POST['update'])) {
     // Validation
-    $required_fields = ['sendername', 'sendercontact', 'senderemail', 'senderaddress', 'status', 'dispatchlocation', 'carrier', 'carrierreferencenumber', 'weight', 'paymentmode', 'receivername', 'recevieremail', 'receviercontact', 'recevieraddress', 'destination', 'packagedescription', 'dipatchdate', 'estimateddeliverydate', 'shipmentmethod', 'quantity', 'deliverytime'];
+    $required_fields = ['sendername', 'sendercontact', 'senderemail', 'senderaddress', 'status', 'dispatchlocation', 'carrier', 'carrierreferencenumber', 'weight', 'paymentmode', 'receivername', 'receiver_email', 'receivercontact', 'receiveraddress', 'destination', 'packagedescription', 'dispatch_date', 'estimateddeliverydate', 'shipmentmethod', 'quantity', 'deliverytime'];
     foreach ($required_fields as $field) {
         if (empty($_POST[$field])) {
             $err = "Please fill in all required fields.";
@@ -41,12 +41,12 @@ if (isset($_POST['update'])) {
         $weight = text_input($_POST['weight']);
         $payment_mode = text_input($_POST['paymentmode']);
         $receiver_name = text_input($_POST['receivername']);
-        $receiver_email = text_input($_POST['recevieremail']);
-        $receiver_contact = text_input($_POST['receviercontact']);
-        $receiver_address = text_input($_POST['recevieraddress']);
+        $receiver_email = text_input($_POST['receiver_email']);
+        $receiver_contact = text_input($_POST['receivercontact']);
+        $receiver_address = text_input($_POST['receiveraddress']);
         $destination = text_input($_POST['destination']);
         $package_discription = text_input($_POST['packagedescription']);
-        $dispach_date = text_input($_POST['dipatchdate']);
+        $dispatch_date = text_input($_POST['dispatch_date']);
         $estimated_delivery_date = text_input($_POST['estimateddeliverydate']);
         $shipment_mode = text_input($_POST['shipmentmethod']);
         $quantity = text_input($_POST['quantity']);
@@ -63,8 +63,24 @@ if (isset($_POST['update'])) {
         $total_actual_weight = text_input($_POST['total_actual_weight'] ?? '');
         $published = isset($_POST['publish']) ? 1 : 0;
 
-        $stmt = mysqli_prepare($con, "UPDATE addtracking SET sender_name=?, sender_contact=?, sender_email=?, sender_address=?, status=?, dispatch_location=?, carrier=?, carrier_refrence_number=?, weight=?, payment_mode=?, receiver_name=?, receiver_contact=?, receiver_email=?, receiver_address=?, destination=?, package_discription=?, dispach_date=?, estimated_delivery_date=?, shipment_mode=?, quantity=?, delivery_time=?, remarks=?, total_freight=?, courier=?, departure_time=?, pickup_time=?, comments=?, datetimepicker=?, type_of_shipment=?, total_volumetric_weight=?, total_actual_weight=?, published=? WHERE tracking_id=?");
-        mysqli_stmt_bind_param($stmt, "ssssssssssssssssssssssssssssssis", $sender_name, $sender_contact, $sender_email, $sender_address, $status, $dispatch_location, $carrier, $carrier_refrence_number, $weight, $payment_mode, $receiver_name, $receiver_contact, $receiver_email, $receiver_address, $destination, $package_discription, $dispach_date, $estimated_delivery_date, $shipment_mode, $quantity, $delivery_time, $remarks, $total_freight, $courier, $departure_time, $pickup_time, $comments, $datetimepicker, $type_of_shipment, $total_volumetric_weight, $total_actual_weight, $published, $edit_id);
+        // Image upload
+        $packageImage = $_POST['current_image'];
+        if (isset($_FILES["image"]) && $_FILES["image"]["error"] == 0) {
+            $extensions = array("jpeg", "jpg", "png");
+            $location = "../uploads/";
+            $filename1 = $_FILES["image"]["name"];
+            $tempname1 = $_FILES["image"]["tmp_name"];
+            $file_ext1 = @strtolower(end(explode('.', $filename1)));
+            if (in_array($file_ext1, $extensions) === false) {
+                $err = "Extension not allowed, please choose a JPEG or PNG file.";
+            } else {
+                $packageImage = time() . date('d') . ".png";
+                move_uploaded_file($tempname1, $location . $packageImage);
+            }
+        }
+
+        $stmt = mysqli_prepare($con, "UPDATE addtracking SET sender_name=?, sender_contact=?, sender_email=?, sender_address=?, status=?, dispatch_location=?, carrier=?, carrier_refrence_number=?, weight=?, payment_mode=?, receiver_name=?, receiver_contact=?, receiver_email=?, receiver_address=?, destination=?, package_discription=?, dispatch_date=?, estimated_delivery_date=?, shipment_mode=?, quantity=?, delivery_time=?, remarks=?, total_freight=?, courier=?, departure_time=?, pickup_time=?, comments=?, datetimepicker=?, type_of_shipment=?, total_volumetric_weight=?, total_actual_weight=?, published=?, image=? WHERE tracking_id=?");
+        mysqli_stmt_bind_param($stmt, "ssssssssssssssssssssssssssssssssiss", $sender_name, $sender_contact, $sender_email, $sender_address, $status, $dispatch_location, $carrier, $carrier_refrence_number, $weight, $payment_mode, $receiver_name, $receiver_contact, $receiver_email, $receiver_address, $destination, $package_discription, $dispatch_date, $estimated_delivery_date, $shipment_mode, $quantity, $delivery_time, $remarks, $total_freight, $courier, $departure_time, $pickup_time, $comments, $datetimepicker, $type_of_shipment, $total_volumetric_weight, $total_actual_weight, $published, $packageImage, $edit_id);
         $update = mysqli_stmt_execute($stmt);
 
         if ($update) {
@@ -143,7 +159,7 @@ if (isset($_POST['update'])) {
             <div class="card-body">
               <h5 class="card-title">Edit Shipment</h5>
 
-             <form method="POST" action="edit.php?edit=<?php echo $edit_id;  ?>">
+             <form method="POST" action="edit.php?edit=<?php echo $edit_id;  ?>" enctype="multipart/form-data">
                 <main id="main" class="main">
                     <section class="section">
                         <div class="row">
@@ -233,7 +249,7 @@ if (isset($_POST['update'])) {
                                             </div>
                                             <div class="col-md-4">
                                                 <label for="pickup_date" class="form-label">Pickup Date</label>
-                                                <input type="date" class="form-control" id="pickup_date" name="dipatchdate" value="<?php echo $row['dispach_date']; ?>">
+                                                <input type="date" class="form-control" id="pickup_date" name="dispatch_date" value="<?php echo $row['dispach_date']; ?>">
                                             </div>
                                         </div>
                                         <div class="row mt-3">
@@ -256,6 +272,7 @@ if (isset($_POST['update'])) {
                                             <div class="col-md-12">
                                                 <label for="image" class="form-label">Package Image</label>
                                                 <input type="file" class="form-control" id="image" name="image">
+                                                <input type="hidden" name="current_image" value="<?php echo $row['image']; ?>">
                                             </div>
                                         </div>
                                     </div>
@@ -341,7 +358,7 @@ if (isset($_POST['update'])) {
                                         </div>
                                         <div class="mb-3">
                                             <label for="receiver_email" class="form-label">Email</label>
-                                            <input type="email" class="form-control" id="receiver_email" name="recevieremail" value="<?php echo $row['receiver_email']; ?>">
+                                            <input type="email" class="form-control" id="receiver_email" name="receiver_email" value="<?php echo $row['receiver_email']; ?>">
                                         </div>
                                     </div>
                                 </div>

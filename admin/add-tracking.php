@@ -26,7 +26,7 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
     $published = isset($_POST['publish']) ? 1 : 0;
 
     // Validation
-    $required_fields = ['sendername', 'sendercontact', 'senderemail', 'senderaddress', 'status', 'dispatchlocation', 'carrier', 'carrierreferencenumber', 'weight', 'paymentmode', 'receivername', 'recevieremail', 'receviercontact', 'recevieraddress', 'destination', 'packagedescription', 'dipatchdate', 'estimateddeliverydate', 'shipmentmethod', 'quantity', 'deliverytime'];
+    $required_fields = ['sendername', 'sendercontact', 'senderemail', 'senderaddress', 'status', 'dispatchlocation', 'carrier', 'carrierreferencenumber', 'weight', 'paymentmode', 'receivername', 'receiver_email', 'receivercontact', 'receiveraddress', 'destination', 'packagedescription', 'dispatch_date', 'estimateddeliverydate', 'shipmentmethod', 'quantity', 'deliverytime'];
     foreach ($required_fields as $field) {
         if (empty($_POST[$field])) {
             $error = "Please fill in all required fields.";
@@ -46,12 +46,12 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
         $weight = text_input($_POST['weight']);
         $payment_mode = text_input($_POST['paymentmode']);
         $receiver_name = text_input($_POST['receivername']);
-        $receiver_email = text_input($_POST['recevieremail']);
-        $receiver_contact = text_input($_POST['receviercontact']);
-        $receiver_address = text_input($_POST['recevieraddress']);
+        $receiver_email = text_input($_POST['receiver_email']);
+        $receiver_contact = text_input($_POST['receivercontact']);
+        $receiver_address = text_input($_POST['receiveraddress']);
         $destination = text_input($_POST['destination']);
         $package_discription = text_input($_POST['packagedescription']);
-        $dispach_date = text_input($_POST['dipatchdate']);
+        $dispatch_date = text_input($_POST['dispatch_date']);
         $estimated_delivery_date = text_input($_POST['estimateddeliverydate']);
         $shipment_mode = text_input($_POST['shipmentmethod']);
         $quantity = text_input($_POST['quantity']);
@@ -96,8 +96,8 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
         }
 
         if (empty($error)) {
-            $stmt = mysqli_prepare($con, "INSERT INTO addtracking ( tracking_id, sender_name, sender_contact, sender_email, sender_address, status, dispatch_location, carrier, carrier_refrence_number, weight, payment_mode, image,  receiver_name, receiver_contact, receiver_email, receiver_address, destination, package_discription, dispach_date ,estimated_delivery_date ,shipment_mode,  quantity , delivery_time, date_added, remarks, total_freight, courier, departure_time, pickup_time, comments, datetimepicker, type_of_shipment, total_volumetric_weight, total_actual_weight, published ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            mysqli_stmt_bind_param($stmt, "ssssssssssssssssssssssssssssssssssi", $tnumbs, $sender_name, $sender_contact, $sender_email, $sender_address, $status, $dispatch_location, $carrier, $carrier_refrence_number, $weight, $payment_mode, $packageImage, $receiver_name, $receiver_contact, $receiver_email, $receiver_address, $destination, $package_discription, $dispach_date, $estimated_delivery_date, $shipment_mode, $quantity, $delivery_time, $date_added, $remarks, $total_freight, $courier, $departure_time, $pickup_time, $comments, $datetimepicker, $type_of_shipment, $total_volumetric_weight, $total_actual_weight, $published);
+            $stmt = mysqli_prepare($con, "INSERT INTO addtracking ( tracking_id, sender_name, sender_contact, sender_email, sender_address, status, dispatch_location, carrier, carrier_refrence_number, weight, payment_mode, image,  receiver_name, receiver_contact, receiver_email, receiver_address, destination, package_discription, dispatch_date ,estimated_delivery_date ,shipment_mode,  quantity , delivery_time, date_added, remarks, total_freight, courier, departure_time, pickup_time, comments, datetimepicker, type_of_shipment, total_volumetric_weight, total_actual_weight, published ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            mysqli_stmt_bind_param($stmt, "ssssssssssssssssssssssssssssssssssi", $tnumbs, $sender_name, $sender_contact, $sender_email, $sender_address, $status, $dispatch_location, $carrier, $carrier_refrence_number, $weight, $payment_mode, $packageImage, $receiver_name, $receiver_contact, $receiver_email, $receiver_address, $destination, $package_discription, $dispatch_date, $estimated_delivery_date, $shipment_mode, $quantity, $delivery_time, $date_added, $remarks, $total_freight, $courier, $departure_time, $pickup_time, $comments, $datetimepicker, $type_of_shipment, $total_volumetric_weight, $total_actual_weight, $published);
             $insert = mysqli_stmt_execute($stmt);
 
             if ($insert) {
@@ -244,15 +244,15 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
               </div>
               <div class="mb-3">
                 <label for="receiver_phone" class="form-label">Phone Number</label>
-                <input type="text" class="form-control" id="receiver_phone" name="receviercontact">
+                <input type="text" class="form-control" id="receiver_phone" name="receivercontact">
               </div>
               <div class="mb-3">
                 <label for="receiver_address" class="form-label">Address</label>
-                <input type="text" class="form-control" id="receiver_address" name="recevieraddress">
+                <input type="text" class="form-control" id="receiver_address" name="receiveraddress">
               </div>
               <div class="mb-3">
                 <label for="receiver_email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="receiver_email" name="recevieremail">
+                <input type="email" class="form-control" id="receiver_email" name="receiver_email">
               </div>
             </div>
           </div>
@@ -345,7 +345,7 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
                 </div>
                 <div class="col-md-4">
                   <label for="pickup_date" class="form-label">Pickup Date</label>
-                  <input type="date" class="form-control" id="pickup_date" name="dipatchdate">
+                  <input type="date" class="form-control" id="pickup_date" name="dispatch_date">
                 </div>
               </div>
               <div class="row mt-3">
