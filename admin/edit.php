@@ -7,16 +7,25 @@ $err = "";
 if (isset($_GET['edit'])) {
     $edit_id = $_GET['edit'];
 
-    $sql = mysqli_query($con, "SELECT * FROM addtracking WHERE tracking_id = '$edit_id' ");
-    if (mysqli_num_rows($sql) > 0 ) {
-        $row = mysqli_fetch_assoc($sql);
+    $stmt_main = mysqli_prepare($con, "SELECT * FROM addtracking WHERE tracking_id = ?");
+    mysqli_stmt_bind_param($stmt_main, "s", $edit_id);
+    mysqli_stmt_execute($stmt_main);
+    $result_main = mysqli_stmt_get_result($stmt_main);
+    if (mysqli_num_rows($result_main) > 0) {
+        $row = mysqli_fetch_assoc($result_main);
     }
 
-    $package_items_sql = mysqli_query($con, "SELECT * FROM package_items WHERE tracking_id = '$edit_id' ");
-    $package_items = mysqli_fetch_all($package_items_sql, MYSQLI_ASSOC);
+    $stmt_items = mysqli_prepare($con, "SELECT * FROM package_items WHERE tracking_id = ?");
+    mysqli_stmt_bind_param($stmt_items, "s", $edit_id);
+    mysqli_stmt_execute($stmt_items);
+    $result_items = mysqli_stmt_get_result($stmt_items);
+    $package_items = mysqli_fetch_all($result_items, MYSQLI_ASSOC);
 
-    $shipment_history_sql = mysqli_query($con, "SELECT * FROM shipment_history WHERE tracking_id = '$edit_id' ");
-    $shipment_history = mysqli_fetch_all($shipment_history_sql, MYSQLI_ASSOC);
+    $stmt_history = mysqli_prepare($con, "SELECT * FROM shipment_history WHERE tracking_id = ?");
+    mysqli_stmt_bind_param($stmt_history, "s", $edit_id);
+    mysqli_stmt_execute($stmt_history);
+    $result_history = mysqli_stmt_get_result($stmt_history);
+    $shipment_history = mysqli_fetch_all($result_history, MYSQLI_ASSOC);
 }
 
 if (isset($_POST['update'])) {
@@ -77,23 +86,28 @@ if (isset($_POST['update'])) {
             }
         }
 
-        $stmt = mysqli_prepare($con, "UPDATE addtracking SET sender_name=?, sender_contact=?, sender_email=?, sender_address=?, dispatch_location=?, carrier=?, carrier_refrence_number=?, weight=?, payment_mode=?, receiver_name=?, receiver_contact=?, receiver_email=?, receiver_address=?, destination=?, package_discription=?, dispatch_date=?, estimated_delivery_date=?, shipment_mode=?, quantity=?, delivery_time=?, total_freight=?, courier=?, departure_time=?, pickup_time=?, comments=?, type_of_shipment=?, total_volumetric_weight=?, total_actual_weight=?, published=?, image=? WHERE tracking_id=?");
-        mysqli_stmt_bind_param($stmt, "sssssssssssssssssssssssssssssis", $sender_name, $sender_contact, $sender_email, $sender_address, $dispatch_location, $carrier, $carrier_refrence_number, $weight, $payment_mode, $receiver_name, $receiver_contact, $receiver_email, $receiver_address, $destination, $package_discription, $dispatch_date, $estimated_delivery_date, $shipment_mode, $quantity, $delivery_time, $total_freight, $courier, $departure_time, $pickup_time, $comments, $type_of_shipment, $total_volumetric_weight, $total_actual_weight, $published, $packageImage, $edit_id);
-        $update = mysqli_stmt_execute($stmt);
+        $stmt_update = mysqli_prepare($con, "UPDATE addtracking SET sender_name=?, sender_contact=?, sender_email=?, sender_address=?, dispatch_location=?, carrier=?, carrier_refrence_number=?, weight=?, payment_mode=?, receiver_name=?, receiver_contact=?, receiver_email=?, receiver_address=?, destination=?, package_discription=?, dispatch_date=?, estimated_delivery_date=?, shipment_mode=?, quantity=?, delivery_time=?, total_freight=?, courier=?, departure_time=?, pickup_time=?, comments=?, type_of_shipment=?, total_volumetric_weight=?, total_actual_weight=?, published=?, image=? WHERE tracking_id=?");
+        mysqli_stmt_bind_param($stmt_update, "sssssssssssssssssssssssssssssis", $sender_name, $sender_contact, $sender_email, $sender_address, $dispatch_location, $carrier, $carrier_refrence_number, $weight, $payment_mode, $receiver_name, $receiver_contact, $receiver_email, $receiver_address, $destination, $package_discription, $dispatch_date, $estimated_delivery_date, $shipment_mode, $quantity, $delivery_time, $total_freight, $courier, $departure_time, $pickup_time, $comments, $type_of_shipment, $total_volumetric_weight, $total_actual_weight, $published, $packageImage, $edit_id);
 
-        if ($update) {
+        if (!mysqli_stmt_execute($stmt_update)) {
+            $err = "Error updating shipment: " . mysqli_stmt_error($stmt_update);
+        } else {
             // Delete existing package items and shipment history
-            $stmt = mysqli_prepare($con, "DELETE FROM package_items WHERE tracking_id = ?");
-            mysqli_stmt_bind_param($stmt, "s", $edit_id);
-            mysqli_stmt_execute($stmt);
+            $stmt_delete_items = mysqli_prepare($con, "DELETE FROM package_items WHERE tracking_id = ?");
+            mysqli_stmt_bind_param($stmt_delete_items, "s", $edit_id);
+            if (!mysqli_stmt_execute($stmt_delete_items)) {
+                $err .= " Error deleting package items: " . mysqli_stmt_error($stmt_delete_items);
+            }
 
-            $stmt = mysqli_prepare($con, "DELETE FROM shipment_history WHERE tracking_id = ?");
-            mysqli_stmt_bind_param($stmt, "s", $edit_id);
-            mysqli_stmt_execute($stmt);
+            $stmt_delete_history = mysqli_prepare($con, "DELETE FROM shipment_history WHERE tracking_id = ?");
+            mysqli_stmt_bind_param($stmt_delete_history, "s", $edit_id);
+            if (!mysqli_stmt_execute($stmt_delete_history)) {
+                $err .= " Error deleting shipment history: " . mysqli_stmt_error($stmt_delete_history);
+            }
 
             // Process package items
             if (isset($_POST['package_quantity'])) {
-                $stmt = mysqli_prepare($con, "INSERT INTO package_items (tracking_id, quantity, piece_type, description, length, width, height, weight) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt_insert_items = mysqli_prepare($con, "INSERT INTO package_items (tracking_id, quantity, piece_type, description, length, width, height, weight) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
                 for ($i = 0; $i < count($_POST['package_quantity']); $i++) {
                     $package_quantity = text_input($_POST['package_quantity'][$i]);
                     $package_piece_type = text_input($_POST['package_piece_type'][$i]);
@@ -102,14 +116,16 @@ if (isset($_POST['update'])) {
                     $package_width = text_input($_POST['package_width'][$i]);
                     $package_height = text_input($_POST['package_height'][$i]);
                     $package_weight = text_input($_POST['package_weight'][$i]);
-                    mysqli_stmt_bind_param($stmt, "sissdddd", $edit_id, $package_quantity, $package_piece_type, $package_description, $package_length, $package_width, $package_height, $package_weight);
-                    mysqli_stmt_execute($stmt);
+                    mysqli_stmt_bind_param($stmt_insert_items, "sissdddd", $edit_id, $package_quantity, $package_piece_type, $package_description, $package_length, $package_width, $package_height, $package_weight);
+                    if (!mysqli_stmt_execute($stmt_insert_items)) {
+                        $err .= " Error saving package item: " . mysqli_stmt_error($stmt_insert_items);
+                    }
                 }
             }
 
             // Process shipment history
             if (isset($_POST['history_date'])) {
-                $stmt = mysqli_prepare($con, "INSERT INTO shipment_history (tracking_id, date, time, location, status, updated_by, remarks) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                $stmt_insert_history = mysqli_prepare($con, "INSERT INTO shipment_history (tracking_id, date, time, location, status, updated_by, remarks) VALUES (?, ?, ?, ?, ?, ?, ?)");
                 for ($i = 0; $i < count($_POST['history_date']); $i++) {
                     $history_date = text_input($_POST['history_date'][$i]);
                     $history_time = text_input($_POST['history_time'][$i]);
@@ -117,11 +133,15 @@ if (isset($_POST['update'])) {
                     $history_status = text_input($_POST['history_status'][$i]);
                     $history_updated_by = text_input($_POST['history_updated_by'][$i]);
                     $history_remarks = text_input($_POST['history_remarks'][$i]);
-                    mysqli_stmt_bind_param($stmt, "sssssss", $edit_id, $history_date, $history_time, $history_location, $history_status, $history_updated_by, $history_remarks);
-                    mysqli_stmt_execute($stmt);
+                    mysqli_stmt_bind_param($stmt_insert_history, "sssssss", $edit_id, $history_date, $history_time, $history_location, $history_status, $history_updated_by, $history_remarks);
+                    if (!mysqli_stmt_execute($stmt_insert_history)) {
+                        $err .= " Error saving shipment history: " . mysqli_stmt_error($stmt_insert_history);
+                    }
                 }
             }
-            $msg = "Updated successfully";
+            if(empty($err)){
+                $msg = "Updated successfully";
+            }
         }
     }
 }
