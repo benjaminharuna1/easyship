@@ -21,7 +21,7 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
     $published = isset($_POST['publish']) ? 1 : 0;
 
     // Validation
-    $required_fields = ['sendername', 'sendercontact', 'senderemail', 'senderaddress', 'dispatchlocation', 'carrier', 'carrierreferencenumber', 'weight', 'paymentmode', 'receivername', 'receiver_email', 'receivercontact', 'receiveraddress', 'destination', 'packagedescription', 'dispatch_date', 'estimateddeliverydate', 'shipmentmethod', 'quantity', 'deliverytime'];
+    $required_fields = ['sendername', 'sendercontact', 'senderemail', 'senderaddress', 'dispatchlocation', 'carrier', 'carrierreferencenumber', 'weight', 'paymentmode', 'receivername', 'receiver_email', 'receivercontact', 'receiveraddress', 'destination', 'packagedescription', 'pickup_date', 'estimateddeliverydate', 'shipmentmethod', 'quantity', 'deliverytime'];
     foreach ($required_fields as $field) {
         if (empty($_POST[$field])) {
             $error = "Please fill in all required fields. Missing: $field";
@@ -51,7 +51,7 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
             $receiver_address = text_input($_POST['receiveraddress']);
             $destination = text_input($_POST['destination']);
             $package_discription = text_input($_POST['packagedescription']);
-            $dispatch_date = text_input($_POST['dispatch_date']);
+            $pickup_date = text_input($_POST['pickup_date']);
             $estimated_delivery_date = text_input($_POST['estimateddeliverydate']);
             $shipment_mode = text_input($_POST['shipmentmethod']);
             $quantity = text_input($_POST['quantity']);
@@ -94,7 +94,7 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
             mysqli_begin_transaction($con);
 
             $stmt = mysqli_prepare($con, "INSERT INTO addtracking ( tracking_id, sender_name, sender_contact, sender_email, sender_address, dispatch_location, carrier, carrier_refrence_number, weight, payment_mode, image,  receiver_name, receiver_contact, receiver_email, receiver_address, destination, package_discription, pickup_date ,estimated_delivery_date ,shipment_mode,  quantity , delivery_time, date_added, total_freight, courier, departure_time, pickup_time, comments, type_of_shipment, total_volumetric_weight, total_actual_weight, published ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            mysqli_stmt_bind_param($stmt, "sssssssssssssssssssssssssssssssi", $tnumbs_final, $sender_name, $sender_contact, $sender_email, $sender_address, $dispatch_location, $carrier, $carrier_refrence_number, $weight, $payment_mode, $packageImage, $receiver_name, $receiver_contact, $receiver_email, $receiver_address, $destination, $package_discription, $dispatch_date, $estimated_delivery_date, $shipment_mode, $quantity, $delivery_time, $date_added, $total_freight, $courier, $departure_time, $pickup_time, $comments, $type_of_shipment, $total_volumetric_weight, $total_actual_weight, $published);
+            mysqli_stmt_bind_param($stmt, "sssssssssssssssssssssssssssssssi", $tnumbs_final, $sender_name, $sender_contact, $sender_email, $sender_address, $dispatch_location, $carrier, $carrier_refrence_number, $weight, $payment_mode, $packageImage, $receiver_name, $receiver_contact, $receiver_email, $receiver_address, $destination, $package_discription, $pickup_date, $estimated_delivery_date, $shipment_mode, $quantity, $delivery_time, $date_added, $total_freight, $courier, $departure_time, $pickup_time, $comments, $type_of_shipment, $total_volumetric_weight, $total_actual_weight, $published);
             mysqli_stmt_execute($stmt);
 
             // Process package items
@@ -329,7 +329,7 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
                 </div>
                 <div class="col-md-4">
                   <label for="pickup_date" class="form-label">Pickup Date</label>
-                  <input type="date" class="form-control" id="pickup_date" name="dispatch_date">
+                  <input type="date" class="form-control" id="pickup_date" name="pickup_date">
                 </div>
               </div>
               <div class="row mt-3">
