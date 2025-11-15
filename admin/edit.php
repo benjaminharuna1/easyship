@@ -105,7 +105,7 @@ if (isset($_POST['update'])) {
             mysqli_begin_transaction($con);
 
             $stmt_update = mysqli_prepare($con, "UPDATE addtracking SET sender_name=?, sender_contact=?, sender_email=?, sender_address=?, dispatch_location=?, carrier=?, carrier_refrence_number=?, weight=?, payment_mode=?, receiver_name=?, receiver_contact=?, receiver_email=?, receiver_address=?, destination=?, package_discription=?, pickup_date=?, estimated_delivery_date=?, shipment_mode=?, quantity=?, delivery_time=?, total_freight=?, courier=?, departure_time=?, pickup_time=?, comments=?, type_of_shipment=?, total_volumetric_weight=?, total_actual_weight=?, published=?, image=? WHERE tracking_id=?");
-            mysqli_stmt_bind_param($stmt_update, "sssssssssssssssssssssssssssssiss", $sender_name, $sender_contact, $sender_email, $sender_address, $dispatch_location, $carrier, $carrier_refrence_number, $weight, $payment_mode, $receiver_name, $receiver_contact, $receiver_email, $receiver_address, $destination, $package_discription, $pickup_date, $estimated_delivery_date, $shipment_mode, $quantity, $delivery_time, $total_freight, $courier, $departure_time, $pickup_time, $comments, $type_of_shipment, $total_volumetric_weight, $total_actual_weight, $published, $packageImage, $edit_id);
+            mysqli_stmt_bind_param($stmt_update, "ssssssssssssssssssssssssssssiss", $sender_name, $sender_contact, $sender_email, $sender_address, $dispatch_location, $carrier, $carrier_refrence_number, $weight, $payment_mode, $receiver_name, $receiver_contact, $receiver_email, $receiver_address, $destination, $package_discription, $pickup_date, $estimated_delivery_date, $shipment_mode, $quantity, $delivery_time, $total_freight, $courier, $departure_time, $pickup_time, $comments, $type_of_shipment, $total_volumetric_weight, $total_actual_weight, $published, $packageImage, $edit_id);
             mysqli_stmt_execute($stmt_update);
 
             // Delete existing package items and shipment history
@@ -552,7 +552,7 @@ if (isset($_POST['update'])) {
                                         document.getElementById('total_volumetric_weight').value = totalVolumetricWeight.toFixed(2);
                                         document.getElementById('total_actual_weight').value = totalActualWeight.toFixed(2);
                                     }
-                                });
+_                                });
                             </script>
 
 
