@@ -21,7 +21,7 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
     $published = isset($_POST['publish']) ? 1 : 0;
 
     // Validation
-    $required_fields = ['sendername', 'sendercontact', 'senderemail', 'senderaddress', 'dispatchlocation', 'carrier', 'carrierreferencenumber', 'weight', 'paymentmode', 'receivername', 'receiver_email', 'receivercontact', 'receiveraddress', 'destination', 'packagedescription', 'dispatch_date', 'estimateddeliverydate', 'shipmentmethod', 'quantity'];
+    $required_fields = ['sendername', 'sendercontact', 'senderemail', 'senderaddress', 'dispatchlocation', 'carrier', 'carrierreferencenumber', 'weight', 'paymentmode', 'total_cost', 'receivername', 'receiver_email', 'receivercontact', 'receiveraddress', 'destination', 'packagedescription', 'dispatch_date', 'estimateddeliverydate', 'shipmentmethod', 'quantity'];
     foreach ($required_fields as $field) {
         if (empty($_POST[$field])) {
             $error = "Please fill in all required fields. Missing: $field";
@@ -45,6 +45,7 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
             $carrier_refrence_number = text_input($_POST['carrierreferencenumber']);
             $weight = text_input($_POST['weight']);
             $payment_mode = text_input($_POST['paymentmode']);
+            $total_cost = text_input($_POST['total_cost']);
             $receiver_name = text_input($_POST['receivername']);
             $receiver_email = text_input($_POST['receiver_email']);
             $receiver_contact = text_input($_POST['receivercontact']);
@@ -90,8 +91,8 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
             // Start Transaction
             mysqli_begin_transaction($con);
 
-            $stmt = mysqli_prepare($con, "INSERT INTO addtracking ( tracking_id, sender_name, sender_contact, sender_email, sender_address, dispatch_location, carrier, carrier_refrence_number, weight, payment_mode, image,  receiver_name, receiver_contact, receiver_email, receiver_address, destination, package_discription, dispatch_date ,estimated_delivery_date ,shipment_mode,  quantity, date_added, total_freight, courier, comments, type_of_shipment, total_volumetric_weight, total_actual_weight, published ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            mysqli_stmt_bind_param($stmt, "sssssssssssssssssssssssssssi", $tnumbs_final, $sender_name, $sender_contact, $sender_email, $sender_address, $dispatch_location, $carrier, $carrier_refrence_number, $weight, $payment_mode, $packageImage, $receiver_name, $receiver_contact, $receiver_email, $receiver_address, $destination, $package_discription, $dispatch_date, $estimated_delivery_date, $shipment_mode, $quantity, $date_added, $total_freight, $courier, $comments, $type_of_shipment, $total_volumetric_weight, $total_actual_weight, $published);
+            $stmt = mysqli_prepare($con, "INSERT INTO addtracking ( tracking_id, sender_name, sender_contact, sender_email, sender_address, dispatch_location, carrier, carrier_refrence_number, weight, payment_mode, total_cost, image,  receiver_name, receiver_contact, receiver_email, receiver_address, destination, package_discription, dispatch_date ,estimated_delivery_date ,shipment_mode,  quantity, date_added, total_freight, courier, comments, type_of_shipment, total_volumetric_weight, total_actual_weight, published ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            mysqli_stmt_bind_param($stmt, "ssssssssssdssssssssssssssssssi", $tnumbs_final, $sender_name, $sender_contact, $sender_email, $sender_address, $dispatch_location, $carrier, $carrier_refrence_number, $weight, $payment_mode, $total_cost, $packageImage, $receiver_name, $receiver_contact, $receiver_email, $receiver_address, $destination, $package_discription, $dispatch_date, $estimated_delivery_date, $shipment_mode, $quantity, $date_added, $total_freight, $courier, $comments, $type_of_shipment, $total_volumetric_weight, $total_actual_weight, $published);
             mysqli_stmt_execute($stmt);
 
             // Process package items
@@ -261,6 +262,10 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
                     <option>Card</option>
                     <option>Transfer</option>
                   </select>
+                </div>
+                <div class="col-md-4">
+                  <label for="total_cost" class="form-label">Total Cost</label>
+                  <input type="text" class="form-control" id="total_cost" name="total_cost">
                 </div>
                 <div class="col-md-4">
                   <label for="carrier" class="form-label">Carrier</label>

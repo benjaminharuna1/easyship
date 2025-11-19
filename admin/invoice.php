@@ -98,80 +98,27 @@ if (isset($_GET['num']) &&  $_GET['num'] !="") {
 						<!--Invoice owner name content End -->
 						<!--Invoice table data start here -->
 						<div class="table-wrapper agency-service-table pt-32">
-							<table class="invoice-table agency-table">
-								<thead>
-									<tr class="invo-tb-header bg-black">
-										<th class="serv-wid pl-10 font-md">Description</th>
-										<th class="pric-wid font-md">Value</th>
-									</tr>
-								</thead>
-								<tbody class="invo-tb-body">
-									<tr class="invo-tb-row">
-										<td class="font-sm pl-10">Type of Shipment</td>
-										<td class="font-sm pl-10"><?php echo $row['type_of_shipment']; ?></td>
-									</tr>
-									<tr class="invo-tb-row">
-										<td class="font-sm pl-10">Payment Mode</td>
-										<td class="font-sm pl-10"><?php echo $row['payment_mode']; ?></td>
-									</tr>
-									<tr class="invo-tb-row">
-										<td class="font-sm pl-10">Carrier</td>
-										<td class="font-sm pl-10"><?php echo $row['carrier']; ?></td>
-									</tr>
-									<tr class="invo-tb-row">
-										<td class="font-sm pl-10">Courier</td>
-										<td class="font-sm pl-10"><?php echo $row['courier']; ?></td>
-									</tr>
-									<tr class="invo-tb-row">
-										<td class="font-sm pl-10">Mode</td>
-										<td class="font-sm pl-10"><?php echo $row['shipment_mode']; ?></td>
-									</tr>
-									<tr class="invo-tb-row">
-										<td class="font-sm pl-10">Origin</td>
-										<td class="font-sm pl-10"><?php echo $row['dispatch_location']; ?></td>
-									</tr>
-									<tr class="invo-tb-row">
-										<td class="font-sm pl-10">Destination</td>
-										<td class="font-sm pl-10"><?php echo $row['destination']; ?></td>
-									</tr>
-									<tr class="invo-tb-row">
-										<td class="font-sm pl-10">Weight</td>
-										<td class="font-sm pl-10"><?php echo $row['weight']; ?></td>
-									</tr>
-									<tr class="invo-tb-row">
-										<td class="font-sm pl-10">Packages count</td>
-										<td class="font-sm pl-10"><?php echo $row['quantity']; ?></td>
-									</tr>
-									<tr class="invo-tb-row">
-										<td class="font-sm pl-10">Product description</td>
-										<td class="font-sm pl-10"><?php echo $row['package_discription']; ?></td>
-									</tr>
-									<tr class="invo-tb-row">
-										<td class="font-sm pl-10">Total Freight</td>
-										<td class="font-sm pl-10"><?php echo $row['total_freight']; ?></td>
-									</tr>
-									<tr class="invo-tb-row">
-										<td class="font-sm pl-10">Carrier Reference No.</td>
-										<td class="font-sm pl-10"><?php echo $row['carrier_refrence_number']; ?></td>
-									</tr>
-									<tr class="invo-tb-row">
-										<td class="font-sm pl-10">Departure Time</td>
-										<td class="font-sm pl-10"><?php echo $row['departure_time']; ?></td>
-									</tr>
-									<tr class="invo-tb-row">
-										<td class="font-sm pl-10">Pickup Date</td>
-										<td class="font-sm pl-10"><?php echo $row['dispach_date']; ?></td>
-									</tr>
-									<tr class="invo-tb-row">
-										<td class="font-sm pl-10">Pickup Time</td>
-										<td class="font-sm pl-10"><?php echo $row['delivery_time']; ?></td>
-									</tr>
-									<tr class="invo-tb-row">
-										<td class="font-sm pl-10">Expected Delivery Date</td>
-										<td class="font-sm pl-10"><?php echo $row['estimated_delivery_date']; ?></td>
-									</tr>
-								</tbody>
-							</table>
+							<div class="row">
+								<div class="col-md-6">
+									<p><strong>Type of Shipment:</strong> <?php echo $row['type_of_shipment']; ?></p>
+									<p><strong>Payment Mode:</strong> <?php echo $row['payment_mode']; ?></p>
+									<p><strong>Total Cost:</strong> <?php echo $row['total_cost']; ?></p>
+									<p><strong>Carrier:</strong> <?php echo $row['carrier']; ?></p>
+									<p><strong>Courier:</strong> <?php echo $row['courier']; ?></p>
+									<p><strong>Mode:</strong> <?php echo $row['shipment_mode']; ?></p>
+								</div>
+								<div class="col-md-6">
+									<p><strong>Origin:</strong> <?php echo $row['dispatch_location']; ?></p>
+									<p><strong>Destination:</strong> <?php echo $row['destination']; ?></p>
+									<p><strong>Weight:</strong> <?php echo $row['weight']; ?></p>
+									<p><strong>Packages count:</strong> <?php echo $row['quantity']; ?></p>
+									<p><strong>Product description:</strong> <?php echo $row['package_discription']; ?></p>
+									<p><strong>Total Freight:</strong> <?php echo $row['total_freight']; ?></p>
+									<p><strong>Carrier Reference No.:</strong> <?php echo $row['carrier_refrence_number']; ?></p>
+									<p><strong>Dispatch Date:</strong> <?php echo $row['dispatch_date']; ?></p>
+									<p><strong>Expected Delivery Date:</strong> <?php echo $row['estimated_delivery_date']; ?></p>
+								</div>
+							</div>
 						</div>
 						<!--Invoice table data end here -->
 						<!--Invoice table data start here -->
@@ -180,6 +127,7 @@ if (isset($_GET['num']) &&  $_GET['num'] !="") {
 							<table class="invoice-table agency-table">
 								<thead>
 									<tr class="invo-tb-header bg-black">
+										<th class="serv-wid pl-10 font-md">S/N</th>
 										<th class="serv-wid pl-10 font-md">Quantity</th>
 										<th class="pric-wid font-md">Piece Type</th>
 										<th class="tota-wid pr-10 font-md text-right ">Description</th>
@@ -190,8 +138,14 @@ if (isset($_GET['num']) &&  $_GET['num'] !="") {
 									</tr>
 								</thead>
 								<tbody class="invo-tb-body">
-									<?php foreach ($package_items as $item) : ?>
+									<?php
+										$sn = 1;
+										$total_weight = 0;
+										foreach ($package_items as $item) :
+										$total_weight += $item['weight'];
+									?>
 										<tr class="invo-tb-row">
+											<td class="font-sm pl-10"><?php echo $sn++; ?></td>
 											<td class="font-sm pl-10"><?php echo $item['quantity']; ?></td>
 											<td class="font-sm pl-10"><?php echo $item['piece_type']; ?></td>
 											<td class="font-sm pl-10"><?php echo $item['description']; ?></td>
@@ -201,6 +155,10 @@ if (isset($_GET['num']) &&  $_GET['num'] !="") {
 											<td class="font-sm text-right pr-10"><?php echo $item['weight']; ?></td>
 										</tr>
 									<?php endforeach; ?>
+									<tr class="invo-tb-row">
+										<td colspan="7" class="font-sm text-right pr-10">Total Weight</td>
+										<td class="font-sm text-right pr-10"><?php echo $total_weight; ?></td>
+									</tr>
 								</tbody>
 							</table>
 						</div>

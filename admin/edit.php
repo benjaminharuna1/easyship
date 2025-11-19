@@ -44,7 +44,7 @@ if ($edit_id) {
 
 if (isset($_POST['update'])) {
     // Validation
-    $required_fields = ['sendername', 'sendercontact', 'senderemail', 'senderaddress', 'dispatchlocation', 'carrier', 'carrierreferencenumber', 'weight', 'paymentmode', 'receivername', 'receiver_email', 'receivercontact', 'receiveraddress', 'destination', 'packagedescription', 'dispatch_date', 'estimateddeliverydate', 'shipmentmethod', 'quantity'];
+    $required_fields = ['sendername', 'sendercontact', 'senderemail', 'senderaddress', 'dispatchlocation', 'carrier', 'carrierreferencenumber', 'weight', 'paymentmode', 'total_cost', 'receivername', 'receiver_email', 'receivercontact', 'receiveraddress', 'destination', 'packagedescription', 'dispatch_date', 'estimateddeliverydate', 'shipmentmethod', 'quantity'];
     foreach ($required_fields as $field) {
         if (empty($_POST[$field])) {
             $err = "Please fill in all required fields. Missing: $field";
@@ -63,6 +63,7 @@ if (isset($_POST['update'])) {
             $carrier_refrence_number = text_input($_POST['carrierreferencenumber']);
             $weight = text_input($_POST['weight']);
             $payment_mode = text_input($_POST['paymentmode']);
+            $total_cost = text_input($_POST['total_cost']);
             $receiver_name = text_input($_POST['receivername']);
             $receiver_email = text_input($_POST['receiver_email']);
             $receiver_contact = text_input($_POST['receivercontact']);
@@ -101,8 +102,8 @@ if (isset($_POST['update'])) {
             // Start Transaction
             mysqli_begin_transaction($con);
 
-            $stmt_update = mysqli_prepare($con, "UPDATE addtracking SET sender_name=?, sender_contact=?, sender_email=?, sender_address=?, dispatch_location=?, carrier=?, carrier_refrence_number=?, weight=?, payment_mode=?, receiver_name=?, receiver_contact=?, receiver_email=?, receiver_address=?, destination=?, package_discription=?, dispatch_date=?, estimated_delivery_date=?, shipment_mode=?, quantity=?, total_freight=?, courier=?, comments=?, type_of_shipment=?, total_volumetric_weight=?, total_actual_weight=?, published=?, image=? WHERE tracking_id=?");
-            mysqli_stmt_bind_param($stmt_update, "ssssssssssssssssssssssssssis", $sender_name, $sender_contact, $sender_email, $sender_address, $dispatch_location, $carrier, $carrier_refrence_number, $weight, $payment_mode, $receiver_name, $receiver_contact, $receiver_email, $receiver_address, $destination, $package_discription, $dispatch_date, $estimated_delivery_date, $shipment_mode, $quantity, $total_freight, $courier, $comments, $type_of_shipment, $total_volumetric_weight, $total_actual_weight, $published, $packageImage, $edit_id);
+            $stmt_update = mysqli_prepare($con, "UPDATE addtracking SET sender_name=?, sender_contact=?, sender_email=?, sender_address=?, dispatch_location=?, carrier=?, carrier_refrence_number=?, weight=?, payment_mode=?, total_cost=?, receiver_name=?, receiver_contact=?, receiver_email=?, receiver_address=?, destination=?, package_discription=?, dispatch_date=?, estimated_delivery_date=?, shipment_mode=?, quantity=?, total_freight=?, courier=?, comments=?, type_of_shipment=?, total_volumetric_weight=?, total_actual_weight=?, published=?, image=? WHERE tracking_id=?");
+            mysqli_stmt_bind_param($stmt_update, "sssssssssdsssssssssssssssssis", $sender_name, $sender_contact, $sender_email, $sender_address, $dispatch_location, $carrier, $carrier_refrence_number, $weight, $payment_mode, $total_cost, $receiver_name, $receiver_contact, $receiver_email, $receiver_address, $destination, $package_discription, $dispatch_date, $estimated_delivery_date, $shipment_mode, $quantity, $total_freight, $courier, $comments, $type_of_shipment, $total_volumetric_weight, $total_actual_weight, $published, $packageImage, $edit_id);
             mysqli_stmt_execute($stmt_update);
 
             // Delete existing package items and shipment history
@@ -228,6 +229,10 @@ if (isset($_POST['update'])) {
                                                                     <option <?php if (($row['payment_mode'] ?? '') == 'Card') echo 'selected'; ?>>Card</option>
                                                                     <option <?php if (($row['payment_mode'] ?? '') == 'Transfer') echo 'selected'; ?>>Transfer</option>
                                                                 </select>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label for="total_cost" class="form-label">Total Cost</label>
+                                                                <input type="text" class="form-control" id="total_cost" name="total_cost" value="<?php echo htmlspecialchars($row['total_cost'] ?? ''); ?>">
                                                             </div>
                                                             <div class="col-md-4">
                                                                 <label for="carrier" class="form-label">Carrier</label>
