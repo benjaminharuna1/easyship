@@ -44,7 +44,7 @@ if ($edit_id) {
 
 if (isset($_POST['update'])) {
     // Validation
-    $required_fields = ['sendername', 'sendercontact', 'senderemail', 'senderaddress', 'dispatchlocation', 'carrier', 'carrierreferencenumber', 'weight', 'paymentmode', 'receivername', 'receiver_email', 'receivercontact', 'receiveraddress', 'destination', 'packagedescription', 'pickup_date', 'estimateddeliverydate', 'shipmentmethod', 'quantity', 'deliverytime'];
+    $required_fields = ['sendername', 'sendercontact', 'senderemail', 'senderaddress', 'dispatchlocation', 'carrier', 'carrierreferencenumber', 'weight', 'paymentmode', 'receivername', 'receiver_email', 'receivercontact', 'receiveraddress', 'destination', 'packagedescription', 'dispatch_date', 'estimateddeliverydate', 'shipmentmethod', 'quantity'];
     foreach ($required_fields as $field) {
         if (empty($_POST[$field])) {
             $err = "Please fill in all required fields. Missing: $field";
@@ -69,15 +69,12 @@ if (isset($_POST['update'])) {
             $receiver_address = text_input($_POST['receiveraddress']);
             $destination = text_input($_POST['destination']);
             $package_discription = text_input($_POST['packagedescription']);
-            $pickup_date = text_input($_POST['pickup_date']);
+            $dispatch_date = text_input($_POST['dispatch_date']);
             $estimated_delivery_date = text_input($_POST['estimateddeliverydate']);
             $shipment_mode = text_input($_POST['shipmentmethod']);
             $quantity = text_input($_POST['quantity']);
-            $delivery_time = text_input($_POST['deliverytime']);
             $total_freight = text_input($_POST['total_freight'] ?? '');
             $courier = text_input($_POST['courier'] ?? '');
-            $departure_time = text_input($_POST['departure_time'] ?? '');
-            $pickup_time = text_input($_POST['pickup_time'] ?? '');
             $comments = text_input($_POST['comments'] ?? '');
             $type_of_shipment = text_input($_POST['type_of_shipment'] ?? '');
             $total_volumetric_weight = text_input($_POST['total_volumetric_weight'] ?? '');
@@ -104,8 +101,8 @@ if (isset($_POST['update'])) {
             // Start Transaction
             mysqli_begin_transaction($con);
 
-            $stmt_update = mysqli_prepare($con, "UPDATE addtracking SET sender_name=?, sender_contact=?, sender_email=?, sender_address=?, dispatch_location=?, carrier=?, carrier_refrence_number=?, weight=?, payment_mode=?, receiver_name=?, receiver_contact=?, receiver_email=?, receiver_address=?, destination=?, package_discription=?, pickup_date=?, estimated_delivery_date=?, shipment_mode=?, quantity=?, delivery_time=?, total_freight=?, courier=?, departure_time=?, pickup_time=?, comments=?, type_of_shipment=?, total_volumetric_weight=?, total_actual_weight=?, published=?, image=? WHERE tracking_id=?");
-            mysqli_stmt_bind_param($stmt_update, "ssssssssssssssssssssssssssssiss", $sender_name, $sender_contact, $sender_email, $sender_address, $dispatch_location, $carrier, $carrier_refrence_number, $weight, $payment_mode, $receiver_name, $receiver_contact, $receiver_email, $receiver_address, $destination, $package_discription, $pickup_date, $estimated_delivery_date, $shipment_mode, $quantity, $delivery_time, $total_freight, $courier, $departure_time, $pickup_time, $comments, $type_of_shipment, $total_volumetric_weight, $total_actual_weight, $published, $packageImage, $edit_id);
+            $stmt_update = mysqli_prepare($con, "UPDATE addtracking SET sender_name=?, sender_contact=?, sender_email=?, sender_address=?, dispatch_location=?, carrier=?, carrier_refrence_number=?, weight=?, payment_mode=?, receiver_name=?, receiver_contact=?, receiver_email=?, receiver_address=?, destination=?, package_discription=?, dispatch_date=?, estimated_delivery_date=?, shipment_mode=?, quantity=?, total_freight=?, courier=?, comments=?, type_of_shipment=?, total_volumetric_weight=?, total_actual_weight=?, published=?, image=? WHERE tracking_id=?");
+            mysqli_stmt_bind_param($stmt_update, "ssssssssssssssssssssssssssis", $sender_name, $sender_contact, $sender_email, $sender_address, $dispatch_location, $carrier, $carrier_refrence_number, $weight, $payment_mode, $receiver_name, $receiver_contact, $receiver_email, $receiver_address, $destination, $package_discription, $dispatch_date, $estimated_delivery_date, $shipment_mode, $quantity, $total_freight, $courier, $comments, $type_of_shipment, $total_volumetric_weight, $total_actual_weight, $published, $packageImage, $edit_id);
             mysqli_stmt_execute($stmt_update);
 
             // Delete existing package items and shipment history
@@ -291,18 +288,8 @@ if (isset($_POST['update'])) {
                                                                 <input type="text" class="form-control" id="carrier_ref_no" name="carrierreferencenumber" value="<?php echo htmlspecialchars($row['carrier_refrence_number'] ?? ''); ?>">
                                                             </div>
                                                             <div class="col-md-4">
-                                                                <label for="departure_time" class="form-label">Departure Time</label>
-                                                                <input type="time" class="form-control" id="departure_time" name="departure_time" value="<?php echo htmlspecialchars($row['departure_time'] ?? ''); ?>">
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <label for="pickup_date" class="form-label">Pickup Date</label>
-                                                                <input type="date" class="form-control" id="pickup_date" name="pickup_date" value="<?php echo htmlspecialchars($row['pickup_date'] ?? ''); ?>">
-                                                            </div>
-                                                        </div>
-                                                        <div class="row mt-3">
-                                                            <div class="col-md-4">
-                                                                <label for="pickup_time" class="form-label">Pickup Time</label>
-                                                                <input type="time" class="form-control" id="pickup_time" name="deliverytime" value="<?php echo htmlspecialchars($row['delivery_time'] ?? ''); ?>">
+                                                                <label for="dispatch_date" class="form-label">Dispatch Date</label>
+                                                                <input type="date" class="form-control" id="dispatch_date" name="dispatch_date" value="<?php echo htmlspecialchars($row['dispatch_date'] ?? ''); ?>">
                                                             </div>
                                                             <div class="col-md-4">
                                                                 <label for="expected_delivery_date" class="form-label">Expected Delivery Date</label>
