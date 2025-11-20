@@ -4,7 +4,9 @@ include 'header.php';
 // Enable mysqli exceptions
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-$msg = "";
+$msg = $_SESSION['success_message'] ?? '';
+unset($_SESSION['success_message']);
+
 $errors = [];
 $row = [];
 $package_items = [];
@@ -169,7 +171,9 @@ if (isset($_POST['update'])) {
 
             // Commit Transaction
             mysqli_commit($con);
-            $msg = "Updated successfully";
+            $_SESSION['success_message'] = "Updated successfully";
+            header("Location: edit.php?edit=" . urlencode($edit_id));
+            exit();
 
         } catch (Exception $e) {
             mysqli_rollback($con);

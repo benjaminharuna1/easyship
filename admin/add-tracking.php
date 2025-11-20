@@ -159,7 +159,9 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
             // Commit Transaction
             mysqli_commit($con);
 
-            $msg = "Shipment created successfully with Tracking ID: " . htmlspecialchars($tnumbs_final);
+            $_SESSION['success_message'] = "Shipment created successfully with Tracking ID: " . htmlspecialchars($tnumbs_final);
+            header("Location: edit.php?edit=" . urlencode($tnumbs_final));
+            exit();
 
             // Send mail
             $subject = "Registered Shipment";
