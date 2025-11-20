@@ -4,7 +4,7 @@ include 'header.php';
 // Enable mysqli exceptions
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-$error = "";
+$errors = [];
 $msg = "";
 
 // Generate a default tracking number for display
@@ -21,20 +21,41 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
     $published = isset($_POST['publish']) ? 1 : 0;
 
     // Validation
-    $required_fields = ['sendername', 'sendercontact', 'senderemail', 'senderaddress', 'dispatchlocation', 'carrier', 'carrierreferencenumber', 'weight', 'paymentmode', 'total_cost', 'receivername', 'receiver_email', 'receivercontact', 'receiveraddress', 'destination', 'packagedescription', 'dispatch_date', 'estimateddeliverydate', 'shipmentmethod', 'quantity'];
-    foreach ($required_fields as $field) {
+    $required_fields = [
+        'sendername' => 'Sender name is required.',
+        'sendercontact' => 'Sender contact is required.',
+        'senderemail' => 'Sender email is required.',
+        'senderaddress' => 'Sender address is required.',
+        'dispatchlocation' => 'Dispatch location is required.',
+        'carrier' => 'Carrier is required.',
+        'carrierreferencenumber' => 'Carrier reference number is required.',
+        'weight' => 'Weight is required.',
+        'paymentmode' => 'Payment mode is required.',
+        'total_cost' => 'Total cost is required.',
+        'receivername' => 'Receiver name is required.',
+        'receiver_email' => 'Receiver email is required.',
+        'receivercontact' => 'Receiver contact is required.',
+        'receiveraddress' => 'Receiver address is required.',
+        'destination' => 'Destination is required.',
+        'packagedescription' => 'Package description is required.',
+        'dispatch_date' => 'Dispatch date is required.',
+        'estimateddeliverydate' => 'Estimated delivery date is required.',
+        'shipmentmethod' => 'Shipment method is required.',
+        'quantity' => 'Quantity is required.'
+    ];
+
+    foreach ($required_fields as $field => $message) {
         if (empty($_POST[$field])) {
-            $error = "Please fill in all required fields. Missing: $field";
-            break;
+            $errors[$field] = $message;
         }
     }
 
     // Image Upload Validation
-    if (empty($error) && (!isset($_FILES["image"]) || $_FILES["image"]["error"] != 0)) {
-        $error = "A package image is required.";
+    if (!isset($_FILES["image"]) || $_FILES["image"]["error"] != 0) {
+        $errors['image'] = "A package image is required.";
     }
 
-    if (empty($error)) {
+    if (empty($errors)) {
         try {
             $sender_name = text_input($_POST['sendername']);
             $sender_contact = text_input($_POST['sendercontact']);
@@ -199,19 +220,31 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
               <h5 class="card-title">Shipper Details</h5>
               <div class="mb-3">
                 <label for="shipper_name" class="form-label">Shipper Name</label>
-                <input type="text" class="form-control" id="shipper_name" name="sendername">
+                <input type="text" class="form-control" id="shipper_name" name="sendername" required>
+                <?php if (isset($errors['sendername'])) : ?>
+                  <div class="text-danger"><?php echo $errors['sendername']; ?></div>
+                <?php endif; ?>
               </div>
               <div class="mb-3">
                 <label for="shipper_phone" class="form-label">Phone Number</label>
-                <input type="text" class="form-control" id="shipper_phone" name="sendercontact">
+                <input type="text" class="form-control" id="shipper_phone" name="sendercontact" required>
+                <?php if (isset($errors['sendercontact'])) : ?>
+                  <div class="text-danger"><?php echo $errors['sendercontact']; ?></div>
+                <?php endif; ?>
               </div>
               <div class="mb-3">
                 <label for="shipper_address" class="form-label">Address</label>
-                <input type="text" class="form-control" id="shipper_address" name="senderaddress">
+                <input type="text" class="form-control" id="shipper_address" name="senderaddress" required>
+                <?php if (isset($errors['senderaddress'])) : ?>
+                  <div class="text-danger"><?php echo $errors['senderaddress']; ?></div>
+                <?php endif; ?>
               </div>
               <div class="mb-3">
                 <label for="shipper_email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="shipper_email" name="senderemail">
+                <input type="email" class="form-control" id="shipper_email" name="senderemail" required>
+                <?php if (isset($errors['senderemail'])) : ?>
+                  <div class="text-danger"><?php echo $errors['senderemail']; ?></div>
+                <?php endif; ?>
               </div>
             </div>
           </div>
@@ -222,19 +255,31 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
               <h5 class="card-title">Receiver Details</h5>
               <div class="mb-3">
                 <label for="receiver_name" class="form-label">Receiver Name</label>
-                <input type="text" class="form-control" id="receiver_name" name="receivername">
+                <input type="text" class="form-control" id="receiver_name" name="receivername" required>
+                <?php if (isset($errors['receivername'])) : ?>
+                  <div class="text-danger"><?php echo $errors['receivername']; ?></div>
+                <?php endif; ?>
               </div>
               <div class="mb-3">
                 <label for="receiver_phone" class="form-label">Phone Number</label>
-                <input type="text" class="form-control" id="receiver_phone" name="receivercontact">
+                <input type="text" class="form-control" id="receiver_phone" name="receivercontact" required>
+                <?php if (isset($errors['receivercontact'])) : ?>
+                  <div class="text-danger"><?php echo $errors['receivercontact']; ?></div>
+                <?php endif; ?>
               </div>
               <div class="mb-3">
                 <label for="receiver_address" class="form-label">Address</label>
-                <input type="text" class="form-control" id="receiver_address" name="receiveraddress">
+                <input type="text" class="form-control" id="receiver_address" name="receiveraddress" required>
+                <?php if (isset($errors['receiveraddress'])) : ?>
+                  <div class="text-danger"><?php echo $errors['receiveraddress']; ?></div>
+                <?php endif; ?>
               </div>
               <div class="mb-3">
                 <label for="receiver_email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="receiver_email" name="receiver_email">
+                <input type="email" class="form-control" id="receiver_email" name="receiver_email" required>
+                <?php if (isset($errors['receiver_email'])) : ?>
+                  <div class="text-danger"><?php echo $errors['receiver_email']; ?></div>
+                <?php endif; ?>
               </div>
             </div>
           </div>
@@ -248,90 +293,135 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
               <div class="row">
                 <div class="col-md-4">
                   <label for="type_of_shipment" class="form-label">Type of Shipment</label>
-                  <select class="form-control" id="type_of_shipment" name="type_of_shipment">
+                  <select class="form-control" id="type_of_shipment" name="type_of_shipment" required>
                     <option>Select</option>
                     <option>Express</option>
                     <option>Standard</option>
                   </select>
+                  <?php if (isset($errors['type_of_shipment'])) : ?>
+                    <div class="text-danger"><?php echo $errors['type_of_shipment']; ?></div>
+                  <?php endif; ?>
                 </div>
                 <div class="col-md-4">
                   <label for="payment_mode" class="form-label">Payment Mode</label>
-                  <select class="form-control" id="payment_mode" name="paymentmode">
+                  <select class="form-control" id="payment_mode" name="paymentmode" required>
                     <option>Select</option>
                     <option>Cash</option>
                     <option>Card</option>
                     <option>Transfer</option>
                   </select>
+                  <?php if (isset($errors['paymentmode'])) : ?>
+                    <div class="text-danger"><?php echo $errors['paymentmode']; ?></div>
+                  <?php endif; ?>
                 </div>
                 <div class="col-md-4">
                   <label for="total_cost" class="form-label">Total Cost</label>
-                  <input type="text" class="form-control" id="total_cost" name="total_cost">
+                  <input type="text" class="form-control" id="total_cost" name="total_cost" required>
+                  <?php if (isset($errors['total_cost'])) : ?>
+                    <div class="text-danger"><?php echo $errors['total_cost']; ?></div>
+                  <?php endif; ?>
                 </div>
                 <div class="col-md-4">
                   <label for="carrier" class="form-label">Carrier</label>
-                  <select class="form-control" id="carrier" name="carrier">
+                  <select class="form-control" id="carrier" name="carrier" required>
                     <option>Select</option>
                     <option>DHL</option>
                     <option>UPS</option>
                     <option>FedEx</option>
                   </select>
+                  <?php if (isset($errors['carrier'])) : ?>
+                    <div class="text-danger"><?php echo $errors['carrier']; ?></div>
+                  <?php endif; ?>
                 </div>
               </div>
               <div class="row mt-3">
                 <div class="col-md-4">
                   <label for="courier" class="form-label">Courier</label>
-                  <input type="text" class="form-control" id="courier" name="courier">
+                  <input type="text" class="form-control" id="courier" name="courier" required>
+                  <?php if (isset($errors['courier'])) : ?>
+                    <div class="text-danger"><?php echo $errors['courier']; ?></div>
+                  <?php endif; ?>
                 </div>
                 <div class="col-md-4">
                   <label for="mode" class="form-label">Mode</label>
-                  <select class="form-control" id="mode" name="shipmentmethod">
+                  <select class="form-control" id="mode" name="shipmentmethod" required>
                     <option>Select</option>
                     <option>Land Shipping</option>
                     <option>Air Shipping</option>
                     <option>Sea Shipping</option>
                   </select>
+                  <?php if (isset($errors['shipmentmethod'])) : ?>
+                    <div class="text-danger"><?php echo $errors['shipmentmethod']; ?></div>
+                  <?php endif; ?>
                 </div>
                 <div class="col-md-4">
                   <label for="origin" class="form-label">Origin</label>
-                  <input type="text" class="form-control" id="origin" name="dispatchlocation">
+                  <input type="text" class="form-control" id="origin" name="dispatchlocation" required>
+                  <?php if (isset($errors['dispatchlocation'])) : ?>
+                    <div class="text-danger"><?php echo $errors['dispatchlocation']; ?></div>
+                  <?php endif; ?>
                 </div>
               </div>
               <div class="row mt-3">
                 <div class="col-md-4">
                   <label for="destination" class="form-label">Destination</label>
-                  <input type="text" class="form-control" id="destination" name="destination">
+                  <input type="text" class="form-control" id="destination" name="destination" required>
+                  <?php if (isset($errors['destination'])) : ?>
+                    <div class="text-danger"><?php echo $errors['destination']; ?></div>
+                  <?php endif; ?>
                 </div>
                 <div class="col-md-4">
                   <label for="weight" class="form-label">Weight</label>
-                  <input type="text" class="form-control" id="weight" name="weight">
+                  <input type="text" class="form-control" id="weight" name="weight" required>
+                  <?php if (isset($errors['weight'])) : ?>
+                    <div class="text-danger"><?php echo $errors['weight']; ?></div>
+                  <?php endif; ?>
                 </div>
                 <div class="col-md-4">
                   <label for="packages_count" class="form-label">Packages count</label>
-                  <input type="number" class="form-control" id="packages_count" name="quantity">
+                  <input type="number" class="form-control" id="packages_count" name="quantity" required>
+                  <?php if (isset($errors['quantity'])) : ?>
+                    <div class="text-danger"><?php echo $errors['quantity']; ?></div>
+                  <?php endif; ?>
                 </div>
               </div>
               <div class="row mt-3">
                 <div class="col-md-8">
                   <label for="product_description" class="form-label">Product description</label>
-                  <input type="text" class="form-control" id="product_description" name="packagedescription">
+                  <input type="text" class="form-control" id="product_description" name="packagedescription" required>
+                  <?php if (isset($errors['packagedescription'])) : ?>
+                    <div class="text-danger"><?php echo $errors['packagedescription']; ?></div>
+                  <?php endif; ?>
                 </div>
                 <div class="col-md-4">
                   <label for="total_freight" class="form-label">Total Freight</label>
-                  <input type="text" class="form-control" id="total_freight" name="total_freight">
+                  <input type="text" class="form-control" id="total_freight" name="total_freight" required>
+                  <?php if (isset($errors['total_freight'])) : ?>
+                    <div class="text-danger"><?php echo $errors['total_freight']; ?></div>
+                  <?php endif; ?>
                 </div>
               </div>
               <div class="row mt-3">
                 <div class="col-md-4">
                   <label for="carrier_ref_no" class="form-label">Carrier Reference No.</label>
-                  <input type="text" class="form-control" id="carrier_ref_no" name="carrierreferencenumber">
+                  <input type="text" class="form-control" id="carrier_ref_no" name="carrierreferencenumber" required>
+                  <?php if (isset($errors['carrierreferencenumber'])) : ?>
+                    <div class="text-danger"><?php echo $errors['carrierreferencenumber']; ?></div>
+                  <?php endif; ?>
                 </div>
                 <div class="col-md-4">
                   <label for="dispatch_date" class="form-label">Dispatch Date</label>
-                  <input type="date" class="form-control" id="dispatch_date" name="dispatch_date">
+                  <input type="date" class="form-control" id="dispatch_date" name="dispatch_date" required>
+                  <?php if (isset($errors['dispatch_date'])) : ?>
+                    <div class="text-danger"><?php echo $errors['dispatch_date']; ?></div>
+                  <?php endif; ?>
                 </div>
                 <div class="col-md-4">
                   <label for="expected_delivery_date" class="form-label">Expected Delivery Date</label>
-                  <input type="date" class="form-control" id="expected_delivery_date" name="estimateddeliverydate">
+                  <input type="date" class="form-control" id="expected_delivery_date" name="estimateddeliverydate" required>
+                  <?php if (isset($errors['estimateddeliverydate'])) : ?>
+                    <div class="text-danger"><?php echo $errors['estimateddeliverydate']; ?></div>
+                  <?php endif; ?>
                 </div>
               </div>
               <div class="row mt-3">
