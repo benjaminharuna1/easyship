@@ -107,7 +107,14 @@ if (isset($_POST['update'])) {
 
             // Image upload
             $packageImage = $_POST['current_image'];
-            if (isset($_FILES["image"]) && $_FILES["image"]["error"] == 0) {
+            if (isset($_POST['remove_image']) && $_POST['remove_image'] == 1) {
+                // If image is removed, set it to empty and delete the old file
+                if (!empty($packageImage) && file_exists("../uploads/" . $packageImage)) {
+                    unlink("../uploads/" . $packageImage);
+                }
+                $packageImage = "";
+            } elseif (isset($_FILES["image"]) && $_FILES["image"]["error"] == 0 && !empty($_FILES["image"]["name"])) {
+                // If a new image is uploaded, process it
                 $extensions = array("jpeg", "jpg", "png");
                 $location = "../uploads/";
                 $filename1 = $_FILES["image"]["name"];
@@ -116,11 +123,16 @@ if (isset($_POST['update'])) {
                 if (!in_array($file_ext1, $extensions)) {
                     throw new Exception("Extension not allowed, please choose a JPEG or PNG file.");
                 }
+                // Delete old image if it exists
+                if (!empty($packageImage) && file_exists("../uploads/" . $packageImage)) {
+                    unlink("../uploads/" . $packageImage);
+                }
                 $packageImage = time() . date('d') . ".png";
                 if (!move_uploaded_file($tempname1, $location . $packageImage)) {
                     throw new Exception("Failed to upload new image.");
                 }
             }
+            // No action needed if no new image is uploaded and the existing one is not removed
 
             // Start Transaction
             mysqli_begin_transaction($con);
@@ -380,9 +392,22 @@ if (isset($_POST['update'])) {
                                                         <div class="row mt-3">
                                                             <div class="col-md-12">
                                                                 <label for="image" class="form-label">Package Image</label>
-                                                                <input type="file" class="form-control" id="image" name="image">
+                                                                <input type="file" class="form-control" id="image" name="image" onchange="previewImage(event)">
                                                                 <input type="hidden" name="current_image" value="<?php echo htmlspecialchars($row['image'] ?? ''); ?>">
+                                                                <input type="hidden" name="remove_image" id="remove_image" value="0">
                                                             </div>
+
+                                                            <div class="col-md-12 mt-3">
+                                                                <img id="image_preview"
+                                                                     src="<?php if (!empty($row['image'])) { echo '../uploads/' . htmlspecialchars($row['image']); } else { echo '#'; } ?>"
+                                                                     alt="Image Preview"
+                                                                     style="max-width: 200px; max-height: 200px; <?php if (empty($row['image'])) { echo 'display: none;'; } ?>">
+                                                            </div>
+                                                            <?php if (!empty($row['image'])) : ?>
+                                                            <div class="col-md-12 mt-2">
+                                                                <button type="button" class="btn btn-danger btn-sm" onclick="removeCurrentImage()">Remove Image</button>
+                                                            </div>
+                                                            <?php endif; ?>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -490,18 +515,35 @@ if (isset($_POST['update'])) {
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                <?php foreach ($package_items as $item) : ?>
-                                                                    <tr>
-                                                                        <td><input type="number" class="form-control" name="package_quantity[]" value="<?php echo htmlspecialchars($item['quantity']); ?>"></td>
-                                                                        <td><input type="text" class="form-control" name="package_piece_type[]" value="<?php echo htmlspecialchars($item['piece_type']); ?>"></td>
-                                                                        <td><input type="text" class="form-control" name="package_description[]" value="<?php echo htmlspecialchars($item['description']); ?>"></td>
-                                                                        <td><input type="number" class="form-control" name="package_length[]" value="<?php echo htmlspecialchars($item['length']); ?>"></td>
-                                                                        <td><input type="number" class="form-control" name="package_width[]" value="<?php echo htmlspecialchars($item['width']); ?>"></td>
-                                                                        <td><input type="number" class="form-control" name="package_height[]" value="<?php echo htmlspecialchars($item['height']); ?>"></td>
-                                                                        <td><input type="number" class="form-control" name="package_weight[]" value="<?php echo htmlspecialchars($item['weight']); ?>"></td>
-                                                                        <td><button type="button" class="btn btn-danger remove_row">Delete</button></td>
-                                                                    </tr>
-                                                                <?php endforeach; ?>
+                                                                <?php
+                                                                $package_items_source = isset($_POST['package_quantity']) ? $_POST : $package_items;
+                                                                if (isset($_POST['package_quantity'])) {
+                                                                    for ($i = 0; $i < count($_POST['package_quantity']); $i++) { ?>
+                                                                        <tr>
+                                                                            <td><input type="number" class="form-control" name="package_quantity[]" value="<?php echo htmlspecialchars($_POST['package_quantity'][$i]); ?>"></td>
+                                                                            <td><input type="text" class="form-control" name="package_piece_type[]" value="<?php echo htmlspecialchars($_POST['package_piece_type'][$i]); ?>"></td>
+                                                                            <td><input type="text" class="form-control" name="package_description[]" value="<?php echo htmlspecialchars($_POST['package_description'][$i]); ?>"></td>
+                                                                            <td><input type="number" class="form-control" name="package_length[]" value="<?php echo htmlspecialchars($_POST['package_length'][$i]); ?>"></td>
+                                                                            <td><input type="number" class="form-control" name="package_width[]" value="<?php echo htmlspecialchars($_POST['package_width'][$i]); ?>"></td>
+                                                                            <td><input type="number" class="form-control" name="package_height[]" value="<?php echo htmlspecialchars($_POST['package_height'][$i]); ?>"></td>
+                                                                            <td><input type="number" class="form-control" name="package_weight[]" value="<?php echo htmlspecialchars($_POST['package_weight'][$i]); ?>"></td>
+                                                                            <td><button type="button" class="btn btn-danger remove_row">Delete</button></td>
+                                                                        </tr>
+                                                                    <?php }
+                                                                } else {
+                                                                    foreach ($package_items as $item) : ?>
+                                                                        <tr>
+                                                                            <td><input type="number" class="form-control" name="package_quantity[]" value="<?php echo htmlspecialchars($item['quantity']); ?>"></td>
+                                                                            <td><input type="text" class="form-control" name="package_piece_type[]" value="<?php echo htmlspecialchars($item['piece_type']); ?>"></td>
+                                                                            <td><input type="text" class="form-control" name="package_description[]" value="<?php echo htmlspecialchars($item['description']); ?>"></td>
+                                                                            <td><input type="number" class="form-control" name="package_length[]" value="<?php echo htmlspecialchars($item['length']); ?>"></td>
+                                                                            <td><input type="number" class="form-control" name="package_width[]" value="<?php echo htmlspecialchars($item['width']); ?>"></td>
+                                                                            <td><input type="number" class="form-control" name="package_height[]" value="<?php echo htmlspecialchars($item['height']); ?>"></td>
+                                                                            <td><input type="number" class="form-control" name="package_weight[]" value="<?php echo htmlspecialchars($item['weight']); ?>"></td>
+                                                                            <td><button type="button" class="btn btn-danger remove_row">Delete</button></td>
+                                                                        </tr>
+                                                                <?php endforeach;
+                                                                } ?>
                                                             </tbody>
                                                         </table>
                                                         <button type="button" class="btn btn-primary" id="add_package_row">Add Row</button>
@@ -538,24 +580,46 @@ if (isset($_POST['update'])) {
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                <?php foreach ($shipment_history as $history) : ?>
-                                                                    <tr>
-                                                                        <td><input type="date" class="form-control" name="history_date[]" value="<?php echo htmlspecialchars($history['date']); ?>"></td>
-                                                                        <td><input type="time" class="form-control" name="history_time[]" value="<?php echo htmlspecialchars($history['time']); ?>"></td>
-                                                                        <td><input type="text" class="form-control" name="history_location[]" value="<?php echo htmlspecialchars($history['location']); ?>"></td>
-                                                                        <td>
-                                                                            <select class="form-control" name="history_status[]">
-                                                                                <option <?php if ($history['status'] == 'Pending') echo 'selected'; ?>>Pending</option>
-                                                                                <option <?php if ($history['status'] == 'In Transit') echo 'selected'; ?>>In Transit</option>
-                                                                                <option <?php if ($history['status'] == 'Delivered') echo 'selected'; ?>>Delivered</option>
-                                                                                <option <?php if ($history['status'] == 'Cancelled') echo 'selected'; ?>>Cancelled</option>
-                                                                            </select>
-                                                                        </td>
-                                                                        <td><input type="text" class="form-control" name="history_updated_by[]" value="<?php echo htmlspecialchars($history['updated_by']); ?>"></td>
-                                                                        <td><input type="text" class="form-control" name="history_remarks[]" value="<?php echo htmlspecialchars($history['remarks']); ?>"></td>
-                                                                        <td><button type="button" class="btn btn-danger remove_row">Delete</button></td>
-                                                                    </tr>
-                                                                <?php endforeach; ?>
+                                                                <?php
+                                                                if (isset($_POST['history_date'])) {
+                                                                    for ($i = 0; $i < count($_POST['history_date']); $i++) { ?>
+                                                                        <tr>
+                                                                            <td><input type="date" class="form-control" name="history_date[]" value="<?php echo htmlspecialchars($_POST['history_date'][$i]); ?>"></td>
+                                                                            <td><input type="time" class="form-control" name="history_time[]" value="<?php echo htmlspecialchars($_POST['history_time'][$i]); ?>"></td>
+                                                                            <td><input type="text" class="form-control" name="history_location[]" value="<?php echo htmlspecialchars($_POST['history_location'][$i]); ?>"></td>
+                                                                            <td>
+                                                                                <select class="form-control" name="history_status[]">
+                                                                                    <option <?php if ($_POST['history_status'][$i] == 'Pending') echo 'selected'; ?>>Pending</option>
+                                                                                    <option <?php if ($_POST['history_status'][$i] == 'In Transit') echo 'selected'; ?>>In Transit</option>
+                                                                                    <option <?php if ($_POST['history_status'][$i] == 'Delivered') echo 'selected'; ?>>Delivered</option>
+                                                                                    <option <?php if ($_POST['history_status'][$i] == 'Cancelled') echo 'selected'; ?>>Cancelled</option>
+                                                                                </select>
+                                                                            </td>
+                                                                            <td><input type="text" class="form-control" name="history_updated_by[]" value="<?php echo htmlspecialchars($_POST['history_updated_by'][$i]); ?>"></td>
+                                                                            <td><input type="text" class="form-control" name="history_remarks[]" value="<?php echo htmlspecialchars($_POST['history_remarks'][$i]); ?>"></td>
+                                                                            <td><button type="button" class="btn btn-danger remove_row">Delete</button></td>
+                                                                        </tr>
+                                                                    <?php }
+                                                                } else {
+                                                                    foreach ($shipment_history as $history) : ?>
+                                                                        <tr>
+                                                                            <td><input type="date" class="form-control" name="history_date[]" value="<?php echo htmlspecialchars($history['date']); ?>"></td>
+                                                                            <td><input type="time" class="form-control" name="history_time[]" value="<?php echo htmlspecialchars($history['time']); ?>"></td>
+                                                                            <td><input type="text" class="form-control" name="history_location[]" value="<?php echo htmlspecialchars($history['location']); ?>"></td>
+                                                                            <td>
+                                                                                <select class="form-control" name="history_status[]">
+                                                                                    <option <?php if ($history['status'] == 'Pending') echo 'selected'; ?>>Pending</option>
+                                                                                    <option <?php if ($history['status'] == 'In Transit') echo 'selected'; ?>>In Transit</option>
+                                                                                    <option <?php if ($history['status'] == 'Delivered') echo 'selected'; ?>>Delivered</option>
+                                                                                    <option <?php if ($history['status'] == 'Cancelled') echo 'selected'; ?>>Cancelled</option>
+                                                                                </select>
+                                                                            </td>
+                                                                            <td><input type="text" class="form-control" name="history_updated_by[]" value="<?php echo htmlspecialchars($history['updated_by']); ?>"></td>
+                                                                            <td><input type="text" class="form-control" name="history_remarks[]" value="<?php echo htmlspecialchars($history['remarks']); ?>"></td>
+                                                                            <td><button type="button" class="btn btn-danger remove_row">Delete</button></td>
+                                                                        </tr>
+                                                                <?php endforeach;
+                                                                } ?>
                                                             </tbody>
                                                         </table>
                                                         <button type="button" class="btn btn-primary" id="add_history_row">Add Row</button>
@@ -638,7 +702,26 @@ if (isset($_POST['update'])) {
                                         document.getElementById('total_volumetric_weight').value = totalVolumetricWeight.toFixed(2);
                                         document.getElementById('total_actual_weight').value = totalActualWeight.toFixed(2);
                                     }
-_                                });
+                                });
+                                function previewImage(event) {
+                                    var reader = new FileReader();
+                                    reader.onload = function(){
+                                        var output = document.getElementById('image_preview');
+                                        output.src = reader.result;
+                                        output.style.display = 'block';
+                                        document.getElementById('remove_image').value = 0;
+                                    };
+                                    reader.readAsDataURL(event.target.files[0]);
+                                }
+
+                                function removeCurrentImage() {
+                                    var output = document.getElementById('image_preview');
+                                    output.src = '#';
+                                    output.style.display = 'none';
+                                    document.getElementById('image').value = ''; // Clear the file input
+                                    document.getElementById('remove_image').value = 1;
+                                    document.querySelector('[name="current_image"]').value = '';
+                                }
                             </script>
 
 

@@ -50,11 +50,6 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
         }
     }
 
-    // Image Upload Validation
-    if (!isset($_FILES["image"]) || $_FILES["image"]["error"] != 0) {
-        $errors['image'] = "A package image is required.";
-    }
-
     if (empty($errors)) {
         try {
             $sender_name = text_input($_POST['sendername']);
@@ -86,17 +81,19 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
 
             // Image upload
             $packageImage = "";
-            $extensions = array("jpeg", "jpg", "png");
-            $location = "../uploads/";
-            $filename1 = $_FILES["image"]["name"];
-            $tempname1 = $_FILES["image"]["tmp_name"];
-            $file_ext1 = @strtolower(end(explode('.', $filename1)));
-            if (!in_array($file_ext1, $extensions)) {
-                throw new Exception("Extension not allowed, please choose a JPEG or PNG file.");
-            }
-            $packageImage = time() . date('d') . ".png";
-            if (!move_uploaded_file($tempname1, $location . $packageImage)) {
-                throw new Exception("Failed to upload image.");
+            if (isset($_FILES["image"]) && $_FILES["image"]["error"] == 0 && !empty($_FILES["image"]["name"])) {
+                $extensions = array("jpeg", "jpg", "png");
+                $location = "../uploads/";
+                $filename1 = $_FILES["image"]["name"];
+                $tempname1 = $_FILES["image"]["tmp_name"];
+                $file_ext1 = @strtolower(end(explode('.', $filename1)));
+                if (!in_array($file_ext1, $extensions)) {
+                    throw new Exception("Extension not allowed, please choose a JPEG or PNG file.");
+                }
+                $packageImage = time() . date('d') . ".png";
+                if (!move_uploaded_file($tempname1, $location . $packageImage)) {
+                    throw new Exception("Failed to upload image.");
+                }
             }
 
             // Tracking number generation
@@ -439,7 +436,10 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
               <div class="row mt-3">
                 <div class="col-md-12">
                   <label for="image" class="form-label">Package Image</label>
-                  <input type="file" class="form-control" id="image" name="image">
+                  <input type="file" class="form-control" id="image" name="image" onchange="previewImage(event)">
+                </div>
+                <div class="col-md-12 mt-3">
+                    <img id="image_preview" src="#" alt="Image Preview" style="display: none; max-width: 200px; max-height: 200px;">
                 </div>
               </div>
             </div>
@@ -465,6 +465,20 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
                   </tr>
                 </thead>
                 <tbody>
+                  <?php if (isset($_POST['package_quantity'])) : ?>
+                    <?php for ($i = 0; $i < count($_POST['package_quantity']); $i++) : ?>
+                      <tr>
+                        <td><input type="number" class="form-control" name="package_quantity[]" value="<?php echo htmlspecialchars($_POST['package_quantity'][$i]); ?>"></td>
+                        <td><input type="text" class="form-control" name="package_piece_type[]" value="<?php echo htmlspecialchars($_POST['package_piece_type'][$i]); ?>"></td>
+                        <td><input type="text" class="form-control" name="package_description[]" value="<?php echo htmlspecialchars($_POST['package_description'][$i]); ?>"></td>
+                        <td><input type="number" class="form-control" name="package_length[]" value="<?php echo htmlspecialchars($_POST['package_length'][$i]); ?>"></td>
+                        <td><input type="number" class="form-control" name="package_width[]" value="<?php echo htmlspecialchars($_POST['package_width'][$i]); ?>"></td>
+                        <td><input type="number" class="form-control" name="package_height[]" value="<?php echo htmlspecialchars($_POST['package_height'][$i]); ?>"></td>
+                        <td><input type="number" class="form-control" name="package_weight[]" value="<?php echo htmlspecialchars($_POST['package_weight'][$i]); ?>"></td>
+                        <td><button type="button" class="btn btn-danger remove_row">Delete</button></td>
+                      </tr>
+                    <?php endfor; ?>
+                  <?php endif; ?>
                 </tbody>
               </table>
               <button type="button" class="btn btn-primary" id="add_package_row">Add Row</button>
@@ -501,6 +515,26 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
                   </tr>
                 </thead>
                 <tbody>
+                  <?php if (isset($_POST['history_date'])) : ?>
+                    <?php for ($i = 0; $i < count($_POST['history_date']); $i++) : ?>
+                      <tr>
+                        <td><input type="date" class="form-control" name="history_date[]" value="<?php echo htmlspecialchars($_POST['history_date'][$i]); ?>"></td>
+                        <td><input type="time" class="form-control" name="history_time[]" value="<?php echo htmlspecialchars($_POST['history_time'][$i]); ?>"></td>
+                        <td><input type="text" class="form-control" name="history_location[]" value="<?php echo htmlspecialchars($_POST['history_location'][$i]); ?>"></td>
+                        <td>
+                          <select class="form-control" name="history_status[]">
+                            <option <?php if ($_POST['history_status'][$i] == 'Pending') echo 'selected'; ?>>Pending</option>
+                            <option <?php if ($_POST['history_status'][$i] == 'In Transit') echo 'selected'; ?>>In Transit</option>
+                            <option <?php if ($_POST['history_status'][$i] == 'Delivered') echo 'selected'; ?>>Delivered</option>
+                            <option <?php if ($_POST['history_status'][$i] == 'Cancelled') echo 'selected'; ?>>Cancelled</option>
+                          </select>
+                        </td>
+                        <td><input type="text" class="form-control" name="history_updated_by[]" value="<?php echo htmlspecialchars($_POST['history_updated_by'][$i]); ?>"></td>
+                        <td><input type="text" class="form-control" name="history_remarks[]" value="<?php echo htmlspecialchars($_POST['history_remarks'][$i]); ?>"></td>
+                        <td><button type="button" class="btn btn-danger remove_row">Delete</button></td>
+                      </tr>
+                    <?php endfor; ?>
+                  <?php endif; ?>
                 </tbody>
               </table>
               <button type="button" class="btn btn-primary" id="add_history_row">Add Row</button>
@@ -596,4 +630,14 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('total_actual_weight').value = totalActualWeight.toFixed(2);
   }
 });
+
+function previewImage(event) {
+    var reader = new FileReader();
+    reader.onload = function(){
+        var output = document.getElementById('image_preview');
+        output.src = reader.result;
+        output.style.display = 'block';
+    };
+    reader.readAsDataURL(event.target.files[0]);
+}
 </script>
