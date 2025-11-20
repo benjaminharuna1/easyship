@@ -35,7 +35,7 @@ if (isset($_POST['search'])) {
       $weight = $rows['weight'];
       $carrier_refrence_number = $rows['carrier_refrence_number'];
       $quantity = $rows['quantity'];
-      $dispach_date = $rows['dispach_date'];
+      $dispatch_date = $rows['dispatch_date'];
       $package_discription = $rows['package_discription'];
       $destination = $rows['destination'];
       $shipment_mode = $rows['shipment_mode'];
