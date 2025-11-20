@@ -226,28 +226,28 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
               <h5 class="card-title">Shipper Details</h5>
               <div class="mb-3">
                 <label for="shipper_name" class="form-label">Shipper Name</label>
-                <input type="text" class="form-control" id="shipper_name" name="sendername" required>
+                <input type="text" class="form-control" id="shipper_name" name="sendername" value="<?php echo htmlspecialchars($_POST['sendername'] ?? ''); ?>" required>
                 <?php if (isset($errors['sendername'])) : ?>
                   <div class="text-danger"><?php echo $errors['sendername']; ?></div>
                 <?php endif; ?>
               </div>
               <div class="mb-3">
                 <label for="shipper_phone" class="form-label">Phone Number</label>
-                <input type="text" class="form-control" id="shipper_phone" name="sendercontact" required>
+                <input type="text" class="form-control" id="shipper_phone" name="sendercontact" value="<?php echo htmlspecialchars($_POST['sendercontact'] ?? ''); ?>" required>
                 <?php if (isset($errors['sendercontact'])) : ?>
                   <div class="text-danger"><?php echo $errors['sendercontact']; ?></div>
                 <?php endif; ?>
               </div>
               <div class="mb-3">
                 <label for="shipper_address" class="form-label">Address</label>
-                <input type="text" class="form-control" id="shipper_address" name="senderaddress" required>
+                <input type="text" class="form-control" id="shipper_address" name="senderaddress" value="<?php echo htmlspecialchars($_POST['senderaddress'] ?? ''); ?>" required>
                 <?php if (isset($errors['senderaddress'])) : ?>
                   <div class="text-danger"><?php echo $errors['senderaddress']; ?></div>
                 <?php endif; ?>
               </div>
               <div class="mb-3">
                 <label for="shipper_email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="shipper_email" name="senderemail" required>
+                <input type="email" class="form-control" id="shipper_email" name="senderemail" value="<?php echo htmlspecialchars($_POST['senderemail'] ?? ''); ?>" required>
                 <?php if (isset($errors['senderemail'])) : ?>
                   <div class="text-danger"><?php echo $errors['senderemail']; ?></div>
                 <?php endif; ?>
@@ -261,28 +261,28 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
               <h5 class="card-title">Receiver Details</h5>
               <div class="mb-3">
                 <label for="receiver_name" class="form-label">Receiver Name</label>
-                <input type="text" class="form-control" id="receiver_name" name="receivername" required>
+                <input type="text" class="form-control" id="receiver_name" name="receivername" value="<?php echo htmlspecialchars($_POST['receivername'] ?? ''); ?>" required>
                 <?php if (isset($errors['receivername'])) : ?>
                   <div class="text-danger"><?php echo $errors['receivername']; ?></div>
                 <?php endif; ?>
               </div>
               <div class="mb-3">
                 <label for="receiver_phone" class="form-label">Phone Number</label>
-                <input type="text" class="form-control" id="receiver_phone" name="receivercontact" required>
+                <input type="text" class="form-control" id="receiver_phone" name="receivercontact" value="<?php echo htmlspecialchars($_POST['receivercontact'] ?? ''); ?>" required>
                 <?php if (isset($errors['receivercontact'])) : ?>
                   <div class="text-danger"><?php echo $errors['receivercontact']; ?></div>
                 <?php endif; ?>
               </div>
               <div class="mb-3">
                 <label for="receiver_address" class="form-label">Address</label>
-                <input type="text" class="form-control" id="receiver_address" name="receiveraddress" required>
+                <input type="text" class="form-control" id="receiver_address" name="receiveraddress" value="<?php echo htmlspecialchars($_POST['receiveraddress'] ?? ''); ?>" required>
                 <?php if (isset($errors['receiveraddress'])) : ?>
                   <div class="text-danger"><?php echo $errors['receiveraddress']; ?></div>
                 <?php endif; ?>
               </div>
               <div class="mb-3">
                 <label for="receiver_email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="receiver_email" name="receiver_email" required>
+                <input type="email" class="form-control" id="receiver_email" name="receiver_email" value="<?php echo htmlspecialchars($_POST['receiver_email'] ?? ''); ?>" required>
                 <?php if (isset($errors['receiver_email'])) : ?>
                   <div class="text-danger"><?php echo $errors['receiver_email']; ?></div>
                 <?php endif; ?>
@@ -300,9 +300,9 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
                 <div class="col-md-4">
                   <label for="type_of_shipment" class="form-label">Type of Shipment</label>
                   <select class="form-control" id="type_of_shipment" name="type_of_shipment" required>
-                    <option>Select</option>
-                    <option>Express</option>
-                    <option>Standard</option>
+                    <option value="">Select</option>
+                    <option value="Express" <?php if (($_POST['type_of_shipment'] ?? '') == 'Express') echo 'selected'; ?>>Express</option>
+                    <option value="Standard" <?php if (($_POST['type_of_shipment'] ?? '') == 'Standard') echo 'selected'; ?>>Standard</option>
                   </select>
                   <?php if (isset($errors['type_of_shipment'])) : ?>
                     <div class="text-danger"><?php echo $errors['type_of_shipment']; ?></div>
@@ -311,10 +311,10 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
                 <div class="col-md-4">
                   <label for="payment_mode" class="form-label">Payment Mode</label>
                   <select class="form-control" id="payment_mode" name="paymentmode" required>
-                    <option>Select</option>
-                    <option>Cash</option>
-                    <option>Card</option>
-                    <option>Transfer</option>
+                    <option value="">Select</option>
+                    <option value="Cash" <?php if (($_POST['paymentmode'] ?? '') == 'Cash') echo 'selected'; ?>>Cash</option>
+                    <option value="Card" <?php if (($_POST['paymentmode'] ?? '') == 'Card') echo 'selected'; ?>>Card</option>
+                    <option value="Transfer" <?php if (($_POST['paymentmode'] ?? '') == 'Transfer') echo 'selected'; ?>>Transfer</option>
                   </select>
                   <?php if (isset($errors['paymentmode'])) : ?>
                     <div class="text-danger"><?php echo $errors['paymentmode']; ?></div>
@@ -322,7 +322,7 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
                 </div>
                 <div class="col-md-4">
                   <label for="total_cost" class="form-label">Total Cost</label>
-                  <input type="text" class="form-control" id="total_cost" name="total_cost" required>
+                  <input type="text" class="form-control" id="total_cost" name="total_cost" value="<?php echo htmlspecialchars($_POST['total_cost'] ?? ''); ?>" required>
                   <?php if (isset($errors['total_cost'])) : ?>
                     <div class="text-danger"><?php echo $errors['total_cost']; ?></div>
                   <?php endif; ?>
@@ -330,10 +330,10 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
                 <div class="col-md-4">
                   <label for="carrier" class="form-label">Carrier</label>
                   <select class="form-control" id="carrier" name="carrier" required>
-                    <option>Select</option>
-                    <option>DHL</option>
-                    <option>UPS</option>
-                    <option>FedEx</option>
+                    <option value="">Select</option>
+                    <option value="DHL" <?php if (($_POST['carrier'] ?? '') == 'DHL') echo 'selected'; ?>>DHL</option>
+                    <option value="UPS" <?php if (($_POST['carrier'] ?? '') == 'UPS') echo 'selected'; ?>>UPS</option>
+                    <option value="FedEx" <?php if (($_POST['carrier'] ?? '') == 'FedEx') echo 'selected'; ?>>FedEx</option>
                   </select>
                   <?php if (isset($errors['carrier'])) : ?>
                     <div class="text-danger"><?php echo $errors['carrier']; ?></div>
@@ -343,7 +343,7 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
               <div class="row mt-3">
                 <div class="col-md-4">
                   <label for="courier" class="form-label">Courier</label>
-                  <input type="text" class="form-control" id="courier" name="courier" required>
+                  <input type="text" class="form-control" id="courier" name="courier" value="<?php echo htmlspecialchars($_POST['courier'] ?? ''); ?>" required>
                   <?php if (isset($errors['courier'])) : ?>
                     <div class="text-danger"><?php echo $errors['courier']; ?></div>
                   <?php endif; ?>
@@ -351,10 +351,10 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
                 <div class="col-md-4">
                   <label for="mode" class="form-label">Mode</label>
                   <select class="form-control" id="mode" name="shipmentmethod" required>
-                    <option>Select</option>
-                    <option>Land Shipping</option>
-                    <option>Air Shipping</option>
-                    <option>Sea Shipping</option>
+                    <option value="">Select</option>
+                    <option value="Land Shipping" <?php if (($_POST['shipmentmethod'] ?? '') == 'Land Shipping') echo 'selected'; ?>>Land Shipping</option>
+                    <option value="Air Shipping" <?php if (($_POST['shipmentmethod'] ?? '') == 'Air Shipping') echo 'selected'; ?>>Air Shipping</option>
+                    <option value="Sea Shipping" <?php if (($_POST['shipmentmethod'] ?? '') == 'Sea Shipping') echo 'selected'; ?>>Sea Shipping</option>
                   </select>
                   <?php if (isset($errors['shipmentmethod'])) : ?>
                     <div class="text-danger"><?php echo $errors['shipmentmethod']; ?></div>
@@ -362,7 +362,7 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
                 </div>
                 <div class="col-md-4">
                   <label for="origin" class="form-label">Origin</label>
-                  <input type="text" class="form-control" id="origin" name="dispatchlocation" required>
+                  <input type="text" class="form-control" id="origin" name="dispatchlocation" value="<?php echo htmlspecialchars($_POST['dispatchlocation'] ?? ''); ?>" required>
                   <?php if (isset($errors['dispatchlocation'])) : ?>
                     <div class="text-danger"><?php echo $errors['dispatchlocation']; ?></div>
                   <?php endif; ?>
@@ -371,21 +371,21 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
               <div class="row mt-3">
                 <div class="col-md-4">
                   <label for="destination" class="form-label">Destination</label>
-                  <input type="text" class="form-control" id="destination" name="destination" required>
+                  <input type="text" class="form-control" id="destination" name="destination" value="<?php echo htmlspecialchars($_POST['destination'] ?? ''); ?>" required>
                   <?php if (isset($errors['destination'])) : ?>
                     <div class="text-danger"><?php echo $errors['destination']; ?></div>
                   <?php endif; ?>
                 </div>
                 <div class="col-md-4">
                   <label for="weight" class="form-label">Weight</label>
-                  <input type="text" class="form-control" id="weight" name="weight" required>
+                  <input type="text" class="form-control" id="weight" name="weight" value="<?php echo htmlspecialchars($_POST['weight'] ?? ''); ?>" required>
                   <?php if (isset($errors['weight'])) : ?>
                     <div class="text-danger"><?php echo $errors['weight']; ?></div>
                   <?php endif; ?>
                 </div>
                 <div class="col-md-4">
                   <label for="packages_count" class="form-label">Packages count</label>
-                  <input type="number" class="form-control" id="packages_count" name="quantity" required>
+                  <input type="number" class="form-control" id="packages_count" name="quantity" value="<?php echo htmlspecialchars($_POST['quantity'] ?? ''); ?>" required>
                   <?php if (isset($errors['quantity'])) : ?>
                     <div class="text-danger"><?php echo $errors['quantity']; ?></div>
                   <?php endif; ?>
@@ -394,14 +394,14 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
               <div class="row mt-3">
                 <div class="col-md-8">
                   <label for="product_description" class="form-label">Product description</label>
-                  <input type="text" class="form-control" id="product_description" name="packagedescription" required>
+                  <input type="text" class="form-control" id="product_description" name="packagedescription" value="<?php echo htmlspecialchars($_POST['packagedescription'] ?? ''); ?>" required>
                   <?php if (isset($errors['packagedescription'])) : ?>
                     <div class="text-danger"><?php echo $errors['packagedescription']; ?></div>
                   <?php endif; ?>
                 </div>
                 <div class="col-md-4">
                   <label for="total_freight" class="form-label">Total Freight</label>
-                  <input type="text" class="form-control" id="total_freight" name="total_freight" required>
+                  <input type="text" class="form-control" id="total_freight" name="total_freight" value="<?php echo htmlspecialchars($_POST['total_freight'] ?? ''); ?>" required>
                   <?php if (isset($errors['total_freight'])) : ?>
                     <div class="text-danger"><?php echo $errors['total_freight']; ?></div>
                   <?php endif; ?>
@@ -410,21 +410,21 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
               <div class="row mt-3">
                 <div class="col-md-4">
                   <label for="carrier_ref_no" class="form-label">Carrier Reference No.</label>
-                  <input type="text" class="form-control" id="carrier_ref_no" name="carrierreferencenumber" required>
+                  <input type="text" class="form-control" id="carrier_ref_no" name="carrierreferencenumber" value="<?php echo htmlspecialchars($_POST['carrierreferencenumber'] ?? ''); ?>" required>
                   <?php if (isset($errors['carrierreferencenumber'])) : ?>
                     <div class="text-danger"><?php echo $errors['carrierreferencenumber']; ?></div>
                   <?php endif; ?>
                 </div>
                 <div class="col-md-4">
                   <label for="dispatch_date" class="form-label">Dispatch Date</label>
-                  <input type="date" class="form-control" id="dispatch_date" name="dispatch_date" required>
+                  <input type="date" class="form-control" id="dispatch_date" name="dispatch_date" value="<?php echo htmlspecialchars($_POST['dispatch_date'] ?? ''); ?>" required>
                   <?php if (isset($errors['dispatch_date'])) : ?>
                     <div class="text-danger"><?php echo $errors['dispatch_date']; ?></div>
                   <?php endif; ?>
                 </div>
                 <div class="col-md-4">
                   <label for="expected_delivery_date" class="form-label">Expected Delivery Date</label>
-                  <input type="date" class="form-control" id="expected_delivery_date" name="estimateddeliverydate" required>
+                  <input type="date" class="form-control" id="expected_delivery_date" name="estimateddeliverydate" value="<?php echo htmlspecialchars($_POST['estimateddeliverydate'] ?? ''); ?>" required>
                   <?php if (isset($errors['estimateddeliverydate'])) : ?>
                     <div class="text-danger"><?php echo $errors['estimateddeliverydate']; ?></div>
                   <?php endif; ?>
@@ -433,7 +433,7 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
               <div class="row mt-3">
                 <div class="col-md-12">
                   <label for="comments" class="form-label">Comments</label>
-                  <textarea class="form-control" id="comments" name="comments" rows="3"></textarea>
+                  <textarea class="form-control" id="comments" name="comments" rows="3"><?php echo htmlspecialchars($_POST['comments'] ?? ''); ?></textarea>
                 </div>
               </div>
               <div class="row mt-3">
