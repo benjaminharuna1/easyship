@@ -35,6 +35,12 @@ if (isset($_GET['num']) &&  $_GET['num'] !="") {
         $date_added = $row['date_added'];
     }
 
+    $stmt_items = mysqli_prepare($con, "SELECT * FROM package_items WHERE tracking_id = ?");
+    mysqli_stmt_bind_param($stmt_items, "s", $post_id);
+    mysqli_stmt_execute($stmt_items);
+    $result_items = mysqli_stmt_get_result($stmt_items);
+    $package_items = mysqli_fetch_all($result_items, MYSQLI_ASSOC);
+
     $sqls = mysqli_query($con, "SELECT * FROM track_update  WHERE track_num = '$post_id' ORDER BY id DESC LIMIT 1  ");
     if (mysqli_num_rows($sqls) > 0 ) {
         $rows = mysqli_fetch_assoc($sqls);
@@ -235,6 +241,36 @@ Company Website: <?php echo $site_url ?></strong></center>
             </table>
           </div><!-- /.col -->
         </div><!-- /.row -->
+
+        <!-- Package Items Table -->
+        <div class="row">
+            <div class="col-xs-12 table-responsive">
+                <h3 style="color:blue;"><strong>Package Items</strong></h3>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>S/N</th>
+                            <th>Quantity</th>
+                            <th>Piece Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                            $sn = 1;
+                            foreach ($package_items as $item) :
+                        ?>
+                            <tr>
+                                <td><?php echo $sn++; ?></td>
+                                <td><?php echo $item['quantity']; ?></td>
+                                <td><?php echo $item['piece_type']; ?></td>
+                                <td><?php echo $item['description']; ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 		
 		      
 		
