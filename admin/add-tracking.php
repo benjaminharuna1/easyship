@@ -170,7 +170,7 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
 
         } catch (Exception $e) {
             mysqli_rollback($con);
-            $error = "DATABASE ERROR: " . $e->getMessage() . " (Line: " . $e->getLine() . ")";
+            $errors['db_error'] = "DATABASE ERROR: " . $e->getMessage() . " (Line: " . $e->getLine() . ")";
         }
     }
 }
@@ -182,16 +182,20 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
     <div class="page-content">               
         <h1>Add Tracking</h1>
              <?php  
-                  if ($msg != "") {
+                  if (!empty($msg)) {
              ?>
-                 <div class="alert alert success"><?php echo $msg ?></div>
+                 <div class="alert alert-success"><?php echo $msg ?></div>
 
              <?php } ?>
 
                <?php  
-                  if ($error != "") {
+                  if (!empty($errors)) {
              ?>
-                 <div class="alert alert danger"><?php echo $error ?></div>
+                 <div class="alert alert-danger">
+                    <?php foreach ($errors as $error): ?>
+                        <p><?php echo $error ?></p>
+                    <?php endforeach; ?>
+                 </div>
              <?php } ?>
                
                 <br>
