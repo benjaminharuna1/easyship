@@ -20,6 +20,7 @@ if (isset($_GET['num']) &&  $_GET['num'] !="") {
         $carrier_refrence_number = $row['carrier_refrence_number'];
         $weight = $row['weight'];
         $payment_mode = $row['payment_mode'];
+        $total_cost = $row['total_cost'];
         $image = $row['image'];
         $receiver_name = $row['receiver_name'];
         $receiver_contact = $row['receiver_contact'];
@@ -211,36 +212,12 @@ Company Website: <?php echo $site_url ?></strong></center>
             <b>Order ID:</b>&nbsp;&nbsp;<?php echo $tracking_id  ?><br/>
             <b>Est. Delivery Date:</b>&nbsp;<?php echo $estimated_delivery_date  ?><br/>
 			<b>Payment Mode:</b> <small class="label label-danger"><i class="fa fa-money"></i>&nbsp;&nbsp;<?php echo $payment_mode   ?></small><br/> 
+			<b>Total Amount Paid:</b>&nbsp;<?php echo $total_cost   ?><br/>
 			<b>Mode of Transport:</b>&nbsp;<?php echo $shipment_mode   ?><br/>
 			
           </div><!-- /.col -->		 
         </div><!-- /.row -->
 
-        <!-- Table row -->
-        <div class="row">
-          <div class="col-xs-12 table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Qty</th>
-                  <th>Type of Shipment</th>
-                  <th>Product</th>
-                  <th>Description</th>
-                  <th>Total Cost</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><?php echo $quantity  ?></td>
-                  <td><?php echo $shipment_mode ?></td>
-                  <td><?php echo $package_discription  ?></td>
-                  <td>Delivered</td>
-				          <td><?php echo $invoice_total ?></td>
-                </tr>               
-              </tbody>
-            </table>
-          </div><!-- /.col -->
-        </div><!-- /.row -->
 
         <!-- Package Items Table -->
         <div class="row">
