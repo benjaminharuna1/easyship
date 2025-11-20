@@ -262,9 +262,8 @@ if (isset($_POST['search'])) {
                       }
                       $locations = array_unique($locations);
                       $origin = array_shift($locations);
-                      $destination_map = count($locations) > 0 ? array_pop($locations) : $origin;
-                      $waypoints = implode('|', $locations);
-                      $map_url = "https://maps.google.com/maps?f=d&source=s_d&saddr=" . urlencode($origin) . "&daddr=" . urlencode($destination_map) . "&waypoints=" . urlencode($waypoints) . "&output=embed";
+                      $destination_map = count($locations) > 0 ? implode('+to:', array_map('urlencode', $locations)) : urlencode($origin);
+                      $map_url = "https://maps.google.com/maps?f=d&source=s_d&saddr=" . urlencode($origin) . "&daddr=" . $destination_map . "&output=embed";
                       ?>
                       <iframe class="map" src="<?php echo $map_url; ?>" style="border:0; width: 100%; height: 300px;"></iframe>
                     </div>
