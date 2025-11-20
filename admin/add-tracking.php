@@ -159,14 +159,14 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
             // Commit Transaction
             mysqli_commit($con);
 
-            $_SESSION['success_message'] = "Shipment created successfully with Tracking ID: " . htmlspecialchars($tnumbs_final);
-            header("Location: edit.php?edit=" . urlencode($tnumbs_final));
-            exit();
-
             // Send mail
             $subject = "Registered Shipment";
             $body = "<p>Dear $receiver_name</p> <p>We are pleased to inform you that your shipment has been registered with us at <strong>$sitename</strong>.</p>  <center>Tracking Information</center> <p> <strong>Tracking Number - $tnumbs_final </strong> </p> <p> <strong>Status - $status </strong> </p> <p> <strong>Package - $package_discription </strong> </p> <p> <strong>Dispatch Location - $dispatch_location </strong> </p> <p> <strong>Estimated Delivery Date - $destination </strong> </p> <p>For more information visit the <a href='$site_url/tracking.php'>Tracking Page</a> </p> ";
             sendMail($receiver_email, $subject, $body);
+
+            $_SESSION['success_message'] = "Shipment created successfully with Tracking ID: " . htmlspecialchars($tnumbs_final);
+            header("Location: edit.php?edit=" . urlencode($tnumbs_final));
+            exit();
 
         } catch (Exception $e) {
             mysqli_rollback($con);

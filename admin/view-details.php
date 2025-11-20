@@ -24,18 +24,18 @@
             $carrier_refrence_number = $row['carrier_refrence_number'];
             $weight = $row['weight'];
             $payment_mode = $row['payment_mode'];
+            $total_cost = $row['total_cost'];
             $image = $row['image'];
             $receiver_name = $row['receiver_name'];
             $receiver_contact = $row['receiver_contact'];
             $receiver_email = $row['receiver_email'];
             $receiver_address = $row['receiver_address'];
             $package_discription = $row['package_discription'];
-            $dispach_date = $row['dispach_date'];
+            $dispatch_date = $row['dispatch_date'];
             $destination = $row['destination'];
             $estimated_delivery_date = $row['estimated_delivery_date'];
             $shipment_mode = $row['shipment_mode'];
             $quantity = $row['quantity'];
-            $delivery_time = $row ['delivery_time'];
  		
  	}
  }
@@ -70,22 +70,22 @@
               <form action="add-tracking.php" method="POST" enctype="multipart/form-data">
                 <div class="col-12">
                   <label for="inputNanme4" class="form-label">Senders Name</label>
-                  <input type="text" class="form-control" id="inputNanme4" name="sendername" value="<?php echo $sender_name ?>">
+                  <input type="text" class="form-control" id="inputNanme4" name="sendername" value="<?php echo $sender_name ?>" readonly>
                 </div>
 
                 <div class="col-12">
                   <label for="inputNanme4" class="form-label">Senders Contact</label>
-                  <input type="text" class="form-control" id="inputNanme4" name="sendercontact" value="<?php echo $sender_contact?>">
+                  <input type="text" class="form-control" id="inputNanme4" name="sendercontact" value="<?php echo $sender_contact?>" readonly>
                 </div>
 
                 <div class="col-12">
                   <label for="inputNanme4" class="form-label">Senders Email</label>
-                  <input type="text" class="form-control" id="inputNanme4" name="senderemail"value="<?php echo $sender_email ?>">
+                  <input type="text" class="form-control" id="inputNanme4" name="senderemail"value="<?php echo $sender_email ?>" readonly>
                 </div>
 
                 <div class="col-12">
                   <label for="inputNanme4" class="form-label">Senders Address</label>
-                  <input type="text" class="form-control" id="inputNanme4" name="senderaddress" value="<?php echo $sender_address ?>">
+                  <input type="text" class="form-control" id="inputNanme4" name="senderaddress" value="<?php echo $sender_address ?>" readonly>
                 </div>
 
                 <h3>Other info</h3>
@@ -108,27 +108,32 @@
 
                 <div class="col-12">
                   <label for="inputNanme4" class="form-label">Dispatch Location</label>
-                  <input type="text" class="form-control" id="inputNanme4" name="dispatchlocation" value="<?php echo $dispatch_location ?>" >
+                  <input type="text" class="form-control" id="inputNanme4" name="dispatchlocation" value="<?php echo $dispatch_location ?>" readonly>
                 </div>
 
                 <div class="col-12">
                   <label for="inputNanme4" class="form-label">Carrier</label>
-                  <input type="text" class="form-control" id="inputNanme4" name="carrier" value="<?php echo $carrier ?>">
+                  <input type="text" class="form-control" id="inputNanme4" name="carrier" value="<?php echo $carrier ?>" readonly>
                 </div>
 
                 <div class="col-12">
                   <label for="inputNanme4" class="form-label">Carrier reference number </label>
-                  <input type="text" class="form-control" id="inputNanme4" name="carrierreferencenumber" value="<?php echo $carrier_refrence_number ?>" >
+                  <input type="text" class="form-control" id="inputNanme4" name="carrierreferencenumber" value="<?php echo $carrier_refrence_number ?>" readonly>
                 </div>
 
                 <div class="col-12">
                   <label for="inputNanme4" class="form-label">Weight</label>
-                  <input type="text" class="form-control" id="inputNanme4" name="weight" value="<?php echo $weight ?>" >
+                  <input type="text" class="form-control" id="inputNanme4" name="weight" value="<?php echo $weight ?>" readonly>
                 </div>
 
                  <div class="col-12">
                   <label for="inputNanme4" class="form-label">Payment Mode </label>
-                  <input type="text" class="form-control" id="inputNanme4" name="paymentmode" value="<?php echo $payment_mode ?>" >
+                  <input type="text" class="form-control" id="inputNanme4" name="paymentmode" value="<?php echo $payment_mode ?>" readonly>
+                </div>
+
+                <div class="col-12">
+                  <label for="inputNanme4" class="form-label">Total Cost</label>
+                  <input type="text" class="form-control" id="inputNanme4" name="totalcost" value="<?php echo $total_cost ?>" readonly>
                 </div>
 
               <!--   <div class="col-12">
@@ -157,59 +162,53 @@
              
                 <div class="col-12">
                   <label for="inputNanme4" class="form-label">Receiver Name</label>
-                  <input type="text" class="form-control" id="inputNanme4" name="receviername"  value="<?php echo $receiver_name ?>">
+                  <input type="text" class="form-control" id="inputNanme4" name="receviername"  value="<?php echo $receiver_name ?>" readonly>
                 </div>
                 <div class="col-12">
                   <label for="inputEmail4" class="form-label">Receiver Email</label>
-                  <input type="email" class="form-control"  name="recevieremail" value="<?php echo $receiver_email ?>" >
+                  <input type="email" class="form-control"  name="recevieremail" value="<?php echo $receiver_email ?>" readonly>
                 </div>
                 <div class="col-12">
                   <label for="inputEmail4" class="form-label">Recevier contact </label>
-                  <input type="text" class="form-control" id="" name="receviercontact" value="<?php echo $receiver_contact ?>">
+                  <input type="text" class="form-control" id="" name="receviercontact" value="<?php echo $receiver_contact ?>" readonly>
                 </div>
                
                 <div class="col-12">
                   <label for="inputAddress" class="form-label">Recevier Address</label>
-                  <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St" name="recevieraddress" value="<?php echo $receiver_address?>" >
+                  <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St" name="recevieraddress" value="<?php echo $receiver_address?>" readonly>
                 </div>
                 
                 <h3>Other info</h3>
 
                  <div class="col-12">
                   <label for="inputAddress" class="form-label">Destination</label>
-                  <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St" name="destination" value="<?php echo $destination ?>">
+                  <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St" name="destination" value="<?php echo $destination ?>" readonly>
                 </div>
 
 
                  <div class="col-12">
                   <label for="inputAddress" class="form-label">Package description</label>
-                  <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St"name="packagedescription"  value="<?php echo $package_discription ?>">
+                  <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St"name="packagedescription"  value="<?php echo $package_discription ?>" readonly>
                 </div>
 
                 <div class="col-12">
-                  <label for="inputAddress" class="form-label">Dipatch Date</label>
-                  <input type="date" class="form-control" id="inputAddress" placeholder="1234 Main St" name="dipatchdate" value="<?php echo $dispach_date?>">
+                  <label for="inputAddress" class="form-label">Dispatch Date</label>
+                  <input type="date" class="form-control" id="inputAddress" placeholder="1234 Main St" name="dispatchdate" value="<?php echo $dispatch_date?>" readonly>
                 </div>
 
                  <div class="col-12">
-                  <label for="inputAddress" class="form-label">Estimated Deliverly Date</label>
-                  <input type="date" class="form-control" id="inputAddress" placeholder="1234 Main St" name="estimateddeliverydate" value="<?php echo $estimated_delivery_date ?>">
+                  <label for="inputAddress" class="form-label">Estimated Delivery Date</label>
+                  <input type="date" class="form-control" id="inputAddress" placeholder="1234 Main St" name="estimateddeliverydate" value="<?php echo $estimated_delivery_date ?>" readonly>
                 </div>
 
                 <div class="col-12">
                   <label for="inputAddress" class="form-label">Shipment method</label>
-                  <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St" name="shipmentmethod" value="<?php echo $shipment_mode ?>">
+                  <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St" name="shipmentmethod" value="<?php echo $shipment_mode ?>" readonly>
                 </div>
 
                  <div class="col-12">
                   <label for="inputAddress" class="form-label">quantity</label>
-                  <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St" name="quantity" value="<?php echo $quantity ?>" >
-                </div>
-
-
-                 <div class="col-12">
-                  <label for="inputAddress" class="form-label">Devlivery time</label>
-                  <input type="time" class="form-control" id="inputAddress" placeholder="1234 Main St" name="deliverytime" value="<?php echo $delivery_time ?>">
+                  <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St" name="quantity" value="<?php echo $quantity ?>" readonly>
                 </div>
 
 
