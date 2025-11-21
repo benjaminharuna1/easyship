@@ -1,6 +1,8 @@
 <?php  
-
-
+// Fetch sitename from the database to ensure it's always available
+$site_name_query = mysqli_query($con, "SELECT sitename FROM setting WHERE id = 1");
+$site_name_row = mysqli_fetch_assoc($site_name_query);
+$sitename = $site_name_row['sitename'] ?? 'Easy Ship'; // Provide a default value
 ?>
 
 
@@ -11,7 +13,7 @@
 		<!--End Back To Top Button-->
 
         <footer class="page-footer">
-			<p class="mb-0">Copyright ©<?php echo $sitename ?> 2023 - <?php echo date('Y')  ?> All right reserved.</p>
+			<p class="mb-0">Copyright ©<?php echo htmlspecialchars($sitename); ?> 2023 - <?php echo date('Y'); ?> All right reserved.</p>
 		</footer> 
 	</div>
 	<!--end wrapper-->

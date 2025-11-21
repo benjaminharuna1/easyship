@@ -22,19 +22,21 @@ try {
     if (mysqli_num_rows($result) > 0) {
         $settings = mysqli_fetch_assoc($result);
     } else {
+        // This is a critical error, the settings table must have the first row.
         $err = "Settings not found. Please configure your site.";
     }
 
-    // Handle POST requests
+    // Handle POST requests for all forms on this page
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-        // Handle Test Email Submission
+        // Handle Test Email Submission separately as it's in a modal
         if (isset($_POST['send-test-email'])) {
             $test_email_recipient = trim($_POST['test-email-recipient']);
             if (!filter_var($test_email_recipient, FILTER_VALIDATE_EMAIL)) {
                 $_SESSION['error_message'] = "Invalid recipient email address for the test email.";
             } else {
                 $subject = "SMTP Test Email from " . ($settings['Sitename'] ?? 'your site');
+                // The sendMail function uses settings from the DB, so they must be saved first.
                 if (sendMail($test_email_recipient, $subject, 'test_email', [])) {
                     $_SESSION['success_message'] = "Test email sent successfully to " . htmlspecialchars($test_email_recipient);
                 } else {
@@ -45,11 +47,11 @@ try {
             exit();
         }
 
-        // All other updates require a transaction
+        // For main settings forms, use a transaction
         mysqli_begin_transaction($con);
         try {
-            // General settings update
-            if (isset($_POST['save'])) {
+            // Site settings update
+            if (isset($_POST['save-site-settings'])) {
                 $site_name = trim($_POST['site-name']);
                 $site_title = trim($_POST['site-title']);
                 $site_url = trim($_POST['site-url']);
@@ -65,6 +67,50 @@ try {
                 $update_stmt = mysqli_prepare($con, "UPDATE setting SET Sitename = ?, site_title = ?, site_url = ?, email_name = ?, email_address = ? WHERE id = 1");
                 mysqli_stmt_bind_param($update_stmt, "sssss", $site_name, $site_title, $site_url, $email_name, $email_address);
                 mysqli_stmt_execute($update_stmt);
+
+                // Image upload/removal logic for Site Logo and Favicon
+                $image_fields = ['site-logo' => 'site_logo', 'site-favicon' => 'site_favicon'];
+                foreach ($image_fields as $input_name => $db_column) {
+                    $current_image = $settings[$db_column] ?? '';
+
+                    if (!empty($_POST['remove_' . $db_column])) {
+                        if (!empty($current_image) && file_exists('../' . $current_image)) {
+                            unlink('../' . $current_image);
+                        }
+                        $update_img_stmt = mysqli_prepare($con, "UPDATE setting SET $db_column = '' WHERE id = 1");
+                        mysqli_stmt_execute($update_img_stmt);
+                    } elseif (isset($_FILES[$input_name]) && $_FILES[$input_name]['error'] == 0) {
+                        $target_dir = "uploads/";
+                        $filename = basename($_FILES[$input_name]["name"]);
+                        $target_file = $target_dir . time() . '_' . $filename;
+                        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+                        $allowed_extensions = ($db_column == 'site_logo')
+                            ? ["jpg", "png", "jpeg", "gif", "svg"]
+                            : ["jpg", "png", "jpeg", "gif", "ico", "svg"];
+
+                        if (!in_array($imageFileType, $allowed_extensions)) {
+                             throw new Exception("Invalid file type for " . htmlspecialchars(ucwords(str_replace('_', ' ', $db_column))) . ".");
+                        }
+
+                        // Remove old image if it exists
+                        if (!empty($current_image) && file_exists('../' . $current_image)) {
+                            unlink('../' . $current_image);
+                        }
+
+                        // Move new image and update DB
+                        if (move_uploaded_file($_FILES[$input_name]["tmp_name"], '../' . $target_file)) {
+                            $update_img_stmt = mysqli_prepare($con, "UPDATE setting SET $db_column = ? WHERE id = 1");
+                            mysqli_stmt_bind_param($update_img_stmt, "s", $target_file);
+                            mysqli_stmt_execute($update_img_stmt);
+                        } else {
+                            throw new Exception("Sorry, there was an error uploading your file.");
+                        }
+                    }
+                }
+                 $_SESSION['success_message'] = "Site settings updated successfully.";
+                 header("Location: settings.php");
+                 exit();
             }
 
             // Email settings update
@@ -78,41 +124,13 @@ try {
                 $update_stmt = mysqli_prepare($con, "UPDATE setting SET smtp_host = ?, smtp_username = ?, smtp_password = ?, smtp_port = ?, smtp_secure = ? WHERE id = 1");
                 mysqli_stmt_bind_param($update_stmt, "sssss", $smtp_host, $smtp_username, $smtp_password, $smtp_port, $smtp_secure);
                 mysqli_stmt_execute($update_stmt);
-            }
 
-            // Image upload/removal logic
-            $image_fields = ['site-logo' => 'site_logo', 'site-favicon' => 'site_favicon'];
-            foreach ($image_fields as $input_name => $db_column) {
-                if (isset($_POST['remove_' . $db_column])) {
-                    if (!empty($settings[$db_column]) && file_exists('../' . $settings[$db_column])) {
-                        unlink('../' . $settings[$db_column]);
-                    }
-                    $update_img_stmt = mysqli_prepare($con, "UPDATE setting SET $db_column = '' WHERE id = 1");
-                    mysqli_stmt_execute($update_img_stmt);
-                } elseif (isset($_FILES[$input_name]) && $_FILES[$input_name]['error'] == 0) {
-                    $target_dir = "uploads/";
-                    $filename = basename($_FILES[$input_name]["name"]);
-                    $target_file = $target_dir . time() . '_' . $filename;
-                    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-                    $allowed_extensions = ($db_column == 'site_logo') ? ["jpg", "png", "jpeg", "gif"] : ["jpg", "png", "jpeg", "gif", "ico", "svg"];
-
-                    if (!in_array($imageFileType, $allowed_extensions)) throw new Exception("Invalid file type for " . htmlspecialchars($input_name) . ".");
-                    if (!empty($settings[$db_column]) && file_exists('../' . $settings[$db_column])) unlink('../' . $settings[$db_column]);
-
-                    if (move_uploaded_file($_FILES[$input_name]["tmp_name"], '../' . $target_file)) {
-                        $update_img_stmt = mysqli_prepare($con, "UPDATE setting SET $db_column = ? WHERE id = 1");
-                        mysqli_stmt_bind_param($update_img_stmt, "s", $target_file);
-                        mysqli_stmt_execute($update_img_stmt);
-                    } else {
-                        throw new Exception("Sorry, there was an error uploading your file.");
-                    }
-                }
+                $_SESSION['success_message'] = "Email settings updated successfully.";
+                header("Location: settings.php#email-settings");
+                exit();
             }
 
             mysqli_commit($con);
-            $_SESSION['success_message'] = "Settings updated successfully.";
-            header("Location: settings.php" . (isset($_POST['save-email-settings']) ? '#email-settings' : ''));
-            exit();
 
         } catch (Exception $e) {
             mysqli_rollback($con);
@@ -121,6 +139,7 @@ try {
         }
     }
 } catch (Exception $e) {
+    // This catches errors from the initial settings fetch
     $err = "Database Error: " . $e->getMessage();
 }
 
@@ -145,72 +164,114 @@ include 'header.php';
             </div>
         <?php endif; ?>
 
-        <section class="section profile">
-            <div class="col-xl-8">
-                <div class="card">
-                    <div class="card-body pt-3">
-                        <!-- Bordered Tabs -->
-                        <ul class="nav nav-tabs nav-tabs-bordered">
-                            <li class="nav-item">
-                                <a class="nav-link active" data-bs-toggle="tab" href="#profile-overview">Site Settings</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="tab" href="#email-settings">Email Settings</a>
-                            </li>
-                        </ul>
+        <div class="card">
+            <div class="card-body pt-3">
+                <!-- Bordered Tabs -->
+                <ul class="nav nav-tabs nav-tabs-bordered">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#site-settings">Site Settings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#email-settings">Email Settings</a>
+                    </li>
+                </ul>
 
-                        <div class="tab-content pt-2">
-                            <div class="tab-pane fade show active profile-overview" id="profile-overview">
-                                <h5 class="card-title"></h5>
+                <div class="tab-content pt-2">
+                    <!-- Site Settings Tab -->
+                    <div class="tab-pane fade show active" id="site-settings">
+                        <h5 class="card-title">Manage your site's general information and branding.</h5>
 
-                                <form method="POST" action="settings.php">
-                                    <div class="mb-3"><label class="form-label">Site name</label><input class="form-control" type="text" name="site-name" value="<?php echo htmlspecialchars($settings['sitename'] ?? ''); ?>"></div>
-                                    <div class="mb-3"><label class="form-label">Site title</label><input class="form-control" type="text" name="site-title" value="<?php echo htmlspecialchars($settings['site_title'] ?? ''); ?>"></div>
-                                    <div class="mb-3"><label class="form-label">Site Url</label><input class="form-control" type="text" name="site-url" value="<?php echo htmlspecialchars($settings['site_url'] ?? ''); ?>"></div>
-                                    <div class="mb-3"><label class="form-label">Email Name</label><input class="form-control" type="text" name="email-name" value="<?php echo htmlspecialchars($settings['email_name'] ?? ''); ?>"></div>
-                                    <div class="mb-3"><label class="form-label">Email Address</label><input class="form-control" type="email" name="email" value="<?php echo htmlspecialchars($settings['email_address'] ?? ''); ?>"></div>
-                                    <button name="save" type="submit" class="btn btn-primary">Save Settings</button>
-                                </form>
-                                <hr>
-                                <form method="POST" action="settings.php" enctype="multipart/form-data" class="mb-4">
-                                    <div class="mb-3">
-                                        <label class="form-label">Site Logo</label>
-                                        <?php if (!empty($settings['site_logo'])) : ?>
-                                            <div class="mb-2"><img src="../<?php echo htmlspecialchars($settings['site_logo']); ?>" alt="Site Logo" style="max-width: 200px; max-height: 100px;"><button type="submit" name="remove_site_logo" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Remove</button></div>
-                                        <?php endif; ?>
-                                        <div class="input-group"><input class="form-control" type="file" name="site-logo"><button name="upload-logo" type="submit" class="btn btn-primary">Upload</button></div>
-                                    </div>
-                                </form>
-                                <hr>
-                                <form method="POST" action="settings.php" enctype="multipart/form-data">
-                                    <div class="mb-3">
-                                        <label class="form-label">Site Favicon</label>
-                                        <?php if (!empty($settings['site_favicon'])) : ?>
-                                            <div class="mb-2"><img src="../<?php echo htmlspecialchars($settings['site_favicon']); ?>" alt="Site Favicon" style="max-width: 50px; max-height: 50px;"><button type="submit" name="remove_site_favicon" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Remove</button></div>
-                                        <?php endif; ?>
-                                        <div class="input-group"><input class="form-control" type="file" name="site-favicon"><button name="upload-favicon" type="submit" class="btn btn-primary">Upload</button></div>
-                                    </div>
-                                </form>
+                        <form method="POST" action="settings.php" enctype="multipart/form-data">
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">Site name</label>
+                                <div class="col-sm-10"><input class="form-control" type="text" name="site-name" value="<?php echo htmlspecialchars($_POST['site-name'] ?? $settings['Sitename'] ?? ''); ?>" required></div>
                             </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">Site title</label>
+                                <div class="col-sm-10"><input class="form-control" type="text" name="site-title" value="<?php echo htmlspecialchars($_POST['site-title'] ?? $settings['site_title'] ?? ''); ?>" required></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">Site Url</label>
+                                <div class="col-sm-10"><input class="form-control" type="url" name="site-url" value="<?php echo htmlspecialchars($_POST['site-url'] ?? $settings['site_url'] ?? ''); ?>" required></div>
+                            </div>
+                             <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">Email Name</label>
+                                <div class="col-sm-10"><input class="form-control" type="text" name="email-name" value="<?php echo htmlspecialchars($_POST['email-name'] ?? $settings['email_name'] ?? ''); ?>" placeholder="The name emails will come from" required></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">Email Address</label>
+                                <div class="col-sm-10"><input class="form-control" type="email" name="email" value="<?php echo htmlspecialchars($_POST['email'] ?? $settings['email_address'] ?? ''); ?>" placeholder="The email address emails will come from" required></div>
+                            </div>
+                            <hr>
+                            <!-- Site Logo -->
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">Site Logo</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" type="file" id="site-logo-input" name="site-logo" onchange="previewImage(event, 'logo-preview')">
+                                    <input type="hidden" name="remove_site_logo" id="remove_site_logo_input" value="">
+                                    <?php $logo_src = !empty($settings['site_logo']) ? '../' . htmlspecialchars($settings['site_logo']) : ''; ?>
+                                    <div class="mt-2">
+                                        <img id="logo-preview" src="<?php echo $logo_src; ?>" alt="Logo Preview" style="max-width: 200px; max-height: 100px; <?php echo empty($logo_src) ? 'display: none;' : ''; ?>">
+                                    </div>
+                                    <?php if (!empty($logo_src)): ?>
+                                    <button type="button" class="btn btn-danger btn-sm mt-2" onclick="removeImage('site-logo-input', 'logo-preview', 'remove_site_logo_input')">Remove Current Logo</button>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <!-- Site Favicon -->
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">Site Favicon</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" type="file" id="site-favicon-input" name="site-favicon" onchange="previewImage(event, 'favicon-preview')">
+                                    <input type="hidden" name="remove_site_favicon" id="remove_site_favicon_input" value="">
+                                     <?php $favicon_src = !empty($settings['site_favicon']) ? '../' . htmlspecialchars($settings['site_favicon']) : ''; ?>
+                                     <div class="mt-2">
+                                        <img id="favicon-preview" src="<?php echo $favicon_src; ?>" alt="Favicon Preview" style="max-width: 50px; max-height: 50px; <?php echo empty($favicon_src) ? 'display: none;' : ''; ?>">
+                                     </div>
+                                     <?php if (!empty($favicon_src)): ?>
+                                     <button type="button" class="btn btn-danger btn-sm mt-2" onclick="removeImage('site-favicon-input', 'favicon-preview', 'remove_site_favicon_input')">Remove Current Favicon</button>
+                                     <?php endif; ?>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <button name="save-site-settings" type="submit" class="btn btn-primary">Save Settings</button>
+                            </div>
+                        </form>
+                    </div>
 
-                            <div class="tab-pane fade" id="email-settings">
-                                <h5 class="card-title"></h5>
-                                <form method="POST" action="settings.php">
-                                    <div class="mb-3"><label class="form-label">SMTP Host</label><input class="form-control" type="text" name="smtp-host" value="<?php echo htmlspecialchars($settings['smtp_host'] ?? ''); ?>"></div>
-                                    <div class="mb-3"><label class="form-label">SMTP Username</label><input class="form-control" type="text" name="smtp-username" value="<?php echo htmlspecialchars($settings['smtp_username'] ?? ''); ?>"></div>
-                                    <div class="mb-3"><label class="form-label">SMTP Password</label><input class="form-control" type="password" name="smtp-password" value="<?php echo htmlspecialchars($settings['smtp_password'] ?? ''); ?>"></div>
-                                    <div class="mb-3"><label class="form-label">SMTP Port</label><input class="form-control" type="text" name="smtp-port" value="<?php echo htmlspecialchars($settings['smtp_port'] ?? ''); ?>"></div>
-                                    <div class="mb-3"><label class="form-label">SMTP Secure</label><input class="form-control" type="text" name="smtp-secure" placeholder="e.g., tls or ssl" value="<?php echo htmlspecialchars($settings['smtp_secure'] ?? ''); ?>"></div>
-                                    <button name="save-email-settings" type="submit" class="btn btn-primary">Save Email Settings</button>
-                                </form>
-                                <hr>
+                    <!-- Email Settings Tab -->
+                    <div class="tab-pane fade" id="email-settings">
+                        <h5 class="card-title">Configure SMTP settings for sending emails.</h5>
+                        <form method="POST" action="settings.php">
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">SMTP Host</label>
+                                <div class="col-sm-10"><input class="form-control" type="text" name="smtp-host" value="<?php echo htmlspecialchars($_POST['smtp-host'] ?? $settings['smtp_host'] ?? ''); ?>"></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">SMTP Username</label>
+                                <div class="col-sm-10"><input class="form-control" type="text" name="smtp-username" value="<?php echo htmlspecialchars($_POST['smtp-username'] ?? $settings['smtp_username'] ?? ''); ?>"></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">SMTP Password</label>
+                                <div class="col-sm-10"><input class="form-control" type="password" name="smtp-password" value="<?php echo htmlspecialchars($_POST['smtp-password'] ?? $settings['smtp_password'] ?? ''); ?>"></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">SMTP Port</label>
+                                <div class="col-sm-10"><input class="form-control" type="number" name="smtp-port" value="<?php echo htmlspecialchars($_POST['smtp-port'] ?? $settings['smtp_port'] ?? ''); ?>"></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">SMTP Secure</label>
+                                <div class="col-sm-10"><input class="form-control" type="text" name="smtp-secure" placeholder="e.g., tls or ssl" value="<?php echo htmlspecialchars($_POST['smtp-secure'] ?? $settings['smtp_secure'] ?? ''); ?>"></div>
+                            </div>
+                             <div class="d-flex justify-content-between">
                                 <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#testEmailModal">Send Test Email</button>
+                                <button name="save-email-settings" type="submit" class="btn btn-primary">Save Email Settings</button>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
     </div>
 </div>
 
@@ -224,6 +285,7 @@ include 'header.php';
             </div>
             <form method="POST" action="settings.php">
                 <div class="modal-body">
+                    <p>This will send a test email using your currently saved SMTP settings.</p>
                     <div class="mb-3">
                         <label for="test-email-recipient" class="form-label">Recipient Email</label>
                         <input type="email" class="form-control" id="test-email-recipient" name="test-email-recipient" required>
@@ -242,12 +304,30 @@ include 'header.php';
 // Logic to stay on the correct tab after a page reload/redirect
 document.addEventListener('DOMContentLoaded', function() {
     if (location.hash) {
-        const tabTrigger = document.querySelector('a[href="' + location.hash + '"]');
+        const tabTrigger = document.querySelector('a.nav-link[href="' + location.hash + '"]');
         if (tabTrigger) {
             new bootstrap.Tab(tabTrigger).show();
         }
     }
 });
+
+// Preview selected image and handle removal
+function previewImage(event, previewId) {
+    const reader = new FileReader();
+    reader.onload = function() {
+        const output = document.getElementById(previewId);
+        output.src = reader.result;
+        output.style.display = 'block';
+    };
+    reader.readAsDataURL(event.target.files[0]);
+}
+
+function removeImage(inputId, previewId, removeFlagId) {
+    document.getElementById(inputId).value = ''; // Clear the file input
+    document.getElementById(previewId).src = '';
+    document.getElementById(previewId).style.display = 'none';
+    document.getElementById(removeFlagId).value = '1'; // Set flag to remove on save
+}
 </script>
 
 <?php include 'footer.php'; ?>

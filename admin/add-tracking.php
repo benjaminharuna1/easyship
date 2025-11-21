@@ -19,7 +19,7 @@ $date_added = date('Y-m-d H:i:s');
 if (isset($_POST['add']) || isset($_POST['publish'])) {
 
     $published = isset($_POST['publish']) ? 1 : 0;
-    $send_email = isset($_POST['send_email_notification']);
+    $send_email_notification = isset($_POST['send_email_notification']);
 
     // Validation
     $required_fields = [
@@ -113,7 +113,7 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
 
             mysqli_commit($con);
 
-            if ($send_email) {
+            if ($send_email_notification) {
                 $email_data = [
                     'receiver_name' => $receiver_name,
                     'tracking_id' => $tnumbs_final,
@@ -158,7 +158,7 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
                                     <h5 class="card-title">Basic Info</h5>
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <label for="tracking_number" class="form-label">Tracking Code</label>
+                                            <label for="tracking_number" class="form-label">Tracking Code (auto-generated)</label>
                                             <input type="text" readonly value="<?php echo htmlspecialchars($tnumbs); ?>" class="form-control">
                                         </div>
                                     </div>
@@ -437,7 +437,49 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
 <script>
     // JavaScript for adding/removing rows and calculating weights remains the same
     document.addEventListener('DOMContentLoaded', function() {
-        // ... (existing JS)
+      let historyRow = `
+        <tr>
+          <td><input type="date" class="form-control" name="history_date[]"></td>
+          <td><input type="time" class="form-control" name="history_time[]"></td>
+          <td><input type="text" class="form-control" name="history_location[]"></td>
+          <td>
+            <select class="form-control" name="history_status[]">
+              <option>Pending</option>
+              <option>In Transit</option>
+              <option>Delivered</option>
+              <option>Cancelled</option>
+            </select>
+          </td>
+          <td><input type="text" class="form-control" name="history_updated_by[]"></td>
+          <td><input type="text" class="form-control" name="history_remarks[]"></td>
+          <td><button type="button" class="btn btn-danger remove_row">Delete</button></td>
+        </tr>
+      `;
+      document.getElementById('add_history_row').addEventListener('click', function() {
+        document.querySelector('#shipment_history_table tbody').insertAdjacentHTML('beforeend', historyRow);
+      });
+
+      let packageRow = `
+        <tr>
+          <td><input type="number" class="form-control" name="package_quantity[]"></td>
+          <td><input type="text" class="form-control" name="package_piece_type[]"></td>
+          <td><input type="text" class="form-control" name="package_description[]"></td>
+          <td><input type="number" class="form-control" name="package_length[]" step="any"></td>
+          <td><input type="number" class="form-control" name="package_width[]" step="any"></td>
+          <td><input type="number" class="form-control" name="package_height[]" step="any"></td>
+          <td><input type="number" class="form-control" name="package_weight[]" step="any"></td>
+          <td><button type="button" class="btn btn-danger remove_row">Delete</button></td>
+        </tr>
+      `;
+      document.getElementById('add_package_row').addEventListener('click', function() {
+        document.querySelector('#package_items_table tbody').insertAdjacentHTML('beforeend', packageRow);
+      });
+
+      document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove_row')) {
+          e.target.closest('tr').remove();
+        }
+      });
     });
 
     function previewImage(event) {

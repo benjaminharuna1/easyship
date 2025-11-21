@@ -171,6 +171,56 @@ include 'header.php';
             <form method="POST" action="edit.php?edit=<?php echo htmlspecialchars($edit_id); ?>" enctype="multipart/form-data">
                 <main id="main" class="main">
                     <section class="section">
+                        <!-- Shipper and Receiver Cards -->
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Shipper Details</h5>
+                                        <div class="mb-3">
+                                            <label class="form-label">Shipper Name</label>
+                                            <input type="text" class="form-control" name="sendername" value="<?php echo htmlspecialchars($_POST['sendername'] ?? $row['sender_name']); ?>" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Phone Number</label>
+                                            <input type="text" class="form-control" name="sendercontact" value="<?php echo htmlspecialchars($_POST['sendercontact'] ?? $row['sender_contact']); ?>" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Address</label>
+                                            <input type="text" class="form-control" name="senderaddress" value="<?php echo htmlspecialchars($_POST['senderaddress'] ?? $row['sender_address']); ?>" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Email</label>
+                                            <input type="email" class="form-control" name="senderemail" value="<?php echo htmlspecialchars($_POST['senderemail'] ?? $row['sender_email']); ?>" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Receiver Details</h5>
+                                        <div class="mb-3">
+                                            <label class="form-label">Receiver Name</label>
+                                            <input type="text" class="form-control" name="receivername" value="<?php echo htmlspecialchars($_POST['receivername'] ?? $row['receiver_name']); ?>" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Phone Number</label>
+                                            <input type="text" class="form-control" name="receivercontact" value="<?php echo htmlspecialchars($_POST['receivercontact'] ?? $row['receiver_contact']); ?>" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Address</label>
+                                            <input type="text" class="form-control" name="receiveraddress" value="<?php echo htmlspecialchars($_POST['receiveraddress'] ?? $row['receiver_address']); ?>" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Email</label>
+                                            <input type="email" class="form-control" name="receiver_email" value="<?php echo htmlspecialchars($_POST['receiver_email'] ?? $row['receiver_email']); ?>" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Basic Info & Shipment Details Cards -->
                         <div class="row">
                             <div class="col-lg-12">
@@ -293,56 +343,6 @@ include 'header.php';
                             </div>
                         </div>
 
-                        <!-- Shipper and Receiver Cards -->
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Shipper Details</h5>
-                                        <div class="mb-3">
-                                            <label class="form-label">Shipper Name</label>
-                                            <input type="text" class="form-control" name="sendername" value="<?php echo htmlspecialchars($_POST['sendername'] ?? $row['sender_name']); ?>" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Phone Number</label>
-                                            <input type="text" class="form-control" name="sendercontact" value="<?php echo htmlspecialchars($_POST['sendercontact'] ?? $row['sender_contact']); ?>" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Address</label>
-                                            <input type="text" class="form-control" name="senderaddress" value="<?php echo htmlspecialchars($_POST['senderaddress'] ?? $row['sender_address']); ?>" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Email</label>
-                                            <input type="email" class="form-control" name="senderemail" value="<?php echo htmlspecialchars($_POST['senderemail'] ?? $row['sender_email']); ?>" required>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Receiver Details</h5>
-                                        <div class="mb-3">
-                                            <label class="form-label">Receiver Name</label>
-                                            <input type="text" class="form-control" name="receivername" value="<?php echo htmlspecialchars($_POST['receivername'] ?? $row['receiver_name']); ?>" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Phone Number</label>
-                                            <input type="text" class="form-control" name="receivercontact" value="<?php echo htmlspecialchars($_POST['receivercontact'] ?? $row['receiver_contact']); ?>" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Address</label>
-                                            <input type="text" class="form-control" name="receiveraddress" value="<?php echo htmlspecialchars($_POST['receiveraddress'] ?? $row['receiver_address']); ?>" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Email</label>
-                                            <input type="email" class="form-control" name="receiver_email" value="<?php echo htmlspecialchars($_POST['receiver_email'] ?? $row['receiver_email']); ?>" required>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         <!-- Package Items and History Cards -->
                         <div class="row">
                             <div class="col-lg-12">
@@ -457,7 +457,97 @@ include 'header.php';
 </div>
 
 <script>
-    // JS for dynamic rows and image preview
+    document.addEventListener('DOMContentLoaded', function() {
+      let historyRow = `
+        <tr>
+          <td><input type="date" class="form-control" name="history_date[]"></td>
+          <td><input type="time" class="form-control" name="history_time[]"></td>
+          <td><input type="text" class="form-control" name="history_location[]"></td>
+          <td>
+            <select class="form-control" name="history_status[]">
+              <option>Pending</option>
+              <option>In Transit</option>
+              <option>Delivered</option>
+              <option>Cancelled</option>
+            </select>
+          </td>
+          <td><input type="text" class="form-control" name="history_updated_by[]"></td>
+          <td><input type="text" class="form-control" name="history_remarks[]"></td>
+          <td><button type="button" class="btn btn-danger remove_row">Delete</button></td>
+        </tr>
+      `;
+      document.getElementById('add_history_row').addEventListener('click', function() {
+        document.querySelector('#shipment_history_table tbody').insertAdjacentHTML('beforeend', historyRow);
+      });
+
+      let packageRow = `
+        <tr>
+          <td><input type="number" class="form-control" name="package_quantity[]"></td>
+          <td><input type="text" class="form-control" name="package_piece_type[]"></td>
+          <td><input type="text" class="form-control" name="package_description[]"></td>
+          <td><input type="number" class="form-control" name="package_length[]"></td>
+          <td><input type="number" class="form-control" name="package_width[]"></td>
+          <td><input type="number" class="form-control" name="package_height[]"></td>
+          <td><input type="number" class="form-control" name="package_weight[]"></td>
+          <td><button type="button" class="btn btn-danger remove_row">Delete</button></td>
+        </tr>
+      `;
+      document.getElementById('add_package_row').addEventListener('click', function() {
+        document.querySelector('#package_items_table tbody').insertAdjacentHTML('beforeend', packageRow);
+      });
+
+      document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove_row')) {
+          e.target.closest('tr').remove();
+          calculateTotals();
+        }
+      });
+
+      document.addEventListener('input', function(e) {
+        if (e.target.name.startsWith('package_')) {
+          calculateTotals();
+        }
+      });
+
+      function calculateTotals() {
+        let totalVolumetricWeight = 0;
+        let totalActualWeight = 0;
+        document.querySelectorAll('#package_items_table tbody tr').forEach(function(row) {
+          let length = parseFloat(row.querySelector('[name="package_length[]"]').value) || 0;
+          let width = parseFloat(row.querySelector('[name="package_width[]"]').value) || 0;
+          let height = parseFloat(row.querySelector('[name="package_height[]"]').value) || 0;
+          let weight = parseFloat(row.querySelector('[name="package_weight[]"]').value) || 0;
+          let quantity = parseInt(row.querySelector('[name="package_quantity[]"]').value) || 0;
+
+          let volumetricWeight = (length * width * height) / 5000;
+          totalVolumetricWeight += volumetricWeight * quantity;
+          totalActualWeight += weight * quantity;
+        });
+
+        document.getElementById('total_volumetric_weight').value = totalVolumetricWeight.toFixed(2);
+        document.getElementById('total_actual_weight').value = totalActualWeight.toFixed(2);
+      }
+    });
+
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function(){
+            var output = document.getElementById('image_preview');
+            output.src = reader.result;
+            output.style.display = 'block';
+            document.getElementById('remove_image').value = 0;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    function removeCurrentImage() {
+        var output = document.getElementById('image_preview');
+        output.src = '#';
+        output.style.display = 'none';
+        document.getElementById('image').value = ''; // Clear the file input
+        document.getElementById('remove_image').value = 1;
+        document.querySelector('[name="current_image"]').value = '';
+    }
 </script>
 <?php include 'footer.php'; ?>
 <script>
