@@ -1,6 +1,6 @@
 <?php
 include 'auth.php';
-include 'header.php';
+
 
 // Enable mysqli exceptions
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
@@ -149,6 +149,7 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
         }
     }
 }
+include 'header.php';
 ?>
 
 <div class="page-wrapper">
