@@ -62,26 +62,43 @@ function sendMail($email, $subject, $template_name, $template_data = [], $attach
     $mail = new PHPMailer(true); // Enable exceptions
 
     try {
-        // Message Body
+        // Fetch the main template
+        $main_template_path = __DIR__ . '/mailer/main_template.html';
+        if (!file_exists($main_template_path)) {
+            error_log("Main email template not found.");
+            return false;
+        }
+        $final_message = file_get_contents($main_template_path);
+
+        // Determine the body content
+        $body_content = '';
         if ($template_name === 'custom_email') {
-            // For custom emails, the body is passed directly.
-            $message = $template_data['body'] ?? '';
+            $body_content = $template_data['body'] ?? '';
         } else {
-            // For template-based emails, load and process the template.
             $template_path = __DIR__ . '/mailer/' . $template_name . '.html';
-            if (!file_exists($template_path)) {
+            if (file_exists($template_path)) {
+                $body_content = file_get_contents($template_path);
+            } else {
                 error_log("Email template not found: " . $template_path);
                 return false;
             }
-            $message = file_get_contents($template_path);
-
-            $template_data['site_name'] = $settings['sitename'] ?? 'Our Site';
-            $template_data['site_url'] = $settings['site_url'] ?? '#';
-
-            foreach ($template_data as $key => $value) {
-                $message = str_replace('{' . $key . '}', htmlspecialchars((string)$value), $message);
-            }
         }
+
+        // Replace placeholders in the body content first
+        foreach ($template_data as $key => $value) {
+            $body_content = str_replace('{' . $key . '}', htmlspecialchars((string)$value), $body_content);
+        }
+
+        // Now, embed the processed body into the main template
+        $final_message = str_replace('{body}', $body_content, $final_message);
+
+        // Replace global placeholders in the main template
+        $site_logo_url = rtrim($settings['site_url'], '/') . '/' . ltrim($settings['site_logo'], '/');
+        $final_message = str_replace('{subject}', htmlspecialchars($subject), $final_message);
+        $final_message = str_replace('{site_name}', htmlspecialchars($settings['sitename']), $final_message);
+        $final_message = str_replace('{site_url}', htmlspecialchars($settings['site_url']), $final_message);
+        $final_message = str_replace('{site_logo_url}', htmlspecialchars($site_logo_url), $final_message);
+        $final_message = str_replace('{current_year}', date('Y'), $final_message);
 
         // Attachments
         if (!empty($attachments['name'][0])) {
@@ -105,7 +122,7 @@ function sendMail($email, $subject, $template_name, $template_data = [], $attach
         $mail->addAddress($email);
         $mail->AddReplyTo($smtp_username, $from_name);
         $mail->Subject = $subject;
-        $mail->Body = $message; // Use Body for HTML content
+        $mail->Body = $final_message;
 
         return $mail->send();
 

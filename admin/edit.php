@@ -93,7 +93,7 @@ if (isset($_POST['update'])) {
             // Main tracking info update
             $update_query = "UPDATE addtracking SET tracking_id=?, sender_name=?, sender_contact=?, sender_email=?, sender_address=?, dispatch_location=?, carrier=?, carrier_refrence_number=?, weight=?, payment_mode=?, total_cost=?, receiver_name=?, receiver_contact=?, receiver_email=?, receiver_address=?, destination=?, package_discription=?, dispatch_date=?, estimated_delivery_date=?, shipment_mode=?, quantity=?, total_freight=?, courier=?, comments=?, type_of_shipment=?, total_volumetric_weight=?, total_actual_weight=?, published=?, image=? WHERE tracking_id=?";
             $stmt_update = mysqli_prepare($con, $update_query);
-            mysqli_stmt_bind_param($stmt_update, "ssssssssssdssssssssssssssssssis", $new_tracking_id, $_POST['sendername'], $_POST['sendercontact'], $_POST['senderemail'], $_POST['senderaddress'], $_POST['dispatchlocation'], $_POST['carrier'], $_POST['carrierreferencenumber'], $_POST['weight'], $_POST['paymentmode'], $_POST['total_cost'], $receiver_name, $_POST['receivercontact'], $receiver_email, $_POST['receiveraddress'], $_POST['destination'], $_POST['packagedescription'], $_POST['dispatch_date'], $_POST['estimateddeliverydate'], $_POST['shipmentmethod'], $_POST['quantity'], $_POST['total_freight'], $_POST['courier'], $_POST['comments'], $_POST['type_of_shipment'], $_POST['total_volumetric_weight'], $_POST['total_actual_weight'], $published, $packageImage, $edit_id);
+            mysqli_stmt_bind_param($stmt_update, "ssssssssssdssssssssssssssssisss", $new_tracking_id, $_POST['sendername'], $_POST['sendercontact'], $_POST['senderemail'], $_POST['senderaddress'], $_POST['dispatchlocation'], $_POST['carrier'], $_POST['carrierreferencenumber'], $_POST['weight'], $_POST['paymentmode'], $_POST['total_cost'], $receiver_name, $_POST['receivercontact'], $receiver_email, $_POST['receiveraddress'], $_POST['destination'], $_POST['packagedescription'], $_POST['dispatch_date'], $_POST['estimateddeliverydate'], $_POST['shipmentmethod'], $_POST['quantity'], $_POST['total_freight'], $_POST['courier'], $_POST['comments'], $_POST['type_of_shipment'], $_POST['total_volumetric_weight'], $_POST['total_actual_weight'], $published, $packageImage, $edit_id);
             mysqli_stmt_execute($stmt_update);
 
             // Resubmitting package items
@@ -104,7 +104,7 @@ if (isset($_POST['update'])) {
             if (!empty($_POST['package_quantity'])) {
                 $stmt_items = mysqli_prepare($con, "INSERT INTO package_items (tracking_id, quantity, piece_type, description, length, width, height, weight) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
                 for ($i = 0; $i < count($_POST['package_quantity']); $i++) {
-                     mysqli_stmt_bind_param($stmt_items, "sissdddd", $edit_id, $_POST['package_quantity'][$i], $_POST['package_piece_type'][$i], $_POST['package_description'][$i], $_POST['package_length'][$i], $_POST['package_width'][$i], $_POST['package_height'][$i], $_POST['package_weight'][$i]);
+                     mysqli_stmt_bind_param($stmt_items, "sissdddd", $new_tracking_id, $_POST['package_quantity'][$i], $_POST['package_piece_type'][$i], $_POST['package_description'][$i], $_POST['package_length'][$i], $_POST['package_width'][$i], $_POST['package_height'][$i], $_POST['package_weight'][$i]);
                     mysqli_stmt_execute($stmt_items);
                 }
             }
@@ -117,7 +117,7 @@ if (isset($_POST['update'])) {
             if (!empty($_POST['history_date'])) {
                 $stmt_history = mysqli_prepare($con, "INSERT INTO shipment_history (tracking_id, date, time, location, status, updated_by, remarks) VALUES (?, ?, ?, ?, ?, ?, ?)");
                 for ($i = 0; $i < count($_POST['history_date']); $i++) {
-                    mysqli_stmt_bind_param($stmt_history, "sssssss", $edit_id, $_POST['history_date'][$i], $_POST['history_time'][$i], $_POST['history_location'][$i], $_POST['history_status'][$i], $_POST['history_updated_by'][$i], $_POST['history_remarks'][$i]);
+                    mysqli_stmt_bind_param($stmt_history, "sssssss", $new_tracking_id, $_POST['history_date'][$i], $_POST['history_time'][$i], $_POST['history_location'][$i], $_POST['history_status'][$i], $_POST['history_updated_by'][$i], $_POST['history_remarks'][$i]);
                     mysqli_stmt_execute($stmt_history);
                 }
             }

@@ -1,5 +1,5 @@
 <?php
-include 'db.php';
+include 'functions.php';
 $stmt = mysqli_prepare($con, "SELECT * FROM setting");
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
