@@ -11,9 +11,12 @@ if (isset($_POST['search'])) {
   if (empty($tracking_pr)) {
     echo "<script> alert('insert a tracking number'); window.location.href = '../track.html'</script>";
   } else {
-    $sql = mysqli_query($con, "SELECT * FROM addtracking WHERE tracking_id = '$tracking_pr' ");
-    if (mysqli_num_rows($sql) > 0) {
-      $rows = mysqli_fetch_assoc($sql);
+    $stmt = mysqli_prepare($con, "SELECT * FROM addtracking WHERE tracking_id = ?");
+    mysqli_stmt_bind_param($stmt, "s", $tracking_pr);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    if (mysqli_num_rows($result) > 0) {
+      $rows = mysqli_fetch_assoc($result);
       $user_tracking = $rows['tracking_id'];
       $package_discription = $rows['package_discription'];
       $image = $rows['image'];
@@ -57,139 +60,122 @@ if (isset($_POST['search'])) {
 
 
 ?>
+<!DOCTYPE html>
+
+<html dir="ltr" lang="en">
+
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Track | Page</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
 
-    <link rel="shortcut icon" type="image/x-icon" href="../assets/img/favicon.png">
-    <!-- Place favicon.ico in the root directory -->
+  <meta name="keywords" content="#1 Best Courier & Logistics Company in UK">
+  <meta name="description" content="#1 Best Courier & Logistics Company in UK">
+  <title>Tracking Result</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="" src="j/jquery.js"> </script>
+  <script type="" src="j/jquery-ui.custom.js"> </script>
+  <link href="j/jquery-ui.custom.js" media="screen" rel="stylesheet" type="text/css">
+  <script type="" src="j/jquery.idTabs.min.js"></script>
+  <link href="c/template.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="c/general.css" media="screen" rel="stylesheet" type="text/css">
+  <script type="" src="j/uploader.js"></script>
+  <link href="c/pagination.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="c/pagination.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="c/menu.css" media="screen" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="c/responsives.css">
+  <link href="images/favicon.png" rel="shortcut icon">
+  <link rel="stylesheet" type="text/css" href="c/styl.css" media="all">
+  <link rel="icon" href="images/favicon.png" type="image/x-icon">
 
-    <!-- CSS here -->
-    <link rel="stylesheet" href="../assets/css/01-bootstrap.min.css">
-    <link rel="stylesheet" href="../assets/css/02-all.min.css">
-    <link rel="stylesheet" href="../assets/css/03-jquery.magnific-popup.css">
-    <link rel="stylesheet" href="../assets/css/04-nice-select.css">
-    <link rel="stylesheet" href="../assets/css/05-odometer.css">
-    <link rel="stylesheet" href="../assets/css/06-swiper.min.css">
-    <link rel="stylesheet" href="../assets/css/07-animate.min.css">
-    <link rel="stylesheet" href="../assets/css/08-custom-animate.css">
-    <link rel="stylesheet" href="../assets/css/09-slick.css">
-    <link rel="stylesheet" href="../assets/css/10-icomoon.css">
-    <link rel="stylesheet" href="../assets/vendor/custom-animate/custom-animate.css">
-    <link rel="stylesheet" href="../assets/vendor/jarallax/jarallax.css">
-    <link rel="stylesheet" href="../assets/vendor/odometer/odometer.min.css">
+  <!-- responsive css -->
 
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/responsive.css">
+  <link rel="stylesheet" type="text/css" href="c/custom-style.css">
+  <link rel="stylesheet" type="text/css" href="c/carousel.css">
+  <script type="text/javascript" src="process/jquery.min.js"></script>
+  <script type="text/javascript" src="process/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="process/bootstrap.min.js"></script>
+  <script type="text/javascript" src="process/carousel.js"></script>
+  <script type="text/javascript" src="process/common.js"></script>
+
+
+  <style>
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    td,
+    th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+
+    tr:nth-child(even) {
+      background-color: #dddddd;
+    }
+  </style>
+  <style>
+    .m-btm {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .mtn {
+      text-align: center;
+    }
+
+    .d-bl {
+      display: block;
+      margin-bottom: 25px;
+    }
+
+    #btnal {
+      background: teal;
+      color: aqua;
+      border-radius: 5px;
+      padding: 0.5rem;
+      font-size: 0.83rem;
+      cursor: pointer;
+    }
+
+    #btn {
+      background: teal;
+      color: aqua;
+      border-radius: 5px;
+      padding: 0.5rem;
+      font-size: 0.83rem;
+      cursor: pointer;
+    }
+  </style>
 </head>
+
 <body>
-    <div class="page-wrapper">
-        <!--Start Main Header One -->
-        <header class="main-header main-header-one style4">
-            <div id="sticky-header" class="menu-area">
-                <div class="container">
-                    <div class="main-header-one__inner">
+  <div id="wrapper">
 
-                        <!--Start Main Header one Inner Left -->
-                        <div class="main-header-style4__left">
-                            <div class="logo-box-one">
-                                <a href="../index.php">
-                                    <img src="../assets/img/logo.png" alt="Logo">
-                                </a>
-                            </div>
-                        </div>
-                        <!--End Main Header one Inner Left -->
+    <!-- Tracker End-->
 
-                        <!--Start Main Header Style4 Middle -->
-                        <div class="main-header-style4__middle">
-                            <div class="menu-area__inner">
-                                <div class="mobile-nav-toggler">
-                                    <i class="fas fa-bars"></i>
-                                </div>
-                                <div class="menu-wrap">
-                                    <nav class="menu-nav">
-                                        <div class="navbar-wrap main-menu">
-                                            <ul class="navigation">
-                                                <li class=""><a href="../index.php">Home</a>
-                                                </li>
-                                                <li class=""><a href="../about.php">About Us</a></li>
-                                                <li class=""><a href="../services.php">Services</a>
+    <!-- Banner Start -->
+    <div id="banner">
+      <div class="container">
+        <div class="bg"></div>
+      </div>
 
-                                                </li>
+      <!-- Tracker Start-->
+      <div class="block block-tracker">
+        <div class="h_container">
+          <form action="tracking.php" method="post" id="userForm" onSubmit="return validate()">
+            <p>TRACK YOUR SHIPMENT
 
-                                                <li class="active"><a href="../track.php">Track</a></li>
+              <input type="text" name="search_P" id="Consignment" placeholder="Enter Tracking number"  />
+              <input type="submit" name="search" id="send" value="TRACK NOW" />
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- Banner End -->
 
-                                                <li><a href="../contact.php">contacts</a></li>
-
-                                            </ul>
-                                        </div>
-                                    </nav>
-                                </div>
-                            </div>
-
-                            <div class="main-menu-right-box-one">
-                                <div class="search-box-one">
-                                    <a href="#" class="main-menu__search search-toggler">
-                                        <span class="icon-search-interface-symbol"></span>
-                                    </a>
-                                </div>
-                                <div class="side-content-button-one">
-                                    <a class="menu-tigger" href="#">
-                                        <span class="line"></span>
-                                        <span class="line two"></span>
-                                    </a>
-                                </div>
-                            </div>
-
-                        </div>
-                        <!--End Main Header Style4 Middle -->
-
-                        <!--Start Main Header Style4 Right -->
-                        <div class="main-header-style4__right">
-                            <div class="contact-box">
-                                <div class="icon">
-                                    <span class="icon-phone-call-1"></span>
-                                </div>
-                                <div class="text-box">
-                                    <p>Requesting A Call:</p>
-                                    <h4><a href="tel:123456789">(629) 555-0129</a></h4>
-                                </div>
-                            </div>
-                        </div>
-                        <!--End Main Header Style4 Right -->
-
-                    </div>
-                </div>
-            </div>
-
-            <!--Start Mobile Menu  -->
-            <div class="mobile-menu">
-                <nav class="menu-box">
-                    <div class="close-btn"><i class="fas fa-times"></i></div>
-                    <div class="nav-logo">
-                        <a href="../index.php"><img src="../assets/img/resource/mobile-menu-logo.png" alt="Logo"></a>
-                    </div>
-                    <div class="menu-outer">
-                        <!--Here Menu Will Come Automatically Via Javascript / Same Menu as in Header-->
-                    </div>
-                    <div class="social-links">
-                        <ul class="clearfix list-wrap">
-                            <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-                            <li><a href="#"><i class="fab fa-twitter"></i></a></li>
-                            <li><a href="#"><i class="fab fa-instagram"></i></a></li>
-                            <li><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
-                            <li><a href="#"><i class="fab fa-youtube"></i></a></li>
-                        </ul>
-                    </div>
-                </nav>
-            </div>
-            <div class="menu-backdrop"></div>
-            <!-- End Mobile Menu -->
-        </header>
-        <!--End Main Header One -->
   <?php 
     if (isset($_POST['search'])) {
 ?>
@@ -230,20 +216,29 @@ if (isset($_POST['search'])) {
                   </strong><br /><br />
 
                   <?php
-                  $stmt = mysqli_prepare($con, "SELECT * FROM shipment_history WHERE tracking_id = ? ORDER BY date DESC, time DESC");
+                  $stmt = mysqli_prepare($con, "SELECT * FROM track_update  WHERE track_num = ? ORDER BY id DESC ");
                   mysqli_stmt_bind_param($stmt, "s", $tracking_pr);
                   mysqli_stmt_execute($stmt);
                   $result = mysqli_stmt_get_result($stmt);
                   if (mysqli_num_rows($result) > 0) {
                       while ($row = mysqli_fetch_assoc($result)) {
-                  ?>
+
+                  switch ($row['status']) {
+                      case 'active':
+                          $class = "delivered-grid-box";
+                          break;
+                      default:
+                          $class = "";
+                          break;
+                   }
+?>
                   <ul class="delivered-grid-box">
                     <li>
                       <div class="delivered-left"> <span><strong><?php  echo date('F dS, Y', strtotime($row['date'])); ?></strong>,<br> <?php echo date("G:i A", strtotime($row['time'])); ?></span></div>
                       <span class="d-bulte"><i class="current"></i></span>
-                      <div class="delivered-right"> <strong><?php echo $row['remarks'] ?></strong>
-                        <br><?php echo $row['updated_by'] ?><br>
-                        <?php echo $row['location'] ?><br> <span id="order-status" class="default"><?php echo $row['status'] ?></span>
+                      <div class="delivered-right"> <strong><?php echo $row['note'] ?></strong>
+                        <br>Customer<br>
+                        <?php echo $row['current_location'] ?><br> <span id="order-status" class="default"><?php echo $row['status'] ?></span>
                       </div>
                     </li><br><br>
                   </ul>
@@ -264,25 +259,8 @@ if (isset($_POST['search'])) {
 
 
                   <div align="center">
-                    <div style="width: 100%; height: 300px;">
-                      <?php
-                      $locations = [];
-                      $locations[] = $dispatch_location;
-                      $stmt_history_map = mysqli_prepare($con, "SELECT * FROM shipment_history WHERE tracking_id = ? ORDER BY date ASC, time ASC");
-                      mysqli_stmt_bind_param($stmt_history_map, "s", $tracking_pr);
-                      mysqli_stmt_execute($stmt_history_map);
-                      $result_history_map = mysqli_stmt_get_result($stmt_history_map);
-                      if (mysqli_num_rows($result_history_map) > 0) {
-                        while ($row_history = mysqli_fetch_assoc($result_history_map)) {
-                          $locations[] = $row_history['location'];
-                        }
-                      }
-                      $locations = array_unique($locations);
-                      $origin = array_shift($locations);
-                      $destination_map = count($locations) > 0 ? implode('+to:', array_map('urlencode', $locations)) : urlencode($origin);
-                      $map_url = "https://maps.google.com/maps?f=d&source=s_d&saddr=" . urlencode($origin) . "&daddr=" . $destination_map . "&output=embed";
-                      ?>
-                      <iframe class="map" src="<?php echo $map_url; ?>" style="border:0; width: 100%; height: 300px;"></iframe>
+                    <div  style="width: 100%; height: 300px;">
+                     <iframe  class="map" src="https://maps.google.com/maps?q=<?php echo $current_location == "" ? $destination : $current_location ?>&amp;t=k&amp;z=13&amp;ie=UTF8&amp;iwloc=&amp;output=embed" style="border:0; width: 100%; height: 300px;"></iframe>
                     </div>
                   </div>
                 </div>
@@ -416,56 +394,39 @@ if (isset($_POST['search'])) {
 
     <?php }} ?>
 
-        <!--Start Footer One-->
-        <footer class="footer-one">
-            <!--Start Footer Middle-->
-            <div class="footer-middle footer-middle--two">
-                <div class="container">
-                    <div class="footer-middle__inner">
-                        <div class="footer-logo-box">
-                            <img src="../assets/img/logo.png" style="width: 170px;" alt="#">
-                        </div>
-                        <div class="phone-number-box phone-number-box--style2">
-                            <div class="icon">
-                                <span class="icon-phone-call-1"></span>
-                            </div>
-                            <div class="text">
-                                <p>Need help?</p>
-                                <p><a href="tel:(808)555-0111">(808) 555-0111</a></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!--End Footer Middle-->
+    <!-- Footer Start -->
 
-            <!--Start Footer Bottom -->
-            <div class="footer-bottom footer-bottom--two">
-                <div class="container">
-                    <div class="footer-bottom__inner">
-                        <div class="copyright-text copyright-text--two">
-                            <p>© Cargo link 2023 | <a href="../index.php">Cargolink</a>, All Rights Reserved.</p>
-                        </div>
+    <footer id="footer">
+      <div class="container">
+        <div class="links-container">
 
-                        <div class="copyright-menu copyright-menu--two">
-                            <ul>
-                                <li>
-                                    <p><a href="#">Trams &amp; Condition</a></p>
-                                </li>
-                                <li>
-                                    <p><a href="#">Privacy Policy</a></p>
-                                </li>
-                                <li>
-                                    <p><a href="#">Contact Us</a></p>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!--End Footer Bottom -->
-        </footer>
-        <!--Start Footer One-->
+
+          <div class="social">
+            Always stay connected with us.. <br><br>
+            <a href="http://www.facebook.com/" target="_blank"><img src="image/facebook.png" width="20" height="20" border="0" title="Facebook"></a>
+            <a href="http://www.twitter.com/" target="_blank"><img src="image/twitter.png" width="20" height="20" border="0" title="Twitter"></a>
+            <a href="http://www.youtube.com/" target="_blank"><img src="image/youtube.png" width="20" height="20" border="0" title="Youtube"></a>
+            <a href="http://www.flickr.com/" target="_blank"><img src="image/flickr.png" width="20" height="20" border="0" title="Flickr"></a>
+            <a href="http://www.delicious.com/" target="_blank"><img src="image/delicious.png" width="20" height="20" border="0" title="Delicious"></a>
+            <a href="http://www.stumbleupon.com/" target="_blank"><img src="image/stumbleupon.png" width="20" height="20" border="0" title="Stumbleupon"></a>
+            <a href="http://www.digg.com/" target="_blank"><img src="image/digg.png" width="20" height="20" border="0" title="Digg"></a>
+            <a href="http://feeds.feedburner.com/" target="_blank"><img src="image/rss.png" width="20" height="20" border="0" title="RSS"></a>
+            <a href="https://plus.google.com/" target="_blank"><img src="image/google-plus-one.png" width="32" height="20" border="0" title="Google +1"></a>
+          </div>
+
+          <div class="copyright clear">
+            Copyright &copy 2023 All Rights Reserved.
+
+          </div>
+        </div>
+
+      </div>
+    </footer>
+
+  </div>
+  <div class="go-top"><a href="#top" id="scroll-top">Top</a></div>
+  <script type="text/javascript" src="j/scroll.js">
+  </script>
 
 
   <script src="j/jquery.min.js"></script>
