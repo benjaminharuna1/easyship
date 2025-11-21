@@ -164,7 +164,7 @@ include 'header.php';
                                 <h5 class="card-title"></h5>
 
                                 <form method="POST" action="settings.php">
-                                    <div class="mb-3"><label class="form-label">Site name</label><input class="form-control" type="text" name="site-name" value="<?php echo htmlspecialchars($settings['Sitename'] ?? ''); ?>"></div>
+                                    <div class="mb-3"><label class="form-label">Site name</label><input class="form-control" type="text" name="site-name" value="<?php echo htmlspecialchars($settings['sitename'] ?? ''); ?>"></div>
                                     <div class="mb-3"><label class="form-label">Site title</label><input class="form-control" type="text" name="site-title" value="<?php echo htmlspecialchars($settings['site_title'] ?? ''); ?>"></div>
                                     <div class="mb-3"><label class="form-label">Site Url</label><input class="form-control" type="text" name="site-url" value="<?php echo htmlspecialchars($settings['site_url'] ?? ''); ?>"></div>
                                     <div class="mb-3"><label class="form-label">Email Name</label><input class="form-control" type="text" name="email-name" value="<?php echo htmlspecialchars($settings['email_name'] ?? ''); ?>"></div>
