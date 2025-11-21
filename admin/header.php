@@ -89,6 +89,22 @@
 					</a>
 
 				</li>
+
+				<li>
+					<a class="" href="send-email.php">
+						<div class="parent-icon"><i class="bx bx-envelope fs-5"></i>
+						</div>
+						<div class="menu-title">Send Email</div>
+					</a>
+				</li>
+
+				<li>
+					<a class="" href="support-messages.php">
+						<div class="parent-icon"><i class="bx bx-support fs-5"></i>
+						</div>
+						<div class="menu-title">Support Messages</div>
+					</a>
+				</li>
 				
 				<li>
 					<a class="" href="logout.php">

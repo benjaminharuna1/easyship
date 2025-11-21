@@ -35,7 +35,7 @@ try {
             if (!filter_var($test_email_recipient, FILTER_VALIDATE_EMAIL)) {
                 $_SESSION['error_message'] = "Invalid recipient email address for the test email.";
             } else {
-                $subject = "SMTP Test Email from " . ($settings['Sitename'] ?? 'your site');
+                $subject = "SMTP Test Email from " . ($settings['sitename'] ?? 'your site');
                 // The sendMail function uses settings from the DB, so they must be saved first.
                 if (sendMail($test_email_recipient, $subject, 'test_email', [])) {
                     $_SESSION['success_message'] = "Test email sent successfully to " . htmlspecialchars($test_email_recipient);
@@ -64,7 +64,7 @@ try {
                 if (!filter_var($site_url, FILTER_VALIDATE_URL)) throw new Exception("Invalid Site URL format.");
                 if (!filter_var($email_address, FILTER_VALIDATE_EMAIL)) throw new Exception("Invalid email address format.");
 
-                $update_stmt = mysqli_prepare($con, "UPDATE setting SET Sitename = ?, site_title = ?, site_url = ?, email_name = ?, email_address = ? WHERE id = 1");
+                $update_stmt = mysqli_prepare($con, "UPDATE setting SET sitename = ?, site_title = ?, site_url = ?, email_name = ?, email_address = ? WHERE id = 1");
                 mysqli_stmt_bind_param($update_stmt, "sssss", $site_name, $site_title, $site_url, $email_name, $email_address);
                 mysqli_stmt_execute($update_stmt);
 
@@ -184,7 +184,7 @@ include 'header.php';
                         <form method="POST" action="settings.php" enctype="multipart/form-data">
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label">Site name</label>
-                                <div class="col-sm-10"><input class="form-control" type="text" name="site-name" value="<?php echo htmlspecialchars($_POST['site-name'] ?? $settings['Sitename'] ?? ''); ?>" required></div>
+                                <div class="col-sm-10"><input class="form-control" type="text" name="site-name" value="<?php echo htmlspecialchars($_POST['site-name'] ?? $settings['sitename'] ?? ''); ?>" required></div>
                             </div>
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label">Site title</label>

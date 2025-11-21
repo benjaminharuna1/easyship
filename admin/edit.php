@@ -126,16 +126,18 @@ if (isset($_POST['update'])) {
 
             // Send emails if checked
             if ($send_email_update) {
-                $email_data = ['receiver_name' => $receiver_name, 'tracking_id' => $edit_id];
-                sendMail($receiver_email, "Shipment Update: " . $edit_id, 'shipment_update', $email_data);
+                $email_data = ['receiver_name' => $receiver_name, 'tracking_id' => $new_tracking_id];
+                sendMail($receiver_email, "Shipment Update: " . $new_tracking_id, 'shipment_update', $email_data);
+                sendMail($sender_email, "Shipment Update: " . $new_tracking_id, 'shipment_update', $email_data);
             }
             if ($send_email_history) {
-                $email_data = ['receiver_name' => $receiver_name, 'tracking_id' => $edit_id];
-                sendMail($receiver_email, "Shipment History Update: " . $edit_id, 'shipment_history_update', $email_data);
+                $email_data = ['receiver_name' => $receiver_name, 'tracking_id' => $new_tracking_id];
+                sendMail($receiver_email, "Shipment History Update: " . $new_tracking_id, 'shipment_history_update', $email_data);
+                sendMail($sender_email, "Shipment History Update: " . $new_tracking_id, 'shipment_history_update', $email_data);
             }
 
             $_SESSION['success_message'] = "Updated successfully";
-            header("Location: edit.php?edit=" . urlencode($edit_id));
+            header("Location: edit.php?edit=" . urlencode($new_tracking_id));
             exit();
 
         } catch (Exception $e) {
@@ -439,11 +441,11 @@ include 'header.php';
                                     <div class="card-body">
                                         <div class="form-check mt-3">
                                             <input class="form-check-input" type="checkbox" name="send_email_update" id="send_email_update">
-                                            <label class="form-check-label" for="send_email_update">Notify user of package update</label>
+                                            <label class="form-check-label" for="send_email_update">Notify Shipper and Receiver of package update</label>
                                         </div>
                                         <div class="form-check mt-3">
                                             <input class="form-check-input" type="checkbox" name="send_email_history" id="send_email_history">
-                                            <label class="form-check-label" for="send_email_history">Notify user of shipment history update</label>
+                                            <label class="form-check-label" for="send_email_history">Notify Shipper and Receiver of shipment history update</label>
                                         </div>
                                         <div class="d-flex justify-content-end mt-3">
                                             <button type="submit" name="update" class="btn btn-primary">Update</button>

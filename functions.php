@@ -36,9 +36,10 @@ if (mysqli_num_rows($sql) > 0) {
  * @param string $subject The subject of the email.
  * @param string $template_name The name of the HTML template file (without .html extension).
  * @param array $template_data An associative array of data to replace placeholders in the template.
+ * @param array $attachments An array of file attachments in $_FILES format.
  * @return bool True on success, false on failure.
  */
-function sendMail($email, $subject, $template_name, $template_data = []){
+function sendMail($email, $subject, $template_name, $template_data = [], $attachments = []){
     global $con;
     $stmt = mysqli_prepare($con, "SELECT * FROM setting WHERE id = 1");
     mysqli_stmt_execute($stmt);
@@ -56,28 +57,40 @@ function sendMail($email, $subject, $template_name, $template_data = []){
     $smtp_port = $settings['smtp_port'];
     $smtp_secure = $settings['smtp_secure'];
     $from_name = $settings['email_name'];
-    $from_email = $settings['email_address']; // The PHPMailer username is often the from address
-
-    // Load and process the template
-    $template_path = __DIR__ . '/mailer/' . $template_name . '.html';
-    if (!file_exists($template_path)) {
-        error_log("Email template not found: " . $template_path);
-        return false;
-    }
-    $message = file_get_contents($template_path);
-
-    // Add global site data to the template data for convenience
-    $template_data['site_name'] = $settings['Sitename'] ?? 'Our Site';
-    $template_data['site_url'] = $settings['site_url'] ?? '#';
-
-    foreach ($template_data as $key => $value) {
-        $message = str_replace('{' . $key . '}', htmlspecialchars((string)$value), $message);
-    }
+    $from_email = $settings['email_address'];
 
     $mail = new PHPMailer(true); // Enable exceptions
 
     try {
-        //SMTP Settings
+        // Message Body
+        if ($template_name === 'custom_email') {
+            // For custom emails, the body is passed directly.
+            $message = $template_data['body'] ?? '';
+        } else {
+            // For template-based emails, load and process the template.
+            $template_path = __DIR__ . '/mailer/' . $template_name . '.html';
+            if (!file_exists($template_path)) {
+                error_log("Email template not found: " . $template_path);
+                return false;
+            }
+            $message = file_get_contents($template_path);
+
+            $template_data['site_name'] = $settings['sitename'] ?? 'Our Site';
+            $template_data['site_url'] = $settings['site_url'] ?? '#';
+
+            foreach ($template_data as $key => $value) {
+                $message = str_replace('{' . $key . '}', htmlspecialchars((string)$value), $message);
+            }
+        }
+
+        // Attachments
+        if (!empty($attachments['name'][0])) {
+            for ($i = 0; $i < count($attachments['name']); $i++) {
+                $mail->addAttachment($attachments['tmp_name'][$i], $attachments['name'][$i]);
+            }
+        }
+
+        // SMTP Settings
         $mail->isSMTP();
         $mail->Host = $smtp_host;
         $mail->SMTPAuth = true;

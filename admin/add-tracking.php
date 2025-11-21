@@ -134,6 +134,7 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
                     'delivery_date' => $estimated_delivery_date
                 ];
                 sendMail($receiver_email, "Shipment Created: " . $tnumbs_final, 'shipment_creation', $email_data);
+                sendMail($sender_email, "Shipment Created: " . $tnumbs_final, 'shipment_creation', $email_data);
             }
 
             $_SESSION['success_message'] = "Shipment created successfully with Tracking ID: " . htmlspecialchars($tnumbs_final);
@@ -431,7 +432,7 @@ include 'header.php';
                                 <div class="card-body">
                                     <div class="form-check mt-3">
                                         <input class="form-check-input" type="checkbox" name="send_email_notification" id="send_email_notification" value="1" <?php if (isset($_POST['send_email_notification'])) echo 'checked'; ?>>
-                                        <label class="form-check-label" for="send_email_notification">Send shipment notification to user</label>
+                                        <label class="form-check-label" for="send_email_notification">Send shipment notification to Shipper and Receiver</label>
                                     </div>
                                     <div class="d-flex justify-content-end mt-3">
                                         <button type="submit" name="add" class="btn btn-primary">Save</button>

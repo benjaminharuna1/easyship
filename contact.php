@@ -6,6 +6,31 @@ $result = mysqli_stmt_get_result($stmt);
 $row = mysqli_fetch_assoc($result);
 $site_logo = $row['site_logo'];
 $site_favicon = $row['site_favicon'];
+
+$msg = '';
+$err = '';
+
+if (isset($_POST['name'])) {
+    $name = text_input($_POST['name']);
+    $email = text_input($_POST['email']);
+    $mobile = text_input($_POST['mobile']);
+    $company = text_input($_POST['company']);
+    $message = text_input($_POST['message']);
+
+    if (empty($name) || empty($email) || empty($message)) {
+        $err = "Name, email, and message are required.";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $err = "Invalid email address.";
+    } else {
+        $stmt = mysqli_prepare($con, "INSERT INTO support_messages (name, email, mobile, company, message) VALUES (?, ?, ?, ?, ?)");
+        mysqli_stmt_bind_param($stmt, "sssss", $name, $email, $mobile, $company, $message);
+        if (mysqli_stmt_execute($stmt)) {
+            $msg = "Your message has been sent successfully. We will get back to you shortly.";
+        } else {
+            $err = "Failed to send message. Please try again later.";
+        }
+    }
+}
 ?>
 <!doctype html>
 <html class="no-js" lang="en">
@@ -276,6 +301,12 @@ $site_favicon = $row['site_favicon'];
         <!--Contact One Start-->
         <section class="contact-one">
             <div class="container">
+                <?php if (!empty($msg)) : ?>
+                    <div class="alert alert-success"><?php echo $msg; ?></div>
+                <?php endif; ?>
+                <?php if (!empty($err)) : ?>
+                    <div class="alert alert-danger"><?php echo $err; ?></div>
+                <?php endif; ?>
                 <div class="sec-title text-center">
                     <div class="sub-title">
                         <h4>Contact us</h4>
@@ -330,7 +361,7 @@ $site_favicon = $row['site_favicon'];
 
                     <div class="col-xl-6 col-lg-12">
                         <div class="contact-one__form">
-                            <form id="contact-form" action="https://itcroctheme.com/nocimon/nocimon-html/assets/inc/mail.php" method="POST">
+                            <form id="contact-form" action="contact.php" method="POST">
                                 <div class="row">
                                     <div class="col-xl-6 col-lg-6">
                                         <div class="contact-one__input-box">
