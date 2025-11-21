@@ -45,19 +45,32 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
         try {
             mysqli_begin_transaction($con);
 
-            $sender_name = text_input($_POST['sendername']); $sender_contact = text_input($_POST['sendercontact']);
-            $sender_email = text_input($_POST['senderemail']); $sender_address = text_input($_POST['senderaddress']);
-            $dispatch_location = text_input($_POST['dispatchlocation']); $carrier = text_input($_POST['carrier']);
-            $carrier_refrence_number = text_input($_POST['carrierreferencenumber']); $weight = text_input($_POST['weight']);
-            $payment_mode = text_input($_POST['paymentmode']); $total_cost = text_input($_POST['total_cost']);
-            $receiver_name = text_input($_POST['receivername']); $receiver_email = text_input($_POST['receiver_email']);
-            $receiver_contact = text_input($_POST['receivercontact']); $receiver_address = text_input($_POST['receiveraddress']);
-            $destination = text_input($_POST['destination']); $package_discription = text_input($_POST['packagedescription']);
-            $dispatch_date = text_input($_POST['dispatch_date']); $estimated_delivery_date = text_input($_POST['estimateddeliverydate']);
-            $shipment_mode = text_input($_POST['shipmentmethod']); $quantity = text_input($_POST['quantity']);
-            $total_freight = text_input($_POST['total_freight'] ?? ''); $courier = text_input($_POST['courier'] ?? '');
-            $comments = text_input($_POST['comments'] ?? ''); $type_of_shipment = text_input($_POST['type_of_shipment'] ?? '');
-            $total_volumetric_weight = text_input($_POST['total_volumetric_weight'] ?? ''); $total_actual_weight = text_input($_POST['total_actual_weight'] ?? '');
+            $sender_name = text_input($_POST['sendername']);
+            $sender_contact = text_input($_POST['sendercontact']);
+            $sender_email = text_input($_POST['senderemail']);
+            $sender_address = text_input($_POST['senderaddress']);
+            $dispatch_location = text_input($_POST['dispatchlocation']);
+            $carrier = text_input($_POST['carrier']);
+            $carrier_refrence_number = text_input($_POST['carrierreferencenumber']);
+            $weight = text_input($_POST['weight']);
+            $payment_mode = text_input($_POST['paymentmode']);
+            $total_cost = text_input($_POST['total_cost']);
+            $receiver_name = text_input($_POST['receivername']);
+            $receiver_email = text_input($_POST['receiver_email']);
+            $receiver_contact = text_input($_POST['receivercontact']);
+            $receiver_address = text_input($_POST['receiveraddress']);
+            $destination = text_input($_POST['destination']);
+            $package_discription = text_input($_POST['packagedescription']);
+            $dispatch_date = text_input($_POST['dispatch_date']);
+            $estimated_delivery_date = text_input($_POST['estimateddeliverydate']);
+            $shipment_mode = text_input($_POST['shipmentmethod']);
+            $quantity = text_input($_POST['quantity']);
+            $total_freight = text_input($_POST['total_freight'] ?? '');
+            $courier = text_input($_POST['courier'] ?? '');
+            $comments = text_input($_POST['comments'] ?? '');
+            $type_of_shipment = text_input($_POST['type_of_shipment'] ?? '');
+            $total_volumetric_weight = text_input($_POST['total_volumetric_weight'] ?? '');
+            $total_actual_weight = text_input($_POST['total_actual_weight'] ?? '');
 
             // Image upload
             $packageImage = "";
