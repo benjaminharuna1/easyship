@@ -129,28 +129,28 @@ if(isset($_POST['save-email-settings'])){
                                 <form method="POST" action="settings.php">
                                     <label>Site name</label>
                                     <input class="form-control" type="text" name="site-name"
-                                        value="<?php echo $sitename  ?>">
+                                        value="<?php echo htmlspecialchars($sitename ?? ''); ?>">
                                     <br>
 
                                     <label>Site title</label>
                                     <input class="form-control" type="text" name="site-title"
-                                        value="<?php echo $site_title  ?>">
+                                        value="<?php echo htmlspecialchars($site_title ?? ''); ?>">
                                     <br>
 
                                     <label>site Url</label>
                                     <input class="form-control" type="text" name="site-url"
-                                        value="<?php echo $site_url  ?>">
+                                        value="<?php echo htmlspecialchars($site_url ?? ''); ?>">
                                     <br>
 
 
                                     <label>Email Name</label>
                                     <input class="form-control" type="text" name="email-name"
-                                        value="<?php echo $email_name  ?>">
+                                        value="<?php echo htmlspecialchars($email_name ?? ''); ?>">
                                     <br>
 
                                     <label> Email Address</label>
                                     <input class="form-control" type="email" name="email"
-                                        value="<?php echo $email_address  ?>">
+                                        value="<?php echo htmlspecialchars($email_address ?? ''); ?>">
                                     <br>
 
                                     <button name="save" type="submit" class="btn btn-primary">save</button>
@@ -181,27 +181,27 @@ if(isset($_POST['save-email-settings'])){
                                 <form method="POST" action="settings.php">
                                     <label>SMTP Host</label>
                                     <input class="form-control" type="text" name="smtp-host"
-                                        value="<?php echo $smtp_host ?>">
+                                        value="<?php echo htmlspecialchars($smtp_host ?? ''); ?>">
                                     <br>
 
                                     <label>SMTP Username</label>
                                     <input class="form-control" type="text" name="smtp-username"
-                                        value="<?php echo $smtp_username ?>">
+                                        value="<?php echo htmlspecialchars($smtp_username ?? ''); ?>">
                                     <br>
 
                                     <label>SMTP Password</label>
                                     <input class="form-control" type="password" name="smtp-password"
-                                        value="<?php echo $smtp_password ?>">
+                                        value="<?php echo htmlspecialchars($smtp_password ?? ''); ?>">
                                     <br>
 
                                     <label>SMTP Port</label>
                                     <input class="form-control" type="text" name="smtp-port"
-                                        value="<?php echo $smtp_port ?>">
+                                        value="<?php echo htmlspecialchars($smtp_port ?? ''); ?>">
                                     <br>
 
                                     <label>SMTP Secure</label>
                                     <input class="form-control" type="text" name="smtp-secure"
-                                        value="<?php echo $smtp_secure ?>">
+                                        value="<?php echo htmlspecialchars($smtp_secure ?? ''); ?>">
                                     <br>
 
                                     <div class="form-check">

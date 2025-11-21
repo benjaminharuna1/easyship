@@ -183,6 +183,12 @@ if (isset($_POST['update'])) {
 
             // Commit Transaction
             mysqli_commit($con);
+            if ($email_on_update == 1) {
+                // Send mail
+                $subject = "Shipment Updated";
+                $body = "<p>Dear $receiver_name</p> <p>We are pleased to inform you that your shipment with tracking number <strong>$edit_id</strong> has been updated.</p> <p>For more information visit the <a href='$site_url/tracking.php'>Tracking Page</a> </p> ";
+                sendMail($receiver_email, $subject, $body);
+            }
             $_SESSION['success_message'] = "Updated successfully";
             header("Location: edit.php?edit=" . urlencode($edit_id));
             exit();

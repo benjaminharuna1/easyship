@@ -63,7 +63,7 @@ $site_favicon = $row['site_favicon'];
             </button>
         </div>
         <div class="logo-side">
-            <a href="index.html"><img src="assets/img/logo.png" alt="#"></a>
+            <a href="index.php"><img src="assets/img/logo.png" alt="#"></a>
         </div>
         <div class="side-info">
             <div class="content-box">
@@ -161,7 +161,7 @@ $site_favicon = $row['site_favicon'];
                         <!--Start Main Header one Inner Left -->
                         <div class="main-header-style4__left">
                             <div class="logo-box-one">
-                                <a href="index.html">
+                                <a href="index.php">
                                     <img src="<?php echo $site_logo; ?>" alt="Logo">
                                 </a>
                             </div>
@@ -178,16 +178,16 @@ $site_favicon = $row['site_favicon'];
                                     <nav class="menu-nav">
                                         <div class="navbar-wrap main-menu">
                                             <ul class="navigation">
-                                                <li class=""><a href="index.html">Home</a>
+                                                <li class=""><a href="index.php">Home</a>
                                                 </li>
-                                                <li class=""><a href="about.html">About Us</a></li>
-                                                <li class=""><a href="services.html">Services</a>
+                                                <li class=""><a href="about.php">About Us</a></li>
+                                                <li class=""><a href="services.php">Services</a>
                                         
                                                 </li>
 
-                                                <li class="active"><a href="track.html">Track</a></li>
+                                                <li class="active"><a href="track.php">Track</a></li>
 
-                                                <li><a href="contact.html">contacts</a></li>
+                                                <li><a href="contact.php">contacts</a></li>
 
                                             </ul>
                                         </div>
@@ -235,7 +235,7 @@ $site_favicon = $row['site_favicon'];
                 <nav class="menu-box">
                     <div class="close-btn"><i class="fas fa-times"></i></div>
                     <div class="nav-logo">
-                        <a href="index.html"><img src="assets/img/resource/mobile-menu-logo.png" alt="Logo"></a>
+                        <a href="index.php"><img src="assets/img/resource/mobile-menu-logo.png" alt="Logo"></a>
                     </div>
                     <div class="menu-outer">
                         <!--Here Menu Will Come Automatically Via Javascript / Same Menu as in Header-->
@@ -263,7 +263,7 @@ $site_favicon = $row['site_favicon'];
                 <div class="page-header__inner">
                     <h2>Tracking Page</h2>
                     <ul class="thm-breadcrumb">
-                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.php">Home</a></li>
                         <li><span class="icon-left"></span></li>
                         <li>Tracking Page</li>
                     </ul>
@@ -328,7 +328,7 @@ $site_favicon = $row['site_favicon'];
                 <div class="container">
                     <div class="footer-bottom__inner">
                         <div class="copyright-text copyright-text--two">
-                            <p>© Cargo link 2023 | <a href="index.html">Cargolink</a>, All Rights Reserved.</p>
+                            <p>© Cargo link 2023 | <a href="index.php">Cargolink</a>, All Rights Reserved.</p>
                         </div>
 
                         <div class="copyright-menu copyright-menu--two">

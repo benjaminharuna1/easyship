@@ -61,7 +61,7 @@ $site_favicon = $row['site_favicon'];
             </button>
         </div>
         <div class="logo-side">
-            <a href="index.html"><img src="assets/img/logo.png" alt="#"></a>
+            <a href="index.php"><img src="assets/img/logo.png" alt="#"></a>
         </div>
         <div class="side-info">
             <div class="content-box">
@@ -106,7 +106,7 @@ $site_favicon = $row['site_favicon'];
             <!--End Sidebar Contact Info -->
             <div class="side-content-newsletter-box">
                 <h3>Newsletter Subscription</h3>
-                <form action="https://itcroctheme.com/nocimon/nocimon-html/index.html" method="post">
+                <form action="index.php" method="post">
                     <div class="form-group">
                         <input type="email" name="email" placeholder="Enter Email Address" required="">
                         <button class="thm-btn" type="submit">
@@ -159,7 +159,7 @@ $site_favicon = $row['site_favicon'];
                         <!--Start Main Header one Inner Left -->
                         <div class="main-header-style4__left">
                             <div class="logo-box-one">
-                                <a href="index.html">
+                                <a href="index.php">
                                     <img src="<?php echo $site_logo; ?>" alt="Logo">
                                 </a>
                             </div>
@@ -176,16 +176,16 @@ $site_favicon = $row['site_favicon'];
                                     <nav class="menu-nav">
                                         <div class="navbar-wrap main-menu">
                                             <ul class="navigation">
-                                                <li class="active"><a href="index.html">Home</a>
+                                                <li class="active"><a href="index.php">Home</a>
                                                 </li>
-                                                <li class=""><a href="about.html">About Us</a></li>
-                                                <li class=""><a href="services.html">Services</a>
+                                                <li class=""><a href="about.php">About Us</a></li>
+                                                <li class=""><a href="services.php">Services</a>
 
                                                 </li>
 
-                                                <li><a href="track.html">Track</a></li>
+                                                <li><a href="track.php">Track</a></li>
 
-                                                <li><a href="contact.html">contacts</a></li>
+                                                <li><a href="contact.php">contacts</a></li>
 
                                             </ul>
                                         </div>
@@ -233,7 +233,7 @@ $site_favicon = $row['site_favicon'];
                 <nav class="menu-box">
                     <div class="close-btn"><i class="fas fa-times"></i></div>
                     <div class="nav-logo">
-                        <a href="index.html"><img src="assets/img/resource/mobile-menu-logo.png" alt="Logo"></a>
+                        <a href="index.php"><img src="assets/img/resource/mobile-menu-logo.png" alt="Logo"></a>
                     </div>
                     <div class="menu-outer">
                         <!--Here Menu Will Come Automatically Via Javascript / Same Menu as in Header-->
@@ -283,7 +283,7 @@ $site_favicon = $row['site_favicon'];
                         <p>We have been operating for over a decade, providing top-notch</p>
                     </div>
                     <div class="btn-box">
-                        <a class="thm-btn" href="track.html">
+                        <a class="thm-btn" href="track.php">
                             <span class="txt">
                                 Track
                                 <i class="icon-next"></i>
@@ -316,11 +316,11 @@ $site_favicon = $row['site_favicon'];
                                     <span class="icon-cargo-ship"></span>
                                 </div>
                                 <div class="right-icon-box">
-                                    <a href="service-details.html"><span class="icon-next"></span></a> 
+                                    <a href="services.php"><span class="icon-next"></span></a>
                                 </div>
                             </div>
                             <div class="service-one__single-content">
-                                <h3><a href="service-details.html">Swift Cargo</a></h3>
+                                <h3><a href="services.php">Swift Cargo</a></h3>
                                 <p>
                                     Swift Cargo is a reliable partner for all your shipping needs. With a commitment to efficiency and safety, we ensure your cargo reaches its destination swiftly and securely.</p>
                             </div>
@@ -336,11 +336,11 @@ $site_favicon = $row['site_favicon'];
                                     <span class="icon-packages3"></span>
                                 </div>
                                 <div class="right-icon-box">
-                                    <a href="service-details.html"><span class="icon-next"></span></a>
+                                    <a href="services.php"><span class="icon-next"></span></a>
                                 </div>
                             </div>
                             <div class="service-one__single-content">
-                                <h3><a href="service-details.html">Cargo Xpress</a></h3>
+                                <h3><a href="services.php">Cargo Xpress</a></h3>
                                 <p> Your express solution for all shipping needs. Fast, efficient, and reliable service tailored to meet your deadlines. Trust us to deliver your cargo swiftly and securely, wherever it needs to go. Experience the speed and precision of Cargo Xpress today.</p>
                             </div>
                         </div>
@@ -355,11 +355,11 @@ $site_favicon = $row['site_favicon'];
                                     <span class="icon-protected"></span>
                                 </div>
                                 <div class="right-icon-box">
-                                    <a href="service-details.html"><span class="icon-next"></span></a>
+                                    <a href="services.php"><span class="icon-next"></span></a>
                                 </div>
                             </div>
                             <div class="service-one__single-content">
-                                <h3><a href="service-details.html">Aero Freight</a></h3>
+                                <h3><a href="services.php">Aero Freight</a></h3>
                                 <p> Your wings in the world of logistics. With speed, reliability, and a dedication to excellence, we soar above the competition to deliver your cargo with precision and efficiency.</p>
                             </div>
                         </div>
@@ -1285,7 +1285,7 @@ $site_favicon = $row['site_favicon'];
                 <div class="container">
                     <div class="footer-bottom__inner">
                         <div class="copyright-text">
-                            <p>©Cargo link 2024 | <a href="index.html">cargolink</a>, All Rights Reserved.</p>
+                            <p>©Cargo link 2024 | <a href="index.php">cargolink</a>, All Rights Reserved.</p>
                         </div>
 
 
