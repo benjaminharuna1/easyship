@@ -96,15 +96,20 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
                 }
             }
 
-            // Tracking number generation
-            $get_prefix_stmt = mysqli_prepare($con, "SELECT tracking_num FROM setting");
-            mysqli_stmt_execute($get_prefix_stmt);
-            $result = mysqli_stmt_get_result($get_prefix_stmt);
-            $track_prefix = mysqli_fetch_assoc($result)['tracking_num'];
-            $tnumbs_rand = "12345678900987654321";
-            $tnumbs_rand = str_shuffle($tnumbs_rand);
-            $tnumbs_rand = substr($tnumbs_rand, 0, 7);
-            $tnumbs_final = $track_prefix . date('m') . $tnumbs_rand;
+            // Tracking number handling
+            if (!empty($_POST['tracking_number'])) {
+                $tnumbs_final = text_input($_POST['tracking_number']);
+            } else {
+                // Generate a new tracking number if the field is empty
+                $get_prefix_stmt = mysqli_prepare($con, "SELECT tracking_num FROM setting");
+                mysqli_stmt_execute($get_prefix_stmt);
+                $result = mysqli_stmt_get_result($get_prefix_stmt);
+                $track_prefix = mysqli_fetch_assoc($result)['tracking_num'];
+                $tnumbs_rand = "12345678900987654321";
+                $tnumbs_rand = str_shuffle($tnumbs_rand);
+                $tnumbs_rand = substr($tnumbs_rand, 0, 7);
+                $tnumbs_final = $track_prefix . date('m') . $tnumbs_rand;
+            }
 
             // Start Transaction
             mysqli_begin_transaction($con);
@@ -211,7 +216,7 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
               <div class="row">
                 <div class="col-md-12">
                   <label for="tracking_number" class="form-label">Tracking Code</label>
-                  <input type="text" readonly="" value="<?php echo $tnumbs ?>" name="tracking_number" class="form-control" id="tracking_number">
+                  <input type="text" value="<?php echo htmlspecialchars($_POST['tracking_number'] ?? $tnumbs); ?>" name="tracking_number" class="form-control" id="tracking_number">
                 </div>
               </div>
             </div>

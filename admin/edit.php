@@ -47,6 +47,7 @@ if ($edit_id) {
 if (isset($_POST['update'])) {
     // Validation
     $required_fields = [
+        'tracking_number' => 'Tracking number is required.',
         'sendername' => 'Sender name is required.',
         'sendercontact' => 'Sender contact is required.',
         'senderemail' => 'Sender email is required.',
@@ -77,6 +78,7 @@ if (isset($_POST['update'])) {
 
     if (empty($errors)) {
         try {
+            $new_tracking_id = text_input($_POST['tracking_number']);
             $sender_name = text_input($_POST['sendername']);
             $sender_contact = text_input($_POST['sendercontact']);
             $sender_email = text_input($_POST['senderemail']);
@@ -108,13 +110,11 @@ if (isset($_POST['update'])) {
             // Image upload
             $packageImage = $_POST['current_image'];
             if (isset($_POST['remove_image']) && $_POST['remove_image'] == 1) {
-                // If image is removed, set it to empty and delete the old file
                 if (!empty($packageImage) && file_exists("../uploads/" . $packageImage)) {
                     unlink("../uploads/" . $packageImage);
                 }
                 $packageImage = "";
             } elseif (isset($_FILES["image"]) && $_FILES["image"]["error"] == 0 && !empty($_FILES["image"]["name"])) {
-                // If a new image is uploaded, process it
                 $extensions = array("jpeg", "jpg", "png");
                 $location = "../uploads/";
                 $filename1 = $_FILES["image"]["name"];
@@ -123,7 +123,6 @@ if (isset($_POST['update'])) {
                 if (!in_array($file_ext1, $extensions)) {
                     throw new Exception("Extension not allowed, please choose a JPEG or PNG file.");
                 }
-                // Delete old image if it exists
                 if (!empty($packageImage) && file_exists("../uploads/" . $packageImage)) {
                     unlink("../uploads/" . $packageImage);
                 }
@@ -132,16 +131,15 @@ if (isset($_POST['update'])) {
                     throw new Exception("Failed to upload new image.");
                 }
             }
-            // No action needed if no new image is uploaded and the existing one is not removed
 
             // Start Transaction
             mysqli_begin_transaction($con);
 
-            $stmt_update = mysqli_prepare($con, "UPDATE addtracking SET sender_name=?, sender_contact=?, sender_email=?, sender_address=?, dispatch_location=?, carrier=?, carrier_refrence_number=?, weight=?, payment_mode=?, total_cost=?, receiver_name=?, receiver_contact=?, receiver_email=?, receiver_address=?, destination=?, package_discription=?, dispatch_date=?, estimated_delivery_date=?, shipment_mode=?, quantity=?, total_freight=?, courier=?, comments=?, type_of_shipment=?, total_volumetric_weight=?, total_actual_weight=?, published=?, image=? WHERE tracking_id=?");
-            mysqli_stmt_bind_param($stmt_update, "sssssssssdsssssssssssssssssis", $sender_name, $sender_contact, $sender_email, $sender_address, $dispatch_location, $carrier, $carrier_refrence_number, $weight, $payment_mode, $total_cost, $receiver_name, $receiver_contact, $receiver_email, $receiver_address, $destination, $package_discription, $dispatch_date, $estimated_delivery_date, $shipment_mode, $quantity, $total_freight, $courier, $comments, $type_of_shipment, $total_volumetric_weight, $total_actual_weight, $published, $packageImage, $edit_id);
+            $stmt_update = mysqli_prepare($con, "UPDATE addtracking SET tracking_id=?, sender_name=?, sender_contact=?, sender_email=?, sender_address=?, dispatch_location=?, carrier=?, carrier_refrence_number=?, weight=?, payment_mode=?, total_cost=?, receiver_name=?, receiver_contact=?, receiver_email=?, receiver_address=?, destination=?, package_discription=?, dispatch_date=?, estimated_delivery_date=?, shipment_mode=?, quantity=?, total_freight=?, courier=?, comments=?, type_of_shipment=?, total_volumetric_weight=?, total_actual_weight=?, published=?, image=? WHERE tracking_id=?");
+            mysqli_stmt_bind_param($stmt_update, "ssssssssssdsssssssssssssssssis", $new_tracking_id, $sender_name, $sender_contact, $sender_email, $sender_address, $dispatch_location, $carrier, $carrier_refrence_number, $weight, $payment_mode, $total_cost, $receiver_name, $receiver_contact, $receiver_email, $receiver_address, $destination, $package_discription, $dispatch_date, $estimated_delivery_date, $shipment_mode, $quantity, $total_freight, $courier, $comments, $type_of_shipment, $total_volumetric_weight, $total_actual_weight, $published, $packageImage, $edit_id);
             mysqli_stmt_execute($stmt_update);
 
-            // Delete existing package items and shipment history
+            // Delete existing package items and shipment history for the OLD tracking ID
             $stmt_delete_items = mysqli_prepare($con, "DELETE FROM package_items WHERE tracking_id = ?");
             mysqli_stmt_bind_param($stmt_delete_items, "s", $edit_id);
             mysqli_stmt_execute($stmt_delete_items);
@@ -150,7 +148,7 @@ if (isset($_POST['update'])) {
             mysqli_stmt_bind_param($stmt_delete_history, "s", $edit_id);
             mysqli_stmt_execute($stmt_delete_history);
 
-            // Process package items
+            // Re-process package items with the NEW tracking ID
             if (!empty($_POST['package_quantity']) && is_array($_POST['package_quantity'])) {
                 $stmt_insert_items = mysqli_prepare($con, "INSERT INTO package_items (tracking_id, quantity, piece_type, description, length, width, height, weight) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
                 for ($i = 0; $i < count($_POST['package_quantity']); $i++) {
@@ -161,12 +159,12 @@ if (isset($_POST['update'])) {
                     $package_width = text_input($_POST['package_width'][$i]);
                     $package_height = text_input($_POST['package_height'][$i]);
                     $package_weight = text_input($_POST['package_weight'][$i]);
-                    mysqli_stmt_bind_param($stmt_insert_items, "sissdddd", $edit_id, $package_quantity, $package_piece_type, $package_description, $package_length, $package_width, $package_height, $package_weight);
+                    mysqli_stmt_bind_param($stmt_insert_items, "sissdddd", $new_tracking_id, $package_quantity, $package_piece_type, $package_description, $package_length, $package_width, $package_height, $package_weight);
                     mysqli_stmt_execute($stmt_insert_items);
                 }
             }
 
-            // Process shipment history
+            // Re-process shipment history with the NEW tracking ID
             if (!empty($_POST['history_date']) && is_array($_POST['history_date'])) {
                 $stmt_insert_history = mysqli_prepare($con, "INSERT INTO shipment_history (tracking_id, date, time, location, status, updated_by, remarks) VALUES (?, ?, ?, ?, ?, ?, ?)");
                 for ($i = 0; $i < count($_POST['history_date']); $i++) {
@@ -176,7 +174,7 @@ if (isset($_POST['update'])) {
                     $history_status = text_input($_POST['history_status'][$i]);
                     $history_updated_by = text_input($_POST['history_updated_by'][$i]);
                     $history_remarks = text_input($_POST['history_remarks'][$i]);
-                    mysqli_stmt_bind_param($stmt_insert_history, "sssssss", $edit_id, $history_date, $history_time, $history_location, $history_status, $history_updated_by, $history_remarks);
+                    mysqli_stmt_bind_param($stmt_insert_history, "sssssss", $new_tracking_id, $history_date, $history_time, $history_location, $history_status, $history_updated_by, $history_remarks);
                     mysqli_stmt_execute($stmt_insert_history);
                 }
             }
@@ -186,11 +184,11 @@ if (isset($_POST['update'])) {
             if ($email_on_update == 1) {
                 // Send mail
                 $subject = "Shipment Updated";
-                $body = "<p>Dear $receiver_name</p> <p>We are pleased to inform you that your shipment with tracking number <strong>$edit_id</strong> has been updated.</p> <p>For more information visit the <a href='$site_url/tracking.php'>Tracking Page</a> </p> ";
+                $body = "<p>Dear $receiver_name</p> <p>We are pleased to inform you that your shipment with tracking number <strong>$new_tracking_id</strong> has been updated.</p> <p>For more information visit the <a href='$site_url/tracking.php'>Tracking Page</a> </p> ";
                 sendMail($receiver_email, $subject, $body);
             }
             $_SESSION['success_message'] = "Updated successfully";
-            header("Location: edit.php?edit=" . urlencode($edit_id));
+            header("Location: edit.php?edit=" . urlencode($new_tracking_id));
             exit();
 
         } catch (Exception $e) {
@@ -243,7 +241,10 @@ if (isset($_POST['update'])) {
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <label for="tracking_number" class="form-label">Tracking Code</label>
-                                                                <input type="text" readonly value="<?php echo htmlspecialchars($row['tracking_id'] ?? ''); ?>" name="tracking_number" class="form-control" id="tracking_number">
+                                                                <input type="text" value="<?php echo htmlspecialchars($_POST['tracking_number'] ?? $row['tracking_id'] ?? ''); ?>" name="tracking_number" class="form-control" id="tracking_number" required>
+                                                                <?php if (isset($errors['tracking_number'])) : ?>
+                                                                    <div class="text-danger"><?php echo $errors['tracking_number']; ?></div>
+                                                                <?php endif; ?>
                                                             </div>
                                                         </div>
                                                     </div>
