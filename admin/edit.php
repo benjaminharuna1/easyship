@@ -1,5 +1,5 @@
 <?php
-include 'header.php';
+include 'auth.php'; // Use the new auth file for initialization
 
 // Enable mysqli exceptions
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
@@ -143,6 +143,7 @@ if (isset($_POST['update'])) {
         }
     }
 }
+include 'header.php';
 ?>
 
 <div class="page-wrapper">
