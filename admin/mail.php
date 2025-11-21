@@ -1,8 +1,6 @@
 <?php
 include 'header.php'; 
-include '../db.php';
-	
-<?php
+
 $msg = "";
 $err = "";
 if (isset($_POST['save'])) {
@@ -28,6 +26,50 @@ if (isset($_POST['save'])) {
             $msg = "Settings updated successfully.";
         } else {
             $err = "Error updating settings: " . mysqli_stmt_error($stmt);
+        }
+    }
+}
+
+if (isset($_POST['upload-logo'])) {
+    $target_dir = "uploads/";
+    $target_file = $target_dir . basename($_FILES["site-logo"]["name"]);
+    $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+    if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+    && $imageFileType != "gif" ) {
+        $err = "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+    } else {
+        if (move_uploaded_file($_FILES["site-logo"]["tmp_name"], '../' . $target_file)) {
+            $stmt = mysqli_prepare($con, "UPDATE setting SET site_logo = ?");
+            mysqli_stmt_bind_param($stmt, "s", $target_file);
+            if (mysqli_stmt_execute($stmt)) {
+                $msg = "Logo uploaded successfully.";
+            } else {
+                $err = "Error uploading logo: " . mysqli_stmt_error($stmt);
+            }
+        } else {
+            $err = "Sorry, there was an error uploading your file.";
+        }
+    }
+}
+
+if (isset($_POST['upload-favicon'])) {
+    $target_dir = "uploads/";
+    $target_file = $target_dir . basename($_FILES["site-favicon"]["name"]);
+    $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+    if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+    && $imageFileType != "gif" && $imageFileType != "ico" ) {
+        $err = "Sorry, only JPG, JPEG, PNG, GIF & ICO files are allowed.";
+    } else {
+        if (move_uploaded_file($_FILES["site-favicon"]["tmp_name"], '../' . $target_file)) {
+            $stmt = mysqli_prepare($con, "UPDATE setting SET site_favicon = ?");
+            mysqli_stmt_bind_param($stmt, "s", $target_file);
+            if (mysqli_stmt_execute($stmt)) {
+                $msg = "Favicon uploaded successfully.";
+            } else {
+                $err = "Error uploading favicon: " . mysqli_stmt_error($stmt);
+            }
+        } else {
+            $err = "Sorry, there was an error uploading your file.";
         }
     }
 }
@@ -93,6 +135,24 @@ if (isset($_POST['save'])) {
                                     <br>
 
                                     <button name="save" type="submit" class="btn btn-primary">save</button>
+                                </form>
+
+                                <hr>
+
+                                <form method="POST" action="mail.php" enctype="multipart/form-data">
+                                    <label>Site Logo</label>
+                                    <input class="form-control" type="file" name="site-logo">
+                                    <br>
+                                    <button name="upload-logo" type="submit" class="btn btn-primary">Upload Logo</button>
+                                </form>
+
+                                <hr>
+
+                                <form method="POST" action="mail.php" enctype="multipart/form-data">
+                                    <label>Site Favicon</label>
+                                    <input class="form-control" type="file" name="site-favicon">
+                                    <br>
+                                    <button name="upload-favicon" type="submit" class="btn btn-primary">Upload Favicon</button>
                                 </form>
 
 

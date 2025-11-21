@@ -1,3 +1,12 @@
+<?php
+include 'db.php';
+$stmt = mysqli_prepare($con, "SELECT * FROM setting");
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$row = mysqli_fetch_assoc($result);
+$site_logo = $row['site_logo'];
+$site_favicon = $row['site_favicon'];
+?>
 <!doctype html>
 <html class="no-js" lang="en">
 
@@ -8,7 +17,7 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="<?php echo $site_favicon; ?>">
     <!-- Place favicon.ico in the root directory -->
 
     <!-- CSS here -->
@@ -151,7 +160,7 @@
                         <div class="main-header-style4__left">
                             <div class="logo-box-one">
                                 <a href="index.html">
-                                    <img src="assets/img/logo.png" alt="Logo">
+                                    <img src="<?php echo $site_logo; ?>" alt="Logo">
                                 </a>
                             </div>
                         </div>
@@ -1250,187 +1259,6 @@
 
         <!--Start Footer One-->
         <footer class="footer-one">
-            <!-- Start Footer Main -->
-            <div class="footer-main">
-                <div class="container">
-                    <div class="footer-main__inner">
-                        <div class="row">
-                            <!--Start Single Footer Widget-->
-                            <div class="col-xl-3 col-lg-6 col-md-6  wow fadeInUp" data-wow-delay=".1s">
-                                <div class="single-footer-widget">
-                                    <div class="title">
-                                        <h3>Get Free Link</h3>
-                                    </div>
-                                    <div class="footer-widget__links-box">
-                                        <ul>
-                                            <li>
-                                                <a href="#"><span class="icon-chevron"></span>Software Development</a>
-                                            </li>
-                                            <li>
-                                                <a href="#"><span class="icon-chevron"></span>Data Analytics</a>
-                                            </li>
-                                            <li>
-                                                <a href="#"><span class="icon-chevron"></span>IT Consulting</a>
-                                            </li>
-                                            <li>
-                                                <a href="#"><span class="icon-chevron"></span>UI/UX Design</a>
-                                            </li>
-                                            <li>
-                                                <a href="#"><span class="icon-chevron"></span>Network Solutions</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--End Single Footer Widget-->
-
-                            <!--Start Single Footer Widget-->
-                            <div class="col-xl-3 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay=".2s">
-                                <div class="single-footer-widget ml-52">
-                                    <div class="title">
-                                        <h3>Contact</h3>
-                                    </div>
-                                    <div class="single-footer-widget__contact-info">
-                                        <div class="text">
-                                            <p>Your reliable communication ally.</p>
-                                        </div>
-                                        <ul class="clearfix">
-                                            <li>
-                                                <div class="icon">
-                                                    <span class="icon-envelope"></span>
-                                                </div>
-                                                <p><a href="mailto:info@example.com">info@example.com</a></p>
-                                            </li>
-                                            <li>
-                                                <div class="icon">
-                                                    <span class="icon-location-pin"></span>
-                                                </div>
-                                                <p>6391 Elgin St. Celina, 10299</p>
-                                            </li>
-                                            <li>
-                                                <div class="icon">
-                                                    <span class="icon-phone-call-1"></span>
-                                                </div>
-                                                <p><a href="tel:(629)555-0129">(629) 555-0129</a></p>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--End Single Footer Widget-->
-
-                            <!--Start Single Footer Widget-->
-                            <div class="col-xl-3 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay=".3s">
-                                <div class="single-footer-widget ml-7">
-                                    <div class="title">
-                                        <h3>Recent Blog</h3>
-                                    </div>
-                                    <div class="single-footer-widget__recent-blog-list">
-                                        <ul class="clearfix">
-                                            <li>
-                                                <div class="img-box">
-                                                    <img src="assets/img/footer/footer-one__recent-blog__img1.jpg"
-                                                        alt="#">
-                                                    <a href="#"><i class="fa-solid fa-link"></i></a>
-                                                </div>
-                                                <div class="title-box">
-                                                    <div class="date-box">
-                                                        <div class="icon">
-                                                            <span class="icon-calendar"></span>
-                                                        </div>
-                                                        <div class="text">
-                                                            <p>january 11, 2023</p>
-                                                        </div>
-                                                    </div>
-                                                    <h5><a href="#">The standard chunk of Lorem Ipsum</a></h5>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div class="img-box">
-                                                    <img src="assets/img/footer/footer-one__recent-blog__img2.jpg"
-                                                        alt="#">
-                                                    <a href="#"><i class="fa-solid fa-link"></i></a>
-                                                </div>
-                                                <div class="title-box">
-                                                    <div class="date-box">
-                                                        <div class="icon">
-                                                            <span class="icon-calendar"></span>
-                                                        </div>
-                                                        <div class="text">
-                                                            <p>january 11, 2023</p>
-                                                        </div>
-                                                    </div>
-                                                    <h5><a href="#">The standard chunk of Lorem Ipsum</a></h5>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--End Single Footer Widget-->
-
-                            <!--Start Single Footer Widget-->
-                            <div class="col-xl-3 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay=".4s">
-                                <div class="single-footer-widget pl40">
-                                    <div class="title">
-                                        <h3>Photo Gallery</h3>
-                                    </div>
-                                    <div class="single-footer-widget__photo-gallery-list">
-                                        <ul class="clearfix">
-                                            <li>
-                                                <div class="footer-widget__photo-gallery-img">
-                                                    <img src="assets/img/footer/footer-widget__photo-gallery-img-1.jpg"
-                                                        alt="">
-                                                    <a href="#"><i class="fa-solid fa-link"></i></a>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div class="footer-widget__photo-gallery-img">
-                                                    <img src="assets/img/footer/footer-widget__photo-gallery-img-2.jpg"
-                                                        alt="">
-                                                    <a href="#"><i class="fa-solid fa-link"></i></a>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div class="footer-widget__photo-gallery-img">
-                                                    <img src="assets/img/footer/footer-widget__photo-gallery-img-3.jpg"
-                                                        alt="">
-                                                    <a href="#"><i class="fa-solid fa-link"></i></a>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div class="footer-widget__photo-gallery-img">
-                                                    <img src="assets/img/footer/footer-widget__photo-gallery-img-4.jpg"
-                                                        alt="">
-                                                    <a href="#"><i class="fa-solid fa-link"></i></a>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div class="footer-widget__photo-gallery-img">
-                                                    <img src="assets/img/footer/footer-widget__photo-gallery-img-5.jpg"
-                                                        alt="">
-                                                    <a href="#"><i class="fa-solid fa-link"></i></a>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div class="footer-widget__photo-gallery-img">
-                                                    <img src="assets/img/footer/footer-widget__photo-gallery-img-6.jpg"
-                                                        alt="">
-                                                    <a href="#"><i class="fa-solid fa-link"></i></a>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--End Single Footer Widget-->
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- End Footer Main -->
-
             <!--Start Footer Middle-->
             <div class="footer-middle">
                 <div class="container">
@@ -1446,33 +1274,6 @@
                                 <p>Need help?</p>
                                 <p><a href="tel:(808)555-0111">(808) 555-0111</a></p>
                             </div>
-                        </div>
-                        <div class="socel-link-box">
-                            <div class="text">
-                                <p>Follow us:</p>
-                            </div>
-                            <ul class="clearfix">
-                                <li>
-                                    <a href="#">
-                                        <i class="icon-facebook-app-symbol"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <i class="icon-twitter"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <i class="icon-linked-in-logo-of-two-letters"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <i class="icon-pinterest"></i>
-                                    </a>
-                                </li>
-                            </ul>
                         </div>
                     </div>
                 </div>
