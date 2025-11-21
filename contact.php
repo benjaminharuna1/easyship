@@ -13,7 +13,7 @@ $err = '';
 if (isset($_POST['name'])) {
     $name = text_input($_POST['name']);
     $email = text_input($_POST['email']);
-    $mobile = text_input($_POST['mobile']);
+    $mobile = text_input($_POST['number']);
     $company = text_input($_POST['company']);
     $message = text_input($_POST['message']);
 
