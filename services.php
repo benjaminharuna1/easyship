@@ -1,11 +1,5 @@
 <?php
-include 'db.php';
-$stmt = mysqli_prepare($con, "SELECT * FROM setting");
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
-$row = mysqli_fetch_assoc($result);
-$site_logo = $row['site_logo'];
-$site_favicon = $row['site_favicon'];
+include 'functions.php';
 ?>
 <!doctype html>
 <html class="no-js" lang="en">
