@@ -191,7 +191,22 @@ if (isset($_POST['update'])) {
             mysqli_rollback($con);
             $err = "DATABASE ERROR: " . $e->getMessage() . " (Line: " . $e->getLine() . ")";
         }
+    } else {
+        $_SESSION['form_data'] = $_POST;
+        $_SESSION['errors'] = $errors;
+        header("Location: edit.php?edit=" . urlencode($edit_id));
+        exit();
     }
+}
+
+if (isset($_SESSION['form_data'])) {
+    $_POST = $_SESSION['form_data'];
+    unset($_SESSION['form_data']);
+}
+
+if (isset($_SESSION['errors'])) {
+    $errors = $_SESSION['errors'];
+    unset($_SESSION['errors']);
 }
 ?>
 

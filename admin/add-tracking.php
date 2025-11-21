@@ -169,7 +169,22 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
             mysqli_rollback($con);
             $errors['db_error'] = "DATABASE ERROR: " . $e->getMessage() . " (Line: " . $e->getLine() . ")";
         }
+    } else {
+        $_SESSION['form_data'] = $_POST;
+        $_SESSION['errors'] = $errors;
+        header("Location: add-tracking.php");
+        exit();
     }
+}
+
+if (isset($_SESSION['form_data'])) {
+    $_POST = $_SESSION['form_data'];
+    unset($_SESSION['form_data']);
+}
+
+if (isset($_SESSION['errors'])) {
+    $errors = $_SESSION['errors'];
+    unset($_SESSION['errors']);
 }
  ?>
 
