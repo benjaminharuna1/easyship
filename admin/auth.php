@@ -5,7 +5,7 @@ session_start();
 include '../functions.php';
 
 // if user is not logged in, redirect to login page
-if (!isset($_SESSION['IS_LOGIN'])) {
+if (!isset($_SESSION['ADMIN_LOGIN'])) {
     header('location:login.php');
     die();
 }
