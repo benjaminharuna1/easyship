@@ -183,17 +183,10 @@ if (isset($_POST['update'])) {
 
             // Commit Transaction
             mysqli_commit($con);
-            if (isset($_POST['send-email']) && $_POST['send-email'] == 1) {
+            if ($email_on_update == 1) {
                 // Send mail
                 $subject = "Shipment Updated";
-                $status = 'Pending';
-                if (isset($_POST['history_status']) && !empty($_POST['history_status'])) {
-                    $status = end($_POST['history_status']);
-                }
-                $body = file_get_contents('../mailer/shipment_update.html');
-                $body = str_replace('{receiver_name}', $receiver_name, $body);
-                $body = str_replace('{tracking_id}', $edit_id, $body);
-                $body = str_replace('{status}', $status, $body);
+                $body = "<p>Dear $receiver_name</p> <p>We are pleased to inform you that your shipment with tracking number <strong>$edit_id</strong> has been updated.</p> <p>For more information visit the <a href='$site_url/tracking.php'>Tracking Page</a> </p> ";
                 sendMail($receiver_email, $subject, $body);
             }
             $_SESSION['success_message'] = "Updated successfully";
@@ -502,13 +495,6 @@ if (isset($_POST['update'])) {
                                             <div class="col-lg-12">
                                                 <div class="card">
                                                     <div class="card-body">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" name="send-email" value="1" id="send-email">
-                                                            <label class="form-check-label" for="send-email">
-                                                                Send Update Email to Customer
-                                                            </label>
-                                                        </div>
-                                                        <br>
                                                         <div class="d-flex justify-content-end">
                                                             <button type="submit" name="update" class="btn btn-primary">Update</button>
                                                         </div>

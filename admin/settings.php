@@ -80,30 +80,15 @@ if(isset($_POST['save-email-settings'])){
     $smtp_password = $_POST['smtp-password'];
     $smtp_port = $_POST['smtp-port'];
     $smtp_secure = $_POST['smtp-secure'];
+    $email_on_creation = isset($_POST['email-on-creation']) ? 1 : 0;
+    $email_on_update = isset($_POST['email-on-update']) ? 1 : 0;
 
-    $stmt = mysqli_prepare($con, "UPDATE setting SET smtp_host = ?, smtp_username = ?, smtp_password = ?, smtp_port = ?, smtp_secure = ?");
-    mysqli_stmt_bind_param($stmt, "sssss", $smtp_host, $smtp_username, $smtp_password, $smtp_port, $smtp_secure);
+    $stmt = mysqli_prepare($con, "UPDATE setting SET smtp_host = ?, smtp_username = ?, smtp_password = ?, smtp_port = ?, smtp_secure = ?, email_on_creation = ?, email_on_update = ?");
+    mysqli_stmt_bind_param($stmt, "sssssii", $smtp_host, $smtp_username, $smtp_password, $smtp_port, $smtp_secure, $email_on_creation, $email_on_update);
     if (mysqli_stmt_execute($stmt)) {
         $msg = "Email settings updated successfully.";
     } else {
         $err = "Error updating email settings: " . mysqli_stmt_error($stmt);
-    }
-}
-
-if (isset($_POST['send-test-email'])) {
-    $test_email = trim($_POST['test-email']);
-    if (empty($test_email)) {
-        $err = "Please enter an email address.";
-    } elseif (!filter_var($test_email, FILTER_VALIDATE_EMAIL)) {
-        $err = "Invalid email address format.";
-    } else {
-        $subject = "Test Email from $sitename";
-        $body = "This is a test email to verify your SMTP settings.";
-        if (sendMail($test_email, $subject, $body)) {
-            $msg = "Test email sent successfully to " . htmlspecialchars($test_email);
-        } else {
-            $err = "Failed to send test email.";
-        }
     }
 }
 ?>
@@ -219,14 +204,22 @@ if (isset($_POST['send-test-email'])) {
                                         value="<?php echo htmlspecialchars($smtp_secure ?? ''); ?>">
                                     <br>
 
-                                    <button name="save-email-settings" type="submit" class="btn btn-primary">Save Settings</button>
-                                </form>
-                                <hr>
-                                <form method="POST" action="settings.php">
-                                    <label>Send Test Email</label>
-                                    <input class="form-control" type="email" name="test-email" placeholder="Enter email address to receive test email">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="email-on-creation" value="1" <?php echo $email_on_creation == 1 ? 'checked' : '' ?>>
+                                        <label class="form-check-label">
+                                            Email on Shipment Creation
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="email-on-update" value="1" <?php echo $email_on_update == 1 ? 'checked' : '' ?>>
+                                        <label class="form-check-label">
+                                            Email on Package History Update
+                                        </label>
+                                    </div>
                                     <br>
-                                    <button name="send-test-email" type="submit" class="btn btn-secondary">Send Test Email</button>
+
+                                    <button name="save-email-settings" type="submit" class="btn btn-primary">Save Settings</button>
                                 </form>
                             </div>
                         </div>

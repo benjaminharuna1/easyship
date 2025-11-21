@@ -13,30 +13,31 @@ require_once "mailer/Exception.php";
 
 $sql = mysqli_query($con, "SELECT * FROM setting WHERE id = 1 ");
 if (mysqli_num_rows($sql) > 0) {
-    $data = mysqli_fetch_assoc($sql);
+  $data = mysqli_fetch_assoc($sql);
 
-    $tracking_id = $data['tracking_num'];
+  $tracking_id = $data['tracking_num'];
 
 
-    $email_name = $data['email_name'];
-    $email_address = $data['email_address'];
+  $email_name = $data['email_name'];
+  $email_address = $data['email_address'];
 
-    $sitename = $data['sitename'];
-    $site_title = $data['site_title'];
-    $site_url = $data['site_url'];
-
-    $smtp_host = $data['smtp_host'];
-    $smtp_username = $data['smtp_username'];
-    $smtp_password = $data['smtp_password'];
-    $smtp_port = $data['smtp_port'];
-    $smtp_secure = $data['smtp_secure'];
-    $email_on_creation = $data['email_on_creation'];
-    $email_on_update = $data['email_on_update'];
+  $sitename = $data['sitename'];
+  $site_title = $data['site_title'];
+  $site_url = $data['site_url'];
 }
 
 
 function sendMail($email, $subject, $message){
-    global $smtp_host, $smtp_username, $smtp_password, $smtp_port, $smtp_secure;
+    global $con;
+    $stmt = mysqli_prepare($con, "SELECT * FROM setting");
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $row = mysqli_fetch_assoc($result);
+    $smtp_host = $row['smtp_host'];
+    $smtp_username = $row['smtp_username'];
+    $smtp_password = $row['smtp_password'];
+    $smtp_port = $row['smtp_port'];
+    $smtp_secure = $row['smtp_secure'];
 
    $mail = new PHPMailer();
    //SMTP Settings (use default cpanel email account)

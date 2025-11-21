@@ -156,12 +156,10 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
             // Commit Transaction
             mysqli_commit($con);
 
-            if (isset($_POST['send-email']) && $_POST['send-email'] == 1) {
+            if ($email_on_creation == 1) {
                 // Send mail
                 $subject = "Registered Shipment";
-                $body = file_get_contents('../mailer/shipment_creation.html');
-                $body = str_replace('{receiver_name}', $receiver_name, $body);
-                $body = str_replace('{tracking_id}', $tnumbs_final, $body);
+                $body = "<p>Dear $receiver_name</p> <p>We are pleased to inform you that your shipment has been registered with us at <strong>$sitename</strong>.</p>  <center>Tracking Information</center> <p> <strong>Tracking Number - $tnumbs_final </strong> </p> <p> <strong>Status - $status </strong> </p> <p> <strong>Package - $package_discription </strong> </p> <p> <strong>Dispatch Location - $dispatch_location </strong> </p> <p> <strong>Estimated Delivery Date - $destination </strong> </p> <p>For more information visit the <a href='$site_url/tracking.php'>Tracking Page</a> </p> ";
                 sendMail($receiver_email, $subject, $body);
             }
 
@@ -551,13 +549,6 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
         <div class="col-lg-12">
           <div class="card">
             <div class="card-body">
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="send-email" value="1" id="send-email">
-                <label class="form-check-label" for="send-email">
-                  Send Shipment Creation Email to Customer
-                </label>
-              </div>
-              <br>
               <div class="d-flex justify-content-end">
                 <button type="submit" name="add" class="btn btn-primary">Save</button>
                 <button type="submit" name="publish" class="btn btn-secondary ms-2">Publish</button>
