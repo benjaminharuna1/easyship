@@ -88,13 +88,10 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
             }
 
             // Tracking number generation
-            $get_prefix_stmt = mysqli_prepare($con, "SELECT tracking_num FROM setting");
-            mysqli_stmt_execute($get_prefix_stmt);
-            $result = mysqli_stmt_get_result($get_prefix_stmt);
-            $track_prefix_row = mysqli_fetch_assoc($result);
-            $track_prefix = $track_prefix_row ? $track_prefix_row['tracking_num'] : 'TRK';
-            $tnumbs_rand = substr(str_shuffle("12345678900987654321"), 0, 7);
-            $tnumbs_final = $track_prefix . date('m') . $tnumbs_rand;
+            $tnumbs_final = text_input($_POST['tracking_id']);
+            if (empty($tnumbs_final)) {
+                $tnumbs_final = $_POST['auto_tracking_id'];
+            }
 
             // Insert into addtracking
             $stmt = mysqli_prepare($con, "INSERT INTO addtracking (tracking_id, sender_name, sender_contact, sender_email, sender_address, dispatch_location, carrier, carrier_refrence_number, weight, payment_mode, total_cost, image, receiver_name, receiver_contact, receiver_email, receiver_address, destination, package_discription, dispatch_date, estimated_delivery_date, shipment_mode, quantity, date_added, total_freight, courier, comments, type_of_shipment, total_volumetric_weight, total_actual_weight, published) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -173,8 +170,9 @@ include 'header.php';
                                     <h5 class="card-title">Basic Info</h5>
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <label for="tracking_number" class="form-label">Tracking Code (auto-generated)</label>
-                                            <input type="text" readonly value="<?php echo htmlspecialchars($tnumbs); ?>" class="form-control">
+                                            <label for="tracking_id" class="form-label">Tracking ID (leave blank to auto-generate)</label>
+                                            <input type="text" id="tracking_id" name="tracking_id" value="<?php echo htmlspecialchars($_POST['tracking_id'] ?? $tnumbs); ?>" class="form-control">
+                                            <input type="hidden" name="auto_tracking_id" value="<?php echo htmlspecialchars($tnumbs); ?>">
                                         </div>
                                     </div>
                                 </div>
