@@ -1,5 +1,7 @@
 <?php
-include 'header.php';
+// All PHP logic now comes before any HTML output.
+// This includes includes, session handling, and form processing.
+include 'functions.php';
 
 // Enable mysqli exceptions for error handling
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
@@ -33,7 +35,6 @@ try {
                 $_SESSION['error_message'] = "Invalid recipient email address for the test email.";
             } else {
                 $subject = "SMTP Test Email from " . ($settings['Sitename'] ?? 'your site');
-                // Use the new template-based email function
                 if (sendMail($test_email_recipient, $subject, 'test_email', [])) {
                     $_SESSION['success_message'] = "Test email sent successfully to " . htmlspecialchars($test_email_recipient);
                 } else {
@@ -122,6 +123,9 @@ try {
 } catch (Exception $e) {
     $err = "Database Error: " . $e->getMessage();
 }
+
+// Now that all logic is done, we can start outputting the page
+include 'header.php';
 ?>
 
 <div class="page-wrapper">
