@@ -1,5 +1,5 @@
 <?php
-include 'header.php'; 
+include 'header.php';
 
 $msg = "";
 $err = "";
@@ -73,6 +73,24 @@ if (isset($_POST['upload-favicon'])) {
         }
     }
 }
+
+if(isset($_POST['save-email-settings'])){
+    $smtp_host = $_POST['smtp-host'];
+    $smtp_username = $_POST['smtp-username'];
+    $smtp_password = $_POST['smtp-password'];
+    $smtp_port = $_POST['smtp-port'];
+    $smtp_secure = $_POST['smtp-secure'];
+    $email_on_creation = isset($_POST['email-on-creation']) ? 1 : 0;
+    $email_on_update = isset($_POST['email-on-update']) ? 1 : 0;
+
+    $stmt = mysqli_prepare($con, "UPDATE setting SET smtp_host = ?, smtp_username = ?, smtp_password = ?, smtp_port = ?, smtp_secure = ?, email_on_creation = ?, email_on_update = ?");
+    mysqli_stmt_bind_param($stmt, "sssssii", $smtp_host, $smtp_username, $smtp_password, $smtp_port, $smtp_secure, $email_on_creation, $email_on_update);
+    if (mysqli_stmt_execute($stmt)) {
+        $msg = "Email settings updated successfully.";
+    } else {
+        $err = "Error updating email settings: " . mysqli_stmt_error($stmt);
+    }
+}
 ?>
 
 <div class="page-wrapper">
@@ -87,12 +105,13 @@ if (isset($_POST['upload-favicon'])) {
                         <!-- Bordered Tabs -->
                         <ul class="nav nav-tabs nav-tabs-bordered">
 
-
-
                             <li class="nav-item">
-                                <a class="nav-link active " href="dashboard.php">Home</a>
+                                <a class="nav-link active" data-bs-toggle="tab" href="#profile-overview">Site Settings</a>
                             </li>
 
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#email-settings">Email Settings</a>
+                            </li>
 
                         </ul>
 
@@ -107,7 +126,7 @@ if (isset($_POST['upload-favicon'])) {
                                     <div class="alert alert-danger"><?php echo $err; ?></div>
                                 <?php endif; ?>
 
-                                <form method="POST" action="mail.php">
+                                <form method="POST" action="settings.php">
                                     <label>Site name</label>
                                     <input class="form-control" type="text" name="site-name"
                                         value="<?php echo $sitename  ?>">
@@ -139,7 +158,7 @@ if (isset($_POST['upload-favicon'])) {
 
                                 <hr>
 
-                                <form method="POST" action="mail.php" enctype="multipart/form-data">
+                                <form method="POST" action="settings.php" enctype="multipart/form-data">
                                     <label>Site Logo</label>
                                     <input class="form-control" type="file" name="site-logo">
                                     <br>
@@ -148,17 +167,60 @@ if (isset($_POST['upload-favicon'])) {
 
                                 <hr>
 
-                                <form method="POST" action="mail.php" enctype="multipart/form-data">
+                                <form method="POST" action="settings.php" enctype="multipart/form-data">
                                     <label>Site Favicon</label>
                                     <input class="form-control" type="file" name="site-favicon">
                                     <br>
                                     <button name="upload-favicon" type="submit" class="btn btn-primary">Upload Favicon</button>
                                 </form>
+                            </div>
 
+                            <div class="tab-pane fade" id="email-settings">
+                                <h5 class="card-title"></h5>
 
+                                <form method="POST" action="settings.php">
+                                    <label>SMTP Host</label>
+                                    <input class="form-control" type="text" name="smtp-host"
+                                        value="<?php echo $smtp_host ?>">
+                                    <br>
 
+                                    <label>SMTP Username</label>
+                                    <input class="form-control" type="text" name="smtp-username"
+                                        value="<?php echo $smtp_username ?>">
+                                    <br>
 
+                                    <label>SMTP Password</label>
+                                    <input class="form-control" type="password" name="smtp-password"
+                                        value="<?php echo $smtp_password ?>">
+                                    <br>
 
+                                    <label>SMTP Port</label>
+                                    <input class="form-control" type="text" name="smtp-port"
+                                        value="<?php echo $smtp_port ?>">
+                                    <br>
+
+                                    <label>SMTP Secure</label>
+                                    <input class="form-control" type="text" name="smtp-secure"
+                                        value="<?php echo $smtp_secure ?>">
+                                    <br>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="email-on-creation" value="1" <?php echo $email_on_creation == 1 ? 'checked' : '' ?>>
+                                        <label class="form-check-label">
+                                            Email on Shipment Creation
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="email-on-update" value="1" <?php echo $email_on_update == 1 ? 'checked' : '' ?>>
+                                        <label class="form-check-label">
+                                            Email on Package History Update
+                                        </label>
+                                    </div>
+                                    <br>
+
+                                    <button name="save-email-settings" type="submit" class="btn btn-primary">Save Settings</button>
+                                </form>
                             </div>
                         </div>
                     </div>

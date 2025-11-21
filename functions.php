@@ -28,22 +28,32 @@ if (mysqli_num_rows($sql) > 0) {
 
 
 function sendMail($email, $subject, $message){
+    global $con;
+    $stmt = mysqli_prepare($con, "SELECT * FROM setting");
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $row = mysqli_fetch_assoc($result);
+    $smtp_host = $row['smtp_host'];
+    $smtp_username = $row['smtp_username'];
+    $smtp_password = $row['smtp_password'];
+    $smtp_port = $row['smtp_port'];
+    $smtp_secure = $row['smtp_secure'];
 
    $mail = new PHPMailer();
    //SMTP Settings (use default cpanel email account)
    $mail->isSMTP();
-   $mail->Host = "karamelhub.com.ng"; //
+   $mail->Host = $smtp_host; //
    $mail->SMTPAuth = true;
-   $mail->Username = "mail@karamelhub.com.ng"; // Default cpanel email account
-   $mail->Password = '@@mailpass##'; // Default cpanel email password
-   $mail->Port = 465; // 587
-   $mail->SMTPSecure = "ssl"; // tls
+   $mail->Username = $smtp_username; // Default cpanel email account
+   $mail->Password = $smtp_password; // Default cpanel email password
+   $mail->Port = $smtp_port; // 587
+   $mail->SMTPSecure = $smtp_secure; // tls
 
    //Email Settings
    $mail->isHTML(true);
-   $mail->setFrom('mail@karamelhub.com.ng','Easy Ship'); // Email address/ Bank bane shown to reciever
+   $mail->setFrom($smtp_username,'Easy Ship'); // Email address/ Bank bane shown to reciever
    $mail->addAddress($email);
-   $mail->AddReplyTo("mail@karamelhub.com.ng", "Easy Ship"); // Email address/ Bank bane shown to reciever
+   $mail->AddReplyTo($smtp_username, "Easy Ship"); // Email address/ Bank bane shown to reciever
    $mail->Subject = $subject;
    $mail->MsgHTML($message);
    $send = $mail->Send();
