@@ -1,67 +1,106 @@
 <?php
 include 'db.php';
 
+// It's better to include the autoloader only once.
+// The require_once calls are redundant if the autoloader is working.
+// I'll keep them for safety as the original code had them.
 include 'mailer/vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 require_once "mailer/PHPMailer.php";
 require_once "mailer/SMTP.php";
 require_once "mailer/Exception.php";
 
 
-
+// This global query is inefficient as it runs on every page load.
+// It's better to fetch settings when needed, like inside the functions.
+// I'll leave it for now to avoid breaking other parts of the site.
 $sql = mysqli_query($con, "SELECT * FROM setting WHERE id = 1 ");
 if (mysqli_num_rows($sql) > 0) {
   $data = mysqli_fetch_assoc($sql);
 
   $tracking_id = $data['tracking_num'];
-
-
   $email_name = $data['email_name'];
   $email_address = $data['email_address'];
-
   $sitename = $data['sitename'];
   $site_title = $data['site_title'];
   $site_url = $data['site_url'];
 }
 
-
-function sendMail($email, $subject, $message){
+/**
+ * Sends an email using a template.
+ *
+ * @param string $email Recipient's email address.
+ * @param string $subject The subject of the email.
+ * @param string $template_name The name of the HTML template file (without .html extension).
+ * @param array $template_data An associative array of data to replace placeholders in the template.
+ * @return bool True on success, false on failure.
+ */
+function sendMail($email, $subject, $template_name, $template_data = []){
     global $con;
-    $stmt = mysqli_prepare($con, "SELECT * FROM setting");
+    $stmt = mysqli_prepare($con, "SELECT * FROM setting WHERE id = 1");
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
-    $row = mysqli_fetch_assoc($result);
-    $smtp_host = $row['smtp_host'];
-    $smtp_username = $row['smtp_username'];
-    $smtp_password = $row['smtp_password'];
-    $smtp_port = $row['smtp_port'];
-    $smtp_secure = $row['smtp_secure'];
+    $settings = mysqli_fetch_assoc($result);
 
-   $mail = new PHPMailer();
-   //SMTP Settings (use default cpanel email account)
-   $mail->isSMTP();
-   $mail->Host = $smtp_host; //
-   $mail->SMTPAuth = true;
-   $mail->Username = $smtp_username; // Default cpanel email account
-   $mail->Password = $smtp_password; // Default cpanel email password
-   $mail->Port = $smtp_port; // 587
-   $mail->SMTPSecure = $smtp_secure; // tls
+    if (!$settings) {
+        // Cannot send mail without settings
+        return false;
+    }
 
-   //Email Settings
-   $mail->isHTML(true);
-   $mail->setFrom($smtp_username,'Easy Ship'); // Email address/ Bank bane shown to reciever
-   $mail->addAddress($email);
-   $mail->AddReplyTo($smtp_username, "Easy Ship"); // Email address/ Bank bane shown to reciever
-   $mail->Subject = $subject;
-   $mail->MsgHTML($message);
-   $send = $mail->Send();
-   return $send;
+    $smtp_host = $settings['smtp_host'];
+    $smtp_username = $settings['smtp_username'];
+    $smtp_password = $settings['smtp_password'];
+    $smtp_port = $settings['smtp_port'];
+    $smtp_secure = $settings['smtp_secure'];
+    $from_name = $settings['email_name'];
+    $from_email = $settings['email_address']; // The PHPMailer username is often the from address
+
+    // Load and process the template
+    $template_path = __DIR__ . '/mailer/' . $template_name . '.html';
+    if (!file_exists($template_path)) {
+        error_log("Email template not found: " . $template_path);
+        return false;
+    }
+    $message = file_get_contents($template_path);
+
+    // Add global site data to the template data for convenience
+    $template_data['site_name'] = $settings['Sitename'] ?? 'Our Site';
+    $template_data['site_url'] = $settings['site_url'] ?? '#';
+
+    foreach ($template_data as $key => $value) {
+        $message = str_replace('{' . $key . '}', htmlspecialchars((string)$value), $message);
+    }
+
+    $mail = new PHPMailer(true); // Enable exceptions
+
+    try {
+        //SMTP Settings
+        $mail->isSMTP();
+        $mail->Host = $smtp_host;
+        $mail->SMTPAuth = true;
+        $mail->Username = $smtp_username;
+        $mail->Password = $smtp_password;
+        $mail->Port = (int)$smtp_port;
+        $mail->SMTPSecure = $smtp_secure;
+
+        //Email Settings
+        $mail->isHTML(true);
+        $mail->setFrom($smtp_username, $from_name);
+        $mail->addAddress($email);
+        $mail->AddReplyTo($smtp_username, $from_name);
+        $mail->Subject = $subject;
+        $mail->Body = $message; // Use Body for HTML content
+
+        return $mail->send();
+
+    } catch (Exception $e) {
+        error_log("PHPMailer Error: " . $mail->ErrorInfo);
+        return false;
+    }
 }
-
-
-
 
 
 function customAlert($case, $content){
@@ -101,16 +140,5 @@ function pageRedirect($sec, $route){
   $c = "<meta http-equiv='refresh' Content='".$sec."; url=".$route." ' />";
   return $c;
 }
-
-
-
-// function sendMail($email, $subject, $body){
-//   global $email_address, $email_name;
-//   $message = "$body";
-//   $headers = "MIME-Version: 1.0" . "\r\n";
-//     $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-//     $headers .= 'From: '.$email_name.'<'.$email_address.'>' . "\r\n";
-//     return mail($email,$subject,$message,$headers);
-// }
 
 ?>
