@@ -1,15 +1,7 @@
 <?php
-session_start();
-include '../db.php'; 
-include '../functions.php';
-
-if(isset($_SESSION['ADMIN_LOGIN'])){
-    
-}else{
-    echo "<script>window.location.href = 'login.php' </script>";
-}
-
- ?>
+// This file now only contains the visual header HTML.
+// All PHP initialization is handled in auth.php
+?>
 <!doctype html>
 <html lang="en">
 

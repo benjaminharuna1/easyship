@@ -1,7 +1,7 @@
 <?php
 // All PHP logic now comes before any HTML output.
 // This includes includes, session handling, and form processing.
-include 'functions.php';
+include 'auth.php'; // Handles session, DB connection, and login check
 
 // Enable mysqli exceptions for error handling
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
