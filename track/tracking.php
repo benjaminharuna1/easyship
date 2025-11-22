@@ -41,6 +41,7 @@ $receiver_address = $row['receiver_address'];
 $receiver_contact = $row['receiver_contact'];
 
 $coordinates = json_decode($row['coordinates'] ?? 'null', true);
+$geocoding_errors = [];
 
 // If no coordinates saved yet, build from shipment_history
 if (empty($coordinates) || !is_array($coordinates)) {
@@ -49,13 +50,19 @@ if (empty($coordinates) || !is_array($coordinates)) {
     // If dispatch or destination exist on addtracking row, attempt to geocode them
     if (!empty($dispatch_location)) {
         $dc = getCoordinates($dispatch_location);
-        if ($dc) $coordinates['dispatch'] = ['lat' => $dc['lat'], 'lon' => $dc['lon']];
-        else error_log("Geocode failed for dispatch: $dispatch_location (tracking: $tracking_pr)");
+        if (isset($dc['error'])) {
+            $geocoding_errors[] = "Dispatch location ('" . htmlspecialchars($dispatch_location) . "'): " . $dc['error'];
+        } elseif ($dc) {
+            $coordinates['dispatch'] = ['lat' => $dc['lat'], 'lon' => $dc['lon']];
+        }
     }
     if (!empty($destination)) {
         $dd = getCoordinates($destination);
-        if ($dd) $coordinates['destination'] = ['lat' => $dd['lat'], 'lon' => $dd['lon']];
-        else error_log("Geocode failed for destination: $destination (tracking: $tracking_pr)");
+        if (isset($dd['error'])) {
+            $geocoding_errors[] = "Destination location ('" . htmlspecialchars($destination) . "'): " . $dd['error'];
+        } elseif ($dd) {
+            $coordinates['destination'] = ['lat' => $dd['lat'], 'lon' => $dd['lon']];
+        }
     }
 
     // fetch shipment_history for this tracking id (ordered)
@@ -78,7 +85,9 @@ if (empty($coordinates) || !is_array($coordinates)) {
             $gc = $seen_places[$place];
         }
 
-        if ($gc) {
+        if (isset($gc['error'])) {
+            $geocoding_errors[] = "History location ('" . htmlspecialchars($place) . "'): " . $gc['error'];
+        } elseif ($gc) {
             $coordinates['history'][] = [
                 'name' => $place,
                 'lat' => $gc['lat'],
@@ -87,9 +96,6 @@ if (empty($coordinates) || !is_array($coordinates)) {
                 'time' => $h['time'],
                 'remarks' => $h['remarks']
             ];
-        } else {
-            // geocode failed for this history place; log and continue
-            error_log("Geocode failed for history place '$place' (tracking: $tracking_pr)");
         }
     }
 
@@ -211,6 +217,16 @@ $_SESSION['search_P'] = $user_tracking;
               <div class="block block-scrolling-ad">
                 <div class="block-content">
                   <font size="5" color="#2c2c2c">Current Location on Map</font><br/>
+                  <?php if (!empty($geocoding_errors)): ?>
+                    <div style="padding: 15px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 5px; margin-bottom: 20px;">
+                        <strong><i class="icon-warning"></i> Geocoding Errors:</strong>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <?php foreach ($geocoding_errors as $error): ?>
+                                <li><?php echo $error; ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                  <?php endif; ?>
                   <div align="center">
                     <div id="map"></div>
                   </div>

@@ -203,8 +203,7 @@ function getCoordinates($place) {
     $api_key = $settings['geocode_api_key'] ?? '';
 
     if (empty($api_key)) {
-        error_log("Geocode API key is not configured.");
-        return null;
+        return ['error' => 'Geocode API key is not configured.'];
     }
 
     $params = http_build_query([
@@ -226,14 +225,12 @@ function getCoordinates($place) {
     curl_close($ch);
 
     if ($httpCode !== 200 || !$resp) {
-        error_log("LocationIQ API HTTP $httpCode for place: $place");
-        return null;
+        return ['error' => "API request failed with HTTP status $httpCode. Check your API key and server's internet connection."];
     }
 
     $data = json_decode($resp, true);
     if (!is_array($data) || empty($data) || !isset($data[0]['lat'], $data[0]['lon'])) {
-        error_log("LocationIQ API no result for '$place'. Resp preview: " . substr($resp,0,300));
-        return null;
+        return ['error' => "Geocoding service could not find coordinates for the location: '$place'."];
     }
 
     $lat = $data[0]['lat'];
