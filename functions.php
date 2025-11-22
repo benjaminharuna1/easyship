@@ -208,8 +208,8 @@ function getCoordinates($place) {
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-    // IMPORTANT: Replace with your real app name and email to comply with Nominatim's usage policy.
-    curl_setopt($ch, CURLOPT_USERAGENT, 'ShipmentTracker/1.0 (contact@example.com)');
+    // Using a standard browser User-Agent to avoid being blocked.
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
     $resp = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
