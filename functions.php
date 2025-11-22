@@ -195,22 +195,30 @@ function getCoordinates($place) {
         mysqli_stmt_close($stmt);
     }
 
-    // 2) call Nominatim
+    // 2) call LocationIQ
+    $settings_stmt = mysqli_prepare($con, "SELECT locationiq_key FROM setting WHERE id = 1");
+    mysqli_stmt_execute($settings_stmt);
+    $result = mysqli_stmt_get_result($settings_stmt);
+    $settings = mysqli_fetch_assoc($result);
+    $locationiq_key = $settings['locationiq_key'] ?? '';
+
+    if (empty($locationiq_key)) {
+        error_log("LocationIQ API key is not configured.");
+        return null;
+    }
+
     $params = http_build_query([
+        'key' => $locationiq_key,
         'q' => $place,
         'format' => 'json',
         'limit' => 1,
-        'addressdetails' => 0,
-        'accept-language' => 'en'
     ]);
-    $url = "https://nominatim.openstreetmap.org/search?$params";
+    $url = "https://us1.locationiq.com/v1/search.php?$params";
 
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-    // Using a standard browser User-Agent to avoid being blocked.
-    // Nominatim requires a specific User-Agent, see their usage policy.
-    // We will use the site name and admin email from the settings table.
+    // Set a user-agent, which is a good practice.
     global $sitename, $email_address, $site_url;
     $user_agent = "$sitename/1.0 ($site_url; $email_address)";
     curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
@@ -219,13 +227,13 @@ function getCoordinates($place) {
     curl_close($ch);
 
     if ($httpCode !== 200 || !$resp) {
-        error_log("Nominatim HTTP $httpCode for place: $place");
+        error_log("LocationIQ HTTP $httpCode for place: $place");
         return null;
     }
 
     $data = json_decode($resp, true);
     if (!is_array($data) || empty($data) || !isset($data[0]['lat'], $data[0]['lon'])) {
-        error_log("Nominatim no result for '$place'. Resp preview: " . substr($resp,0,300));
+        error_log("LocationIQ no result for '$place'. Resp preview: " . substr($resp,0,300));
         return null;
     }
 

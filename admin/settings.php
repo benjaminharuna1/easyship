@@ -130,6 +130,19 @@ try {
                 exit();
             }
 
+            // API settings update
+            if (isset($_POST['save-api-settings'])) {
+                $locationiq_key = trim($_POST['locationiq-key']);
+
+                $update_stmt = mysqli_prepare($con, "UPDATE setting SET locationiq_key = ? WHERE id = 1");
+                mysqli_stmt_bind_param($update_stmt, "s", $locationiq_key);
+                mysqli_stmt_execute($update_stmt);
+
+                $_SESSION['success_message'] = "API settings updated successfully.";
+                header("Location: settings.php#api-settings");
+                exit();
+            }
+
             mysqli_commit($con);
 
         } catch (Exception $e) {
@@ -173,6 +186,9 @@ include 'header.php';
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="tab" href="#email-settings">Email Settings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#api-settings">API Settings</a>
                     </li>
                 </ul>
 
@@ -269,6 +285,21 @@ include 'header.php';
                             </div>
                         </form>
                     </div>
+
+                    <!-- API Settings Tab -->
+                    <div class="tab-pane fade" id="api-settings">
+                        <h5 class="card-title">Manage API keys for external services.</h5>
+                        <form method="POST" action="settings.php">
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">LocationIQ API Key</label>
+                                <div class="col-sm-10"><input class="form-control" type="text" name="locationiq-key" value="<?php echo htmlspecialchars($_POST['locationiq-key'] ?? $settings['locationiq_key'] ?? ''); ?>"></div>
+                            </div>
+                            <div class="text-end">
+                                <button name="save-api-settings" type="submit" class="btn btn-primary">Save API Settings</button>
+                            </div>
+                        </form>
+                    </div>
+
                 </div>
             </div>
         </div>
