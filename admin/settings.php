@@ -57,6 +57,7 @@ try {
                 $site_url = trim($_POST['site-url']);
                 $email_name = trim($_POST['email-name']);
                 $email_address = trim($_POST['email']);
+                $geocode_api_key = trim($_POST['geocode_api_key']);
 
                 if (empty($site_name) || empty($site_title) || empty($site_url) || empty($email_name) || empty($email_address)) {
                     throw new Exception("All general settings fields are required.");
@@ -64,8 +65,8 @@ try {
                 if (!filter_var($site_url, FILTER_VALIDATE_URL)) throw new Exception("Invalid Site URL format.");
                 if (!filter_var($email_address, FILTER_VALIDATE_EMAIL)) throw new Exception("Invalid email address format.");
 
-                $update_stmt = mysqli_prepare($con, "UPDATE setting SET sitename = ?, site_title = ?, site_url = ?, email_name = ?, email_address = ? WHERE id = 1");
-                mysqli_stmt_bind_param($update_stmt, "sssss", $site_name, $site_title, $site_url, $email_name, $email_address);
+                $update_stmt = mysqli_prepare($con, "UPDATE setting SET sitename = ?, site_title = ?, site_url = ?, email_name = ?, email_address = ?, geocode_api_key = ? WHERE id = 1");
+                mysqli_stmt_bind_param($update_stmt, "ssssss", $site_name, $site_title, $site_url, $email_name, $email_address, $geocode_api_key);
                 mysqli_stmt_execute($update_stmt);
 
                 // Image upload/removal logic for Site Logo and Favicon
@@ -201,6 +202,10 @@ include 'header.php';
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label">Email Address</label>
                                 <div class="col-sm-10"><input class="form-control" type="email" name="email" value="<?php echo htmlspecialchars($_POST['email'] ?? $settings['email_address'] ?? ''); ?>" placeholder="The email address emails will come from" required></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">Geocode API Key</label>
+                                <div class="col-sm-10"><input class="form-control" type="password" name="geocode_api_key" value="<?php echo htmlspecialchars($_POST['geocode_api_key'] ?? $settings['geocode_api_key'] ?? ''); ?>" placeholder="Enter your LocationIQ API key"></div>
                             </div>
                             <hr>
                             <!-- Site Logo -->

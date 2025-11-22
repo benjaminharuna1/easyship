@@ -178,7 +178,7 @@ function pageRedirect($sec, $route){
  * - Returns array('lat'=>..., 'lon'=>...) or null on failure.
  */
 function getCoordinates($place) {
-    global $con; // assume $con is your mysqli connection in included file
+    global $con;
     $place = trim($place);
     if ($place === '') return null;
 
@@ -195,40 +195,51 @@ function getCoordinates($place) {
         mysqli_stmt_close($stmt);
     }
 
-    // 2) call Nominatim
+    // 2) call LocationIQ API
+    $stmt = mysqli_prepare($con, "SELECT geocode_api_key FROM setting WHERE id = 1");
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $settings = mysqli_fetch_assoc($result);
+    $api_key = $settings['geocode_api_key'] ?? '';
+
+    if (empty($api_key)) {
+        error_log("Geocode API key is not configured.");
+        return null;
+    }
+
     $params = http_build_query([
+        'key' => $api_key,
         'q' => $place,
         'format' => 'json',
         'limit' => 1,
         'addressdetails' => 0,
         'accept-language' => 'en'
     ]);
-    $url = "https://nominatim.openstreetmap.org/search?$params";
+    $url = "https://us1.locationiq.com/v1/search.php?$params";
 
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-    // Using a standard browser User-Agent to avoid being blocked.
     curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
     $resp = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
 
     if ($httpCode !== 200 || !$resp) {
-        error_log("Nominatim HTTP $httpCode for place: $place");
+        error_log("LocationIQ API HTTP $httpCode for place: $place");
         return null;
     }
 
     $data = json_decode($resp, true);
     if (!is_array($data) || empty($data) || !isset($data[0]['lat'], $data[0]['lon'])) {
-        error_log("Nominatim no result for '$place'. Resp preview: " . substr($resp,0,300));
+        error_log("LocationIQ API no result for '$place'. Resp preview: " . substr($resp,0,300));
         return null;
     }
 
     $lat = $data[0]['lat'];
     $lon = $data[0]['lon'];
 
-    // 3) insert into geocache (ignore errors)
+    // 3) insert into geocache
     $ins = mysqli_prepare($con, "INSERT INTO geocache (place, lat, lon, updated_at) VALUES (?, ?, ?, NOW())");
     if ($ins) {
         mysqli_stmt_bind_param($ins, "sss", $place, $lat, $lon);
