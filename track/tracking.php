@@ -28,6 +28,14 @@ $row = mysqli_fetch_assoc($result);
 $user_tracking = $row['tracking_id'];
 $package_discription = $row['package_discription'];
 $image = $row['image'];
+
+// Set a placeholder image if no image is provided
+$image_src = '';
+if (!empty($image)) {
+    $image_src = '../uploads/' . htmlspecialchars($image, ENT_QUOTES);
+} else {
+    $image_src = 'https://placehold.co/330x150/EEE/31343C.png?text=Package';
+}
 $dispatch_location = $row['dispatch_location'];
 $destination = $row['destination'];
 $estimated_delivery_date = $row['estimated_delivery_date'];
@@ -188,7 +196,7 @@ $_SESSION['search_P'] = $user_tracking;
           <div class="col_3">
             <div>
               <center>
-                <img class="nav-profile-img mr-2" alt="" src="../uploads/<?php echo htmlspecialchars($image, ENT_QUOTES); ?>" style="width:330px; height:150px;" />
+                <img class="nav-profile-img mr-2" alt="Package Image" src="<?php echo $image_src; ?>" style="width:330px; height:150px;" />
                 <br />
                 <h3>Content of Shipment: <strong><?php echo htmlspecialchars($package_discription, ENT_QUOTES); ?></strong></h3>
               </center>
