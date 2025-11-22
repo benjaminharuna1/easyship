@@ -76,6 +76,9 @@ $_SESSION['search_P'] = $user_tracking;
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 
+  <!-- Font Awesome CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+
   <style>
     /* ensure the map has height */
     #map { width:100%; height:300px; }
@@ -322,7 +325,7 @@ $_SESSION['search_P'] = $user_tracking;
             const isCurrentLocation = index === historyCoords.length - 1;
             const popupContent = `
                 <b>${escapeHtml(item.location)}</b><br>
-                Status: ${escapeHtml(item.remarks)}<br>
+                Status: ${escapeHtml(item.status)}<br>
                 Date: ${escapeHtml(item.date)}<br>
                 Time: ${escapeHtml(item.time)}
             `;
@@ -330,14 +333,14 @@ $_SESSION['search_P'] = $user_tracking;
                 .bindPopup(popupContent);
 
             if (isCurrentLocation) {
-                marker.setIcon(L.icon({
-                    iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-                    iconSize: [25, 41],
-                    iconAnchor: [12, 41],
-                    popupAnchor: [1, -34],
-                    shadowSize: [41, 41]
-                }));
+                const packageIcon = L.divIcon({
+                    html: '<i class="fas fa-box" style="font-size: 24px; color: red;"></i>',
+                    className: 'package-icon',
+                    iconSize: [24, 24],
+                    iconAnchor: [12, 24],
+                    popupAnchor: [0, -24]
+                });
+                marker.setIcon(packageIcon);
                 marker.openPopup();
             }
         });
