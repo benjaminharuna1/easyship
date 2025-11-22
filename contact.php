@@ -10,48 +10,33 @@ $site_favicon = $row['site_favicon'];
 $msg = '';
 $err = '';
 
-// helper to detect AJAX
-function is_ajax() {
-    return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-           strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
-}
+if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+    header('Content-Type: application/json');
+    $response = [];
+    if (isset($_POST['name'])) {
+        $name = text_input($_POST['name']);
+        $email = text_input($_POST['email']);
+        $mobile = text_input($_POST['number']);
+        $company = text_input($_POST['company']);
+        $message = text_input($_POST['message']);
 
-// helper to send JSON and exit
-function json_resp($status, $message) {
-    header('Content-Type: application/json; charset=utf-8');
-    echo json_encode(['status' => $status, 'message' => $message]);
-    exit;
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Use your existing sanitizer
-    $name    = isset($_POST['name']) ? text_input($_POST['name']) : '';
-    $email   = isset($_POST['email']) ? text_input($_POST['email']) : '';
-    $mobile  = isset($_POST['number']) ? text_input($_POST['number']) : '';
-    $company = isset($_POST['company']) ? text_input($_POST['company']) : '';
-    $message = isset($_POST['message']) ? text_input($_POST['message']) : '';
-
-    // Validation
-    if (empty($name) || empty($email) || empty($message)) {
-        $err = "Name, email, and message are required.";
-        if (is_ajax()) json_resp('error', $err);
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $err = "Invalid email address.";
-        if (is_ajax()) json_resp('error', $err);
-    } else {
-        $stmt = mysqli_prepare($con, "INSERT INTO support_messages (name, email, mobile, company, message) VALUES (?, ?, ?, ?, ?)");
-        mysqli_stmt_bind_param($stmt, "sssss", $name, $email, $mobile, $company, $message);
-        if (mysqli_stmt_execute($stmt)) {
-            $msg = "Your message has been sent successfully. We will get back to you shortly.";
-            if (is_ajax()) json_resp('success', $msg);
+        if (empty($name) || empty($email) || empty($message)) {
+            $response = ['status' => 'error', 'message' => 'Name, email, and message are required.'];
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $response = ['status' => 'error', 'message' => 'Invalid email address.'];
         } else {
-            $err = "Failed to send message. Please try again later.";
-            if (is_ajax()) json_resp('error', $err);
+            $stmt = mysqli_prepare($con, "INSERT INTO support_messages (name, email, mobile, company, message) VALUES (?, ?, ?, ?, ?)");
+            mysqli_stmt_bind_param($stmt, "sssss", $name, $email, $mobile, $company, $message);
+            if (mysqli_stmt_execute($stmt)) {
+                $response = ['status' => 'success', 'message' => 'Your message has been sent successfully. We will get back to you shortly.'];
+            } else {
+                $response = ['status' => 'error', 'message' => 'Failed to send message. Please try again later.'];
+            }
         }
     }
-    // For non-AJAX, let the script continue to render the page and show $msg/$err.
+    echo json_encode($response);
+    exit;
 }
-
 ?>
 <!doctype html>
 <html class="no-js" lang="en">
@@ -591,7 +576,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="assets/vendor/marquee/marquee.min.js"></script>
     <script src="assets/vendor/odometer/odometer.min.js"></script>
 
-                    
+
 
 
     <script src="assets/js/main.js"></script>
