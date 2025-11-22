@@ -291,6 +291,24 @@ $_SESSION['search_P'] = $user_tracking;
         }
     }
 
+    // --- HELPERS ---
+    function findCurrentLocationIndex(history) {
+        let deliveredIndex = -1;
+        // The history is already sorted chronologically, so the last 'Delivered' is the most recent.
+        for (let i = 0; i < history.length; i++) {
+            if (history[i].status.toLowerCase() === 'delivered') {
+                deliveredIndex = i;
+            }
+        }
+
+        if (deliveredIndex !== -1) {
+            return deliveredIndex; // Return the last 'Delivered' entry
+        }
+
+        // If no 'Delivered' status is found, return the last known location.
+        return history.length > 0 ? history.length - 1 : -1;
+    }
+
     // --- MAIN EXECUTION ---
     (async function() {
         const dispatchCoords = await geocode(dispatchLabel);
@@ -321,8 +339,10 @@ $_SESSION['search_P'] = $user_tracking;
             latlngs.push([destinationCoords.lat, destinationCoords.lon]);
         }
 
+        const currentLocationIndex = findCurrentLocationIndex(historyCoords);
+
         historyCoords.forEach((item, index) => {
-            const isCurrentLocation = index === historyCoords.length - 1;
+            const isCurrentLocation = index === currentLocationIndex;
             const popupContent = `
                 <b>${escapeHtml(item.location)}</b><br>
                 Status: ${escapeHtml(item.status)}<br>
