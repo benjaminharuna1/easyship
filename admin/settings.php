@@ -91,6 +91,7 @@ try {
                         }
                     }
                 }
+                mysqli_commit($con);
                  $_SESSION['success_message'] = "Site settings updated successfully.";
                  header("Location: settings.php");
                  exit();
@@ -108,12 +109,11 @@ try {
                 mysqli_stmt_bind_param($update_stmt, "sssss", $smtp_host, $smtp_username, $smtp_password, $smtp_port, $smtp_secure);
                 mysqli_stmt_execute($update_stmt);
 
+                mysqli_commit($con);
                 $_SESSION['success_message'] = "Email settings updated successfully.";
                 header("Location: settings.php#email-settings");
                 exit();
             }
-
-            mysqli_commit($con);
 
         } catch (Exception $e) {
             mysqli_rollback($con);
