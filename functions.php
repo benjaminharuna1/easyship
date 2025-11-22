@@ -171,4 +171,33 @@ function pageRedirect($sec, $route){
   return $c;
 }
 
+/**
+ * Geocodes an address using the Nominatim API.
+ *
+ * @param string $address The address to geocode.
+ * @return array|null An associative array with 'lat' and 'lon' keys, or null on failure.
+ */
+function getCoordinates($address) {
+    $url = "https://nominatim.openstreetmap.org/search?q=" . urlencode($address) . "&format=json&limit=1";
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_USERAGENT, 'YourAppName/1.0'); // Nominatim requires a user agent
+
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    if ($response) {
+        $data = json_decode($response, true);
+        if (!empty($data)) {
+            return [
+                'lat' => $data[0]['lat'],
+                'lon' => $data[0]['lon']
+            ];
+        }
+    }
+
+    return null;
+}
 ?>

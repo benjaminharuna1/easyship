@@ -48,6 +48,7 @@ if (isset($_POST['search'])) {
       $current_location = $rows['current_location'];
       $message = $rows['message'];
       $delivary_message = $rows['delivery_message'];
+      $coordinates = json_decode($rows['coordinates'], true);
       $_SESSION['search_P'] = $user_tracking;
       // header('location:../track.html');
     } else {
@@ -90,6 +91,8 @@ if (isset($_POST['search'])) {
 
   <link rel="stylesheet" type="text/css" href="c/custom-style.css">
   <link rel="stylesheet" type="text/css" href="c/carousel.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script type="text/javascript" src="process/jquery.min.js"></script>
   <script type="text/javascript" src="process/jquery-ui.min.js"></script>
   <script type="text/javascript" src="process/bootstrap.min.js"></script>
@@ -259,9 +262,7 @@ if (isset($_POST['search'])) {
 
 
                   <div align="center">
-                    <div  style="width: 100%; height: 300px;">
-                     <iframe  class="map" src="https://maps.google.com/maps?q=<?php echo $current_location == "" ? $destination : $current_location ?>&amp;t=k&amp;z=13&amp;ie=UTF8&amp;iwloc=&amp;output=embed" style="border:0; width: 100%; height: 300px;"></iframe>
-                    </div>
+                    <div id="map" style="width: 100%; height: 300px;"></div>
                   </div>
                 </div>
               </div>
@@ -442,42 +443,40 @@ if (isset($_POST['search'])) {
     });
   </script>
 
+  <script>
+    var map = L.map('map').setView([<?php echo $coordinates['dispatch']['lat'] ?? 0; ?>, <?php echo $coordinates['dispatch']['lon'] ?? 0; ?>], 13);
 
-  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&libraries=places"></script>
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
 
-  <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0JAyU28GRrRC_o5gXkY_CjjHlX5r5Wds&callback=console.debug&libraries=maps,marker&v=beta">
+    var latlngs = [];
+    <?php if (!empty($coordinates['dispatch'])) : ?>
+      var dispatchMarker = L.marker([<?php echo $coordinates['dispatch']['lat']; ?>, <?php echo $coordinates['dispatch']['lon']; ?>]).addTo(map)
+        .bindPopup('<b>Dispatch Location</b><br><?php echo $dispatch_location; ?>')
+        .openPopup();
+      latlngs.push([<?php echo $coordinates['dispatch']['lat']; ?>, <?php echo $coordinates['dispatch']['lon']; ?>]);
+    <?php endif; ?>
+
+    <?php if (!empty($coordinates['history'])) : ?>
+      <?php foreach ($coordinates['history'] as $history) : ?>
+        var historyMarker = L.marker([<?php echo $history['lat']; ?>, <?php echo $history['lon']; ?>]).addTo(map)
+          .bindPopup('<b>History Location</b>');
+        latlngs.push([<?php echo $history['lat']; ?>, <?php echo $history['lon']; ?>]);
+      <?php endforeach; ?>
+    <?php endif; ?>
+
+    <?php if (!empty($coordinates['destination'])) : ?>
+      var destinationMarker = L.marker([<?php echo $coordinates['destination']['lat']; ?>, <?php echo $coordinates['destination']['lon']; ?>]).addTo(map)
+        .bindPopup('<b>Destination Location</b><br><?php echo $destination; ?>');
+      latlngs.push([<?php echo $coordinates['destination']['lat']; ?>, <?php echo $coordinates['destination']['lon']; ?>]);
+    <?php endif; ?>
+
+    var polyline = L.polyline(latlngs, {
+      color: 'blue'
+    }).addTo(map);
+    map.fitBounds(polyline.getBounds());
   </script>
-
-  <script type="text/javascript">
-    function initialize() {
-      // put latitude and longitude data here
-      var latinfo = new google.maps.LatLng(6.6754553, -1.5854323);
-      var map = new google.maps.Map(document.getElementById('map'), {
-        center: latinfo,
-        zoom: 13
-      });
-      var marker = new google.maps.Marker({
-        map: map,
-        position: latinfo,
-        draggable: false,
-        animation: google.maps.Animation.BOUNCE,
-        anchorPoint: new google.maps.Point(0, -29)
-      });
-      var infowindow = new google.maps.InfoWindow();
-      google.maps.event.addListener(marker, 'click', function() {
-        var iwContent = '<div id="pop_window">' + '<div><b>Location</b> : Connaught Place, New Delhi</div></div>';
-        // put content to the infowindow
-        infowindow.setContent(iwContent);
-        // show infowindow in the google map and at the current marker location
-        infowindow.open(map, marker);
-      });
-    }
-    google.maps.event.addDomListener(window, 'load', initialize);
-  </script> 
-
-
-
-
 </body>
 
 </html>

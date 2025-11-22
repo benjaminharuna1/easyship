@@ -93,9 +93,20 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
                 $tnumbs_final = $_POST['auto_tracking_id'];
             }
 
+            // Geocode locations
+            $coordinates = [];
+            $dispatch_coords = getCoordinates($dispatch_location);
+            if ($dispatch_coords) {
+                $coordinates['dispatch'] = $dispatch_coords;
+            }
+            $destination_coords = getCoordinates($destination);
+            if ($destination_coords) {
+                $coordinates['destination'] = $destination_coords;
+            }
+
             // Insert into addtracking
-            $stmt = mysqli_prepare($con, "INSERT INTO addtracking (tracking_id, sender_name, sender_contact, sender_email, sender_address, dispatch_location, carrier, carrier_refrence_number, weight, payment_mode, total_cost, image, receiver_name, receiver_contact, receiver_email, receiver_address, destination, package_discription, dispatch_date, estimated_delivery_date, shipment_mode, quantity, date_added, total_freight, courier, comments, type_of_shipment, total_volumetric_weight, total_actual_weight, published) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            mysqli_stmt_bind_param($stmt, "ssssssssssdssssssssssssssssssi", $tnumbs_final, $sender_name, $sender_contact, $sender_email, $sender_address, $dispatch_location, $carrier, $carrier_refrence_number, $weight, $payment_mode, $total_cost, $packageImage, $receiver_name, $receiver_contact, $receiver_email, $receiver_address, $destination, $package_discription, $dispatch_date, $estimated_delivery_date, $shipment_mode, $quantity, $date_added, $total_freight, $courier, $comments, $type_of_shipment, $total_volumetric_weight, $total_actual_weight, $published);
+            $stmt = mysqli_prepare($con, "INSERT INTO addtracking (tracking_id, sender_name, sender_contact, sender_email, sender_address, dispatch_location, carrier, carrier_refrence_number, weight, payment_mode, total_cost, image, receiver_name, receiver_contact, receiver_email, receiver_address, destination, package_discription, dispatch_date, estimated_delivery_date, shipment_mode, quantity, date_added, total_freight, courier, comments, type_of_shipment, total_volumetric_weight, total_actual_weight, published, coordinates) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            mysqli_stmt_bind_param($stmt, "ssssssssssdssssssssssssssssssis", $tnumbs_final, $sender_name, $sender_contact, $sender_email, $sender_address, $dispatch_location, $carrier, $carrier_refrence_number, $weight, $payment_mode, $total_cost, $packageImage, $receiver_name, $receiver_contact, $receiver_email, $receiver_address, $destination, $package_discription, $dispatch_date, $estimated_delivery_date, $shipment_mode, $quantity, $date_added, $total_freight, $courier, $comments, $type_of_shipment, $total_volumetric_weight, $total_actual_weight, $published, json_encode($coordinates));
             mysqli_stmt_execute($stmt);
 
             // Process package items
