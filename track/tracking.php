@@ -106,6 +106,15 @@ if (empty($coordinates) || !is_array($coordinates)) {
     mysqli_stmt_execute($update_stmt);
 }
 
+// Temporary debugging to expose raw errors
+if (!empty($geocoding_errors)) {
+    echo "<h1>Geocoding Debug Output</h1>";
+    echo "<pre>";
+    var_dump($geocoding_errors);
+    echo "</pre>";
+    die("Execution halted for debugging.");
+}
+
 $_SESSION['search_P'] = $user_tracking;
 ?>
 <!DOCTYPE html>
