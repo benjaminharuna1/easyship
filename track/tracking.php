@@ -49,6 +49,28 @@ if (isset($_POST['search'])) {
       $message = $rows['message'];
       $delivary_message = $rows['delivery_message'];
       $coordinates = json_decode($rows['coordinates'], true);
+
+      if (empty($coordinates)) {
+        $coordinates = [
+            'dispatch' => getCoordinates($dispatch_location),
+            'destination' => getCoordinates($destination),
+            'history' => []
+        ];
+        $history_stmt = mysqli_prepare($con, "SELECT location FROM shipment_history WHERE tracking_id = ?");
+        mysqli_stmt_bind_param($history_stmt, "s", $tracking_pr);
+        mysqli_stmt_execute($history_stmt);
+        $history_result = mysqli_stmt_get_result($history_stmt);
+        while ($history_row = mysqli_fetch_assoc($history_result)) {
+            $history_coords = getCoordinates($history_row['location']);
+            if ($history_coords) {
+                $coordinates['history'][] = [
+                    'name' => $history_row['location'],
+                    'lat' => $history_coords['lat'],
+                    'lon' => $history_coords['lon']
+                ];
+            }
+        }
+    }
       $_SESSION['search_P'] = $user_tracking;
       // header('location:../track.html');
     } else {
