@@ -504,6 +504,16 @@ if (isset($_POST['search'])) {
       }).addTo(map);
       map.fitBounds(polyline.getBounds());
     }
+
+    <?php if (!empty($coordinates['dispatch']) && !empty($coordinates['destination'])) : ?>
+      var directLatLngs = [
+        [<?php echo $coordinates['dispatch']['lat']; ?>, <?php echo $coordinates['dispatch']['lon']; ?>],
+        [<?php echo $coordinates['destination']['lat']; ?>, <?php echo $coordinates['destination']['lon']; ?>]
+      ];
+      var directPolyline = L.polyline(directLatLngs, {
+        color: 'red'
+      }).addTo(map);
+    <?php endif; ?>
   </script>
 </body>
 
