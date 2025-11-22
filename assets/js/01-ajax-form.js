@@ -18,18 +18,17 @@ $(function() {
 		$.ajax({
 			type: 'POST',
 			url: $(form).attr('action'),
-			data: formData
+			data: formData,
+			dataType: 'json'
 		})
 		.done(function(response) {
-			// Make sure that the formMessages div has the 'success' class.
-			$(formMessages).removeClass('error');
-			$(formMessages).addClass('success');
-
-			// Set the message text.
-			$(formMessages).text(response);
-
-			// Clear the form.
-			$('#contact-form input,#contact-form textarea').val('');
+			if (response.status === 'success') {
+				alert(response.message);
+				// Clear the form.
+				$('#contact-form input,#contact-form textarea').val('');
+			} else {
+				alert('Error: ' + response.message);
+			}
 		})
 		.fail(function(data) {
 			// Make sure that the formMessages div has the 'error' class.

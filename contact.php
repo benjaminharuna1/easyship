@@ -10,26 +10,32 @@ $site_favicon = $row['site_favicon'];
 $msg = '';
 $err = '';
 
-if (isset($_POST['name'])) {
-    $name = text_input($_POST['name']);
-    $email = text_input($_POST['email']);
-    $mobile = text_input($_POST['number']);
-    $company = text_input($_POST['company']);
-    $message = text_input($_POST['message']);
+if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+    header('Content-Type: application/json');
+    $response = [];
+    if (isset($_POST['name'])) {
+        $name = text_input($_POST['name']);
+        $email = text_input($_POST['email']);
+        $mobile = text_input($_POST['number']);
+        $company = text_input($_POST['company']);
+        $message = text_input($_POST['message']);
 
-    if (empty($name) || empty($email) || empty($message)) {
-        $err = "Name, email, and message are required.";
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $err = "Invalid email address.";
-    } else {
-        $stmt = mysqli_prepare($con, "INSERT INTO support_messages (name, email, mobile, company, message) VALUES (?, ?, ?, ?, ?)");
-        mysqli_stmt_bind_param($stmt, "sssss", $name, $email, $mobile, $company, $message);
-        if (mysqli_stmt_execute($stmt)) {
-            $msg = "Your message has been sent successfully. We will get back to you shortly.";
+        if (empty($name) || empty($email) || empty($message)) {
+            $response = ['status' => 'error', 'message' => 'Name, email, and message are required.'];
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $response = ['status' => 'error', 'message' => 'Invalid email address.'];
         } else {
-            $err = "Failed to send message. Please try again later.";
+            $stmt = mysqli_prepare($con, "INSERT INTO support_messages (name, email, mobile, company, message) VALUES (?, ?, ?, ?, ?)");
+            mysqli_stmt_bind_param($stmt, "sssss", $name, $email, $mobile, $company, $message);
+            if (mysqli_stmt_execute($stmt)) {
+                $response = ['status' => 'success', 'message' => 'Your message has been sent successfully. We will get back to you shortly.'];
+            } else {
+                $response = ['status' => 'error', 'message' => 'Failed to send message. Please try again later.'];
+            }
         }
     }
+    echo json_encode($response);
+    exit;
 }
 ?>
 <!doctype html>
