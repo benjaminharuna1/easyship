@@ -28,9 +28,36 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
             $stmt = mysqli_prepare($con, "INSERT INTO support_messages (name, email, mobile, company, message) VALUES (?, ?, ?, ?, ?)");
             mysqli_stmt_bind_param($stmt, "sssss", $name, $email, $mobile, $company, $message);
             if (mysqli_stmt_execute($stmt)) {
-                $response = ['status' => 'success', 'message' => 'Your message has been sent successfully. We will get back to you shortly.'];
+                // Message saved to DB, now send email notification
+                $admin_email = $row['email_address'];
+                $subject = "New Contact Form Message from " . htmlspecialchars($name);
+
+                // Using 'custom_email' template type
+                $email_body = "
+                    <h2>New Contact Form Submission</h2>
+                    <p>You have received a new message from the contact form on your website.</p>
+                    <hr>
+                    <p><strong>Name:</strong> " . htmlspecialchars($name) . "</p>
+                    <p><strong>Email:</strong> " . htmlspecialchars($email) . "</p>
+                    <p><strong>Mobile:</strong> " . htmlspecialchars($mobile) . "</p>
+                    <p><strong>Company:</strong> " . htmlspecialchars($company) . "</p>
+                    <p><strong>Message:</strong></p>
+                    <p>" . nl2br(htmlspecialchars($message)) . "</p>
+                    <hr>
+                    <p>Please log in to the admin panel to view and manage this message.</p>
+                ";
+
+                $template_data = ['body' => $email_body];
+
+                if (sendMail($admin_email, $subject, 'custom_email', $template_data)) {
+                    $response = ['status' => 'success', 'message' => 'Your message has been sent successfully. We will get back to you shortly.'];
+                } else {
+                    // Log error for admin, but for user, it's a failure.
+                    error_log("Contact form submission saved to DB but failed to send email notification to " . $admin_email);
+                    $response = ['status' => 'error', 'message' => 'Failed to send message due to a mail server error. Please try again later.'];
+                }
             } else {
-                $response = ['status' => 'error', 'message' => 'Failed to send message. Please try again later.'];
+                $response = ['status' => 'error', 'message' => 'Failed to save your message. Please try again later.'];
             }
         }
     }
@@ -70,6 +97,7 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
 
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/responsive.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 </head>
 
 <body class="body-gray-bg">

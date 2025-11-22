@@ -16,11 +16,11 @@ $(function() {
 		})
 		.done(function(response) {
 			if (response.status === 'success') {
-				alert(response.message);
+                swal("Success!", response.message, "success");
 				// Clear the form.
 				$('#contact-form input,#contact-form textarea').val('');
 			} else {
-				alert('Error: ' + response.message);
+                swal("Error!", response.message, "error");
 			}
 		})
 		.fail(function(data) {

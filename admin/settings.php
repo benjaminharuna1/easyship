@@ -29,24 +29,6 @@ try {
     // Handle POST requests for all forms on this page
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-        // Handle Test Email Submission separately as it's in a modal
-        if (isset($_POST['send-test-email'])) {
-            $test_email_recipient = trim($_POST['test-email-recipient']);
-            if (!filter_var($test_email_recipient, FILTER_VALIDATE_EMAIL)) {
-                $_SESSION['error_message'] = "Invalid recipient email address for the test email.";
-            } else {
-                $subject = "SMTP Test Email from " . ($settings['sitename'] ?? 'your site');
-                // The sendMail function uses settings from the DB, so they must be saved first.
-                if (sendMail($test_email_recipient, $subject, 'test_email', [])) {
-                    $_SESSION['success_message'] = "Test email sent successfully to " . htmlspecialchars($test_email_recipient);
-                } else {
-                    $_SESSION['error_message'] = "Failed to send test email. Please check your SMTP settings and try again.";
-                }
-            }
-            header("Location: settings.php#email-settings");
-            exit();
-        }
-
         // For main settings forms, use a transaction
         mysqli_begin_transaction($con);
         try {
@@ -268,39 +250,13 @@ include 'header.php';
                                 <label class="col-sm-2 col-form-label">SMTP Secure</label>
                                 <div class="col-sm-10"><input class="form-control" type="text" name="smtp-secure" placeholder="e.g., tls or ssl" value="<?php echo htmlspecialchars($_POST['smtp-secure'] ?? $settings['smtp_secure'] ?? ''); ?>"></div>
                             </div>
-                             <div class="d-flex justify-content-between">
-                                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#testEmailModal">Send Test Email</button>
+                             <div class="text-end">
                                 <button name="save-email-settings" type="submit" class="btn btn-primary">Save Email Settings</button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-
-<!-- Test Email Modal -->
-<div class="modal fade" id="testEmailModal" tabindex="-1" aria-labelledby="testEmailModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="testEmailModalLabel">Send Test Email</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form method="POST" action="settings.php">
-                <div class="modal-body">
-                    <p>This will send a test email using your currently saved SMTP settings.</p>
-                    <div class="mb-3">
-                        <label for="test-email-recipient" class="form-label">Recipient Email</label>
-                        <input type="email" class="form-control" id="test-email-recipient" name="test-email-recipient" required>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" name="send-test-email" class="btn btn-primary">Send Email</button>
-                </div>
-            </form>
         </div>
     </div>
 </div>

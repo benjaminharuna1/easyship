@@ -91,6 +91,14 @@
 				</li>
 
 				<li>
+					<a class="" href="test_email.php">
+						<div class="parent-icon"><i class="bx bx-mail-send fs-5"></i>
+						</div>
+						<div class="menu-title">Test Email</div>
+					</a>
+				</li>
+
+				<li>
 					<a class="" href="send-email.php">
 						<div class="parent-icon"><i class="bx bx-envelope fs-5"></i>
 						</div>
