@@ -183,7 +183,7 @@ function getCoordinates($address) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_USERAGENT, 'YourAppName/1.0'); // Nominatim requires a user agent
+    curl_setopt($ch, CURLOPT_USERAGENT, 'ShipmentTracker/1.0'); // Nominatim requires a user agent
 
     $response = curl_exec($ch);
 

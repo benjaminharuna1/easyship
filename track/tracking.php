@@ -219,7 +219,7 @@ if (isset($_POST['search'])) {
                   </strong><br /><br />
 
                   <?php
-                  $stmt = mysqli_prepare($con, "SELECT * FROM track_update  WHERE track_num = ? ORDER BY id DESC ");
+                  $stmt = mysqli_prepare($con, "SELECT * FROM shipment_history WHERE tracking_id = ? ORDER BY date DESC, time DESC");
                   mysqli_stmt_bind_param($stmt, "s", $tracking_pr);
                   mysqli_stmt_execute($stmt);
                   $result = mysqli_stmt_get_result($stmt);
@@ -453,7 +453,7 @@ if (isset($_POST['search'])) {
     var latlngs = [];
     <?php if (!empty($coordinates['dispatch'])) : ?>
       var dispatchMarker = L.marker([<?php echo $coordinates['dispatch']['lat']; ?>, <?php echo $coordinates['dispatch']['lon']; ?>]).addTo(map)
-        .bindPopup('<b>Dispatch Location</b><br><?php echo $dispatch_location; ?>')
+        .bindPopup('<b>Dispatch Location</b><br><?php echo htmlspecialchars($dispatch_location, ENT_QUOTES, 'UTF-8'); ?>')
         .openPopup();
       latlngs.push([<?php echo $coordinates['dispatch']['lat']; ?>, <?php echo $coordinates['dispatch']['lon']; ?>]);
     <?php endif; ?>
@@ -461,14 +461,14 @@ if (isset($_POST['search'])) {
     <?php if (!empty($coordinates['history'])) : ?>
       <?php foreach ($coordinates['history'] as $history) : ?>
         var historyMarker = L.marker([<?php echo $history['lat']; ?>, <?php echo $history['lon']; ?>]).addTo(map)
-          .bindPopup('<b>History Location</b><br><?php echo $history['name']; ?>');
+          .bindPopup('<b>History Location</b><br><?php echo htmlspecialchars($history['name'], ENT_QUOTES, 'UTF-8'); ?>');
         latlngs.push([<?php echo $history['lat']; ?>, <?php echo $history['lon']; ?>]);
       <?php endforeach; ?>
     <?php endif; ?>
 
     <?php if (!empty($coordinates['destination'])) : ?>
       var destinationMarker = L.marker([<?php echo $coordinates['destination']['lat']; ?>, <?php echo $coordinates['destination']['lon']; ?>]).addTo(map)
-        .bindPopup('<b>Destination Location</b><br><?php echo $destination; ?>');
+        .bindPopup('<b>Destination Location</b><br><?php echo htmlspecialchars($destination, ENT_QUOTES, 'UTF-8'); ?>');
       latlngs.push([<?php echo $coordinates['destination']['lat']; ?>, <?php echo $coordinates['destination']['lon']; ?>]);
     <?php endif; ?>
 
