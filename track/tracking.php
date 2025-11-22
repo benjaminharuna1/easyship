@@ -43,6 +43,16 @@ $receiver_contact = $row['receiver_contact'];
 // No server-side geocoding needed anymore.
 // The location names will be passed to the client-side JavaScript.
 
+// Fetch shipment history and pass it to the client-side
+$history_stmt = mysqli_prepare($con, "SELECT location, date, time, remarks, status FROM shipment_history WHERE tracking_id = ? ORDER BY date ASC, time ASC");
+mysqli_stmt_bind_param($history_stmt, "s", $tracking_pr);
+mysqli_stmt_execute($history_stmt);
+$history_result = mysqli_stmt_get_result($history_stmt);
+$shipment_history = [];
+while ($history_row = mysqli_fetch_assoc($history_result)) {
+    $shipment_history[] = $history_row;
+}
+
 $_SESSION['search_P'] = $user_tracking;
 ?>
 <!DOCTYPE html>
@@ -244,6 +254,7 @@ $_SESSION['search_P'] = $user_tracking;
     // --- PHP DATA ---
     const dispatchLabel = <?php echo json_encode($dispatch_location ?? '', JSON_HEX_TAG); ?>;
     const destinationLabel = <?php echo json_encode($destination ?? '', JSON_HEX_TAG); ?>;
+    const shipmentHistory = <?php echo json_encode($shipment_history ?? [], JSON_HEX_TAG); ?>;
 
     // --- MAP SETUP ---
     const map = L.map('map').setView(DEFAULT_CENTER, DEFAULT_ZOOM);
@@ -282,6 +293,14 @@ $_SESSION['search_P'] = $user_tracking;
         const dispatchCoords = await geocode(dispatchLabel);
         const destinationCoords = await geocode(destinationLabel);
 
+        const historyCoords = [];
+        for (const item of shipmentHistory) {
+            const coords = await geocode(item.location);
+            if (coords) {
+                historyCoords.push({ ...coords, ...item });
+            }
+        }
+
         const latlngs = [];
 
         if (dispatchCoords) {
@@ -299,8 +318,37 @@ $_SESSION['search_P'] = $user_tracking;
             latlngs.push([destinationCoords.lat, destinationCoords.lon]);
         }
 
-        if (latlngs.length > 1) {
-            const polyline = L.polyline(latlngs, { color: 'blue' }).addTo(map);
+        historyCoords.forEach((item, index) => {
+            const isCurrentLocation = index === historyCoords.length - 1;
+            const popupContent = `
+                <b>${escapeHtml(item.location)}</b><br>
+                Status: ${escapeHtml(item.remarks)}<br>
+                Date: ${escapeHtml(item.date)}<br>
+                Time: ${escapeHtml(item.time)}
+            `;
+            const marker = L.marker([item.lat, item.lon]).addTo(markers)
+                .bindPopup(popupContent);
+
+            if (isCurrentLocation) {
+                marker.setIcon(L.icon({
+                    iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
+                }));
+                marker.openPopup();
+            }
+        });
+
+        const pathLatLngs = [];
+        if (dispatchCoords) pathLatLngs.push([dispatchCoords.lat, dispatchCoords.lon]);
+        historyCoords.forEach(item => pathLatLngs.push([item.lat, item.lon]));
+        if (destinationCoords) pathLatLngs.push([destinationCoords.lat, destinationCoords.lon]);
+
+        if (pathLatLngs.length > 1) {
+            const polyline = L.polyline(pathLatLngs, { color: 'green' }).addTo(map);
             map.fitBounds(polyline.getBounds(), { padding: [50, 50] });
         } else if (latlngs.length === 1) {
             map.setView(latlngs[0], 13);
