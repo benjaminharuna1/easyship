@@ -56,7 +56,7 @@ if (isset($_POST['search'])) {
             'destination' => getCoordinates($destination),
             'history' => []
         ];
-        $history_stmt = mysqli_prepare($con, "SELECT location FROM shipment_history WHERE tracking_id = ?");
+        $history_stmt = mysqli_prepare($con, "SELECT location FROM shipment_history WHERE tracking_id = ? ORDER BY date ASC, time ASC");
         mysqli_stmt_bind_param($history_stmt, "s", $tracking_pr);
         mysqli_stmt_execute($history_stmt);
         $history_result = mysqli_stmt_get_result($history_stmt);
@@ -70,6 +70,10 @@ if (isset($_POST['search'])) {
                 ];
             }
         }
+        $update_stmt = mysqli_prepare($con, "UPDATE addtracking SET coordinates = ? WHERE tracking_id = ?");
+        $json_coordinates = json_encode($coordinates);
+        mysqli_stmt_bind_param($update_stmt, "ss", $json_coordinates, $tracking_pr);
+        mysqli_stmt_execute($update_stmt);
     }
       $_SESSION['search_P'] = $user_tracking;
       // header('location:../track.html');
@@ -261,9 +265,9 @@ if (isset($_POST['search'])) {
                     <li>
                       <div class="delivered-left"> <span><strong><?php  echo date('F dS, Y', strtotime($row['date'])); ?></strong>,<br> <?php echo date("G:i A", strtotime($row['time'])); ?></span></div>
                       <span class="d-bulte"><i class="current"></i></span>
-                      <div class="delivered-right"> <strong><?php echo $row['note'] ?></strong>
+                      <div class="delivered-right"> <strong><?php echo $row['remarks'] ?></strong>
                         <br>Customer<br>
-                        <?php echo $row['current_location'] ?><br> <span id="order-status" class="default"><?php echo $row['status'] ?></span>
+                        <?php echo $row['location'] ?><br> <span id="order-status" class="default"><?php echo $row['status'] ?></span>
                       </div>
                     </li><br><br>
                   </ul>
