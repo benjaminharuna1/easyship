@@ -186,6 +186,13 @@ function getCoordinates($address) {
     curl_setopt($ch, CURLOPT_USERAGENT, 'YourAppName/1.0'); // Nominatim requires a user agent
 
     $response = curl_exec($ch);
+
+    if (curl_errno($ch)) {
+        // Handle cURL error
+        curl_close($ch);
+        return null;
+    }
+
     curl_close($ch);
 
     if ($response) {

@@ -461,7 +461,7 @@ if (isset($_POST['search'])) {
     <?php if (!empty($coordinates['history'])) : ?>
       <?php foreach ($coordinates['history'] as $history) : ?>
         var historyMarker = L.marker([<?php echo $history['lat']; ?>, <?php echo $history['lon']; ?>]).addTo(map)
-          .bindPopup('<b>History Location</b>');
+          .bindPopup('<b>History Location</b><br><?php echo $history['name']; ?>');
         latlngs.push([<?php echo $history['lat']; ?>, <?php echo $history['lon']; ?>]);
       <?php endforeach; ?>
     <?php endif; ?>
@@ -472,10 +472,12 @@ if (isset($_POST['search'])) {
       latlngs.push([<?php echo $coordinates['destination']['lat']; ?>, <?php echo $coordinates['destination']['lon']; ?>]);
     <?php endif; ?>
 
-    var polyline = L.polyline(latlngs, {
-      color: 'blue'
-    }).addTo(map);
-    map.fitBounds(polyline.getBounds());
+    if (latlngs.length > 0) {
+      var polyline = L.polyline(latlngs, {
+        color: 'blue'
+      }).addTo(map);
+      map.fitBounds(polyline.getBounds());
+    }
   </script>
 </body>
 

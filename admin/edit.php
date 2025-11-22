@@ -53,7 +53,7 @@ if (isset($_POST['update'])) {
     $send_email_history = isset($_POST['send_email_history']);
 
     // Validation
-    $required_fields = ['sendername', 'sendercontact', 'senderemail', 'senderaddress', 'dispatchlocation', 'carrier', 'carrierreferencenumber', 'weight', 'paymentmode', 'total_cost', 'receivername', 'receiver_email', 'receivercontact', 'receiveraddress', 'destination', 'packagedescription', 'dispatch_date', 'estimateddeliverydate', 'shipmentmethod', 'quantity'];
+    $required_fields = ['tracking_id', 'sendername', 'sendercontact', 'senderemail', 'senderaddress', 'dispatchlocation', 'carrier', 'carrierreferencenumber', 'weight', 'paymentmode', 'total_cost', 'receivername', 'receiver_email', 'receivercontact', 'receiveraddress', 'destination', 'packagedescription', 'dispatch_date', 'estimateddeliverydate', 'shipmentmethod', 'quantity'];
     foreach ($required_fields as $field) {
         if (empty($_POST[$field])) {
             $errors[$field] = ucfirst($field) . " is required.";
@@ -104,7 +104,11 @@ if (isset($_POST['update'])) {
                 foreach ($_POST['history_location'] as $location) {
                     $history_coords = getCoordinates($location);
                     if ($history_coords) {
-                        $coordinates['history'][] = $history_coords;
+                        $coordinates['history'][] = [
+                            'name' => $location,
+                            'lat' => $history_coords['lat'],
+                            'lon' => $history_coords['lon']
+                        ];
                     }
                 }
             }
@@ -186,7 +190,7 @@ include 'header.php';
                 <div class="card-body">
                     <div class="mb-3">
                         <label for="tracking_id" class="form-label">Tracking ID</label>
-                        <input type="text" id="tracking_id" name="tracking_id" value="<?php echo htmlspecialchars($_POST['tracking_id'] ?? $row['tracking_id']); ?>" class="form-control">
+                        <input type="text" id="tracking_id" name="tracking_id" value="<?php echo htmlspecialchars($_POST['tracking_id'] ?? $row['tracking_id']); ?>" class="form-control" required>
                     </div>
                 </div>
             </div>
