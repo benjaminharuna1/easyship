@@ -40,80 +40,8 @@ $receiver_email = $row['receiver_email'];
 $receiver_address = $row['receiver_address'];
 $receiver_contact = $row['receiver_contact'];
 
-$coordinates = json_decode($row['coordinates'] ?? 'null', true);
-$geocoding_errors = [];
-
-// If no coordinates saved yet, build from shipment_history
-if (empty($coordinates) || !is_array($coordinates)) {
-    $coordinates = ['dispatch' => null, 'destination' => null, 'history' => []];
-
-    // If dispatch or destination exist on addtracking row, attempt to geocode them
-    if (!empty($dispatch_location)) {
-        $dc = getCoordinates($dispatch_location);
-        if (isset($dc['error'])) {
-            $geocoding_errors[] = "Dispatch location ('" . htmlspecialchars($dispatch_location) . "'): " . $dc['error'];
-        } elseif ($dc) {
-            $coordinates['dispatch'] = ['lat' => $dc['lat'], 'lon' => $dc['lon']];
-        }
-    }
-    if (!empty($destination)) {
-        $dd = getCoordinates($destination);
-        if (isset($dd['error'])) {
-            $geocoding_errors[] = "Destination location ('" . htmlspecialchars($destination) . "'): " . $dd['error'];
-        } elseif ($dd) {
-            $coordinates['destination'] = ['lat' => $dd['lat'], 'lon' => $dd['lon']];
-        }
-    }
-
-    // fetch shipment_history for this tracking id (ordered)
-    $hist_stmt = mysqli_prepare($con, "SELECT location, date, time, remarks FROM shipment_history WHERE tracking_id = ? ORDER BY date ASC, time ASC");
-    mysqli_stmt_bind_param($hist_stmt, "s", $tracking_pr);
-    mysqli_stmt_execute($hist_stmt);
-    $hist_res = mysqli_stmt_get_result($hist_stmt);
-
-    // to avoid duplicate geocoding, track which places we've already looked up
-    $seen_places = [];
-
-    while ($h = mysqli_fetch_assoc($hist_res)) {
-        $place = trim($h['location']);
-        if ($place === '') continue;
-
-        if (!isset($seen_places[$place])) {
-            $gc = getCoordinates($place); // uses geocache internally
-            $seen_places[$place] = $gc; // possibly null
-        } else {
-            $gc = $seen_places[$place];
-        }
-
-        if (isset($gc['error'])) {
-            $geocoding_errors[] = "History location ('" . htmlspecialchars($place) . "'): " . $gc['error'];
-        } elseif ($gc) {
-            $coordinates['history'][] = [
-                'name' => $place,
-                'lat' => $gc['lat'],
-                'lon' => $gc['lon'],
-                'date' => $h['date'],
-                'time' => $h['time'],
-                'remarks' => $h['remarks']
-            ];
-        }
-    }
-
-    // Save coordinates JSON back to addtracking for future loads
-    $json_coordinates = json_encode($coordinates);
-    $update_stmt = mysqli_prepare($con, "UPDATE addtracking SET coordinates = ? WHERE tracking_id = ?");
-    mysqli_stmt_bind_param($update_stmt, "ss", $json_coordinates, $tracking_pr);
-    mysqli_stmt_execute($update_stmt);
-}
-
-// Temporary debugging to expose raw errors
-if (!empty($geocoding_errors)) {
-    echo "<h1>Geocoding Debug Output</h1>";
-    echo "<pre>";
-    var_dump($geocoding_errors);
-    echo "</pre>";
-    die("Execution halted for debugging.");
-}
+// No server-side geocoding needed anymore.
+// The location names will be passed to the client-side JavaScript.
 
 $_SESSION['search_P'] = $user_tracking;
 ?>
@@ -304,81 +232,85 @@ $_SESSION['search_P'] = $user_tracking;
 
   </div>
 
-  <!-- Scripts: jQuery (only once) and Leaflet JS -->
-  <script src="j/jquery.min.js"></script>
-  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <script>
-    // Export PHP coordinates and location strings into JS safely
-    var coords = <?php echo json_encode($coordinates ?? [], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
-    var dispatchLabel = <?php echo json_encode($dispatch_location ?? '', JSON_HEX_TAG); ?>;
-    var destinationLabel = <?php echo json_encode($destination ?? '', JSON_HEX_TAG); ?>;
-    console.log("coords from server:", coords);
+    // --- CONFIG ---
+    const LOCATIONIQ_KEY = 'pk.01682cb67d93596fbb5d646c24723c75'; // Your public API key
+    const DEFAULT_CENTER = [9.0820, 8.6753]; // Nigeria center
+    const DEFAULT_ZOOM = 6;
 
-    // sensible fallback (Lagos coordinates)
-    var fallback = {lat: 6.5244, lon: 3.3792};
+    // --- PHP DATA ---
+    const dispatchLabel = <?php echo json_encode($dispatch_location ?? '', JSON_HEX_TAG); ?>;
+    const destinationLabel = <?php echo json_encode($destination ?? '', JSON_HEX_TAG); ?>;
 
-    function safeParseFloat(v) {
-      if (typeof v === 'number') return v;
-      if (typeof v === 'string') { v = v.trim(); return v === '' ? NaN : parseFloat(v); }
-      return NaN;
+    // --- MAP SETUP ---
+    const map = L.map('map').setView(DEFAULT_CENTER, DEFAULT_ZOOM);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    const markers = L.layerGroup().addTo(map);
+
+    // --- GEOCODING LOGIC ---
+    async function geocode(query) {
+        if (!query || !query.trim()) return null;
+        const url = `https://us1.locationiq.com/v1/search.php?key=${encodeURIComponent(LOCATIONIQ_KEY)}&q=${encodeURIComponent(query)}&format=json&limit=1`;
+        try {
+            const resp = await fetch(url);
+            if (!resp.ok) {
+                console.error('LocationIQ API Error: HTTP ' + resp.status);
+                return null;
+            }
+            const data = await resp.json();
+            if (!Array.isArray(data) || data.length === 0) {
+                console.warn('No results found for "' + query + '"');
+                return null;
+            }
+            const best = data[0];
+            return { lat: parseFloat(best.lat), lon: parseFloat(best.lon) };
+        } catch (err) {
+            console.error('Network error during geocoding:', err);
+            return null;
+        }
     }
 
-    // pick initial center
-    var centerLat = fallback.lat, centerLon = fallback.lon, zoom = 6;
+    // --- MAIN EXECUTION ---
+    (async function() {
+        const dispatchCoords = await geocode(dispatchLabel);
+        const destinationCoords = await geocode(destinationLabel);
 
-    if (coords && coords.dispatch && coords.dispatch.lat && coords.dispatch.lon) {
-      centerLat = safeParseFloat(coords.dispatch.lat);
-      centerLon = safeParseFloat(coords.dispatch.lon);
-      zoom = 10;
-    }
+        const latlngs = [];
 
-    var map = L.map('map').setView([centerLat, centerLon], zoom);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
+        if (dispatchCoords) {
+            L.marker([dispatchCoords.lat, dispatchCoords.lon])
+                .addTo(markers)
+                .bindPopup('<b>Origin</b><br>' + escapeHtml(dispatchLabel))
+                .openPopup();
+            latlngs.push([dispatchCoords.lat, dispatchCoords.lon]);
+        }
 
-    var latlngs = [];
+        if (destinationCoords) {
+            L.marker([destinationCoords.lat, destinationCoords.lon])
+                .addTo(markers)
+                .bindPopup('<b>Destination</b><br>' + escapeHtml(destinationLabel));
+            latlngs.push([destinationCoords.lat, destinationCoords.lon]);
+        }
 
-    function addIfValid(lat, lon, popup, openPopup=false){
-      lat = safeParseFloat(lat); lon = safeParseFloat(lon);
-      if (isNaN(lat) || isNaN(lon)) return false;
-      var m = L.marker([lat, lon]).addTo(map).bindPopup(popup || '');
-      if (openPopup) m.openPopup();
-      return [lat, lon];
-    }
+        if (latlngs.length > 1) {
+            const polyline = L.polyline(latlngs, { color: 'blue' }).addTo(map);
+            map.fitBounds(polyline.getBounds(), { padding: [50, 50] });
+        } else if (latlngs.length === 1) {
+            map.setView(latlngs[0], 13);
+        } else {
+            console.warn('Could not find coordinates for origin or destination.');
+        }
+    })();
 
-    if (coords && coords.dispatch && coords.dispatch.lat && coords.dispatch.lon) {
-      var r = addIfValid(coords.dispatch.lat, coords.dispatch.lon, '<b>Dispatch</b><br>' + dispatchLabel, true);
-      if (r) latlngs.push(r);
-    }
-
-    if (coords && Array.isArray(coords.history)) {
-      coords.history.forEach(function(h){
-        var popup = '<b>' + (h.name||'') + '</b>' + (h.remarks ? '<br/>' + h.remarks : '');
-        var r = addIfValid(h.lat, h.lon, popup, false);
-        if (r) latlngs.push(r);
-      });
-    }
-
-    if (coords && coords.destination && coords.destination.lat && coords.destination.lon) {
-      var r = addIfValid(coords.destination.lat, coords.destination.lon, '<b>Destination</b><br>' + destinationLabel, false);
-      if (r) latlngs.push(r);
-    }
-
-    if (latlngs.length > 1) {
-      var polyline = L.polyline(latlngs, {color: 'blue'}).addTo(map);
-      map.fitBounds(polyline.getBounds(), {padding:[40,40]});
-    } else if (latlngs.length === 1) {
-      map.setView(latlngs[0], 13);
-    } else {
-      console.warn('No valid coordinates available to show on map.');
-    }
-
-    if (coords && coords.dispatch && coords.dispatch.lat && coords.dispatch.lon && coords.destination && coords.destination.lat && coords.destination.lon) {
-      var directLatLngs = [
-        [safeParseFloat(coords.dispatch.lat), safeParseFloat(coords.dispatch.lon)],
-        [safeParseFloat(coords.destination.lat), safeParseFloat(coords.destination.lon)]
-      ];
-      var directPolyline = L.polyline(directLatLngs, {color: 'red'}).addTo(map);
+    function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[m]));
     }
   </script>
 
