@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS geocache (
+  id INT NOT NULL AUTO_INCREMENT,
+  place VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
+  lat VARCHAR(50) NOT NULL,
+  lon VARCHAR(50) NOT NULL,
+  updated_at DATETIME NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY (place)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

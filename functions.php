@@ -172,39 +172,70 @@ function pageRedirect($sec, $route){
 }
 
 /**
- * Geocodes an address using the Nominatim API.
- *
- * @param string $address The address to geocode.
- * @return array|null An associative array with 'lat' and 'lon' keys, or null on failure.
+ * getCoordinates($place)
+ * - Checks local geocache table first.
+ * - If not found, queries Nominatim and caches the result.
+ * - Returns array('lat'=>..., 'lon'=>...) or null on failure.
  */
-function getCoordinates($address) {
-    $url = "https://nominatim.openstreetmap.org/search?q=" . urlencode($address) . "&format=json&limit=1";
+function getCoordinates($place) {
+    global $con; // assume $con is your mysqli connection in included file
+    $place = trim($place);
+    if ($place === '') return null;
 
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_USERAGENT, 'ShipmentTracker/1.0'); // Nominatim requires a user agent
+    // 1) check local cache
+    $stmt = mysqli_prepare($con, "SELECT lat, lon FROM geocache WHERE place = ? LIMIT 1");
+    if ($stmt) {
+        mysqli_stmt_bind_param($stmt, "s", $place);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_bind_result($stmt, $lat, $lon);
+        if (mysqli_stmt_fetch($stmt)) {
+            mysqli_stmt_close($stmt);
+            return ['lat' => $lat, 'lon' => $lon];
+        }
+        mysqli_stmt_close($stmt);
+    }
 
-    $response = curl_exec($ch);
+    // 2) call Nominatim
+    $params = http_build_query([
+        'q' => $place,
+        'format' => 'json',
+        'limit' => 1,
+        'addressdetails' => 0,
+        'accept-language' => 'en'
+    ]);
+    $url = "https://nominatim.openstreetmap.org/search?$params";
 
-    if (curl_errno($ch)) {
-        // Handle cURL error
-        curl_close($ch);
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+    // IMPORTANT: Replace with your real app name and email to comply with Nominatim's usage policy.
+    curl_setopt($ch, CURLOPT_USERAGENT, 'ShipmentTracker/1.0 (contact@example.com)');
+    $resp = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($httpCode !== 200 || !$resp) {
+        error_log("Nominatim HTTP $httpCode for place: $place");
         return null;
     }
 
-    curl_close($ch);
-
-    if ($response) {
-        $data = json_decode($response, true);
-        if (!empty($data)) {
-            return [
-                'lat' => $data[0]['lat'],
-                'lon' => $data[0]['lon']
-            ];
-        }
+    $data = json_decode($resp, true);
+    if (!is_array($data) || empty($data) || !isset($data[0]['lat'], $data[0]['lon'])) {
+        error_log("Nominatim no result for '$place'. Resp preview: " . substr($resp,0,300));
+        return null;
     }
 
-    return null;
+    $lat = $data[0]['lat'];
+    $lon = $data[0]['lon'];
+
+    // 3) insert into geocache (ignore errors)
+    $ins = mysqli_prepare($con, "INSERT INTO geocache (place, lat, lon, updated_at) VALUES (?, ?, ?, NOW())");
+    if ($ins) {
+        mysqli_stmt_bind_param($ins, "sss", $place, $lat, $lon);
+        @mysqli_stmt_execute($ins);
+        mysqli_stmt_close($ins);
+    }
+
+    return ['lat' => $lat, 'lon' => $lon];
 }
 ?>
