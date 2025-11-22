@@ -1,9 +1,13 @@
-CREATE TABLE IF NOT EXISTS geocache (
-  id INT NOT NULL AUTO_INCREMENT,
-  place VARCHAR(255) COLLATE utf8mb4_general_ci NOT NULL,
-  lat VARCHAR(50) NOT NULL,
-  lon VARCHAR(50) NOT NULL,
-  updated_at DATETIME NOT NULL,
-  PRIMARY KEY (id),
-  UNIQUE KEY (place)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+--
+-- Table structure for table `geocache`
+--
+
+CREATE TABLE `geocache` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `place` varchar(255) NOT NULL,
+  `lat` decimal(10,8) NOT NULL,
+  `lon` decimal(11,8) NOT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `place` (`place`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

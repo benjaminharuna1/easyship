@@ -209,7 +209,11 @@ function getCoordinates($place) {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_TIMEOUT, 10);
     // Using a standard browser User-Agent to avoid being blocked.
-    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
+    // Nominatim requires a specific User-Agent, see their usage policy.
+    // We will use the site name and admin email from the settings table.
+    global $sitename, $email_address, $site_url;
+    $user_agent = "$sitename/1.0 ($site_url; $email_address)";
+    curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
     $resp = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
