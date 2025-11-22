@@ -185,17 +185,6 @@ include 'header.php';
 
 <div class="page-wrapper">
     <div class="page-content">
-        <?php if (!empty($row)): ?>
-            <div class="card">
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label for="tracking_id" class="form-label">Tracking ID</label>
-                        <input type="text" id="tracking_id" name="tracking_id" value="<?php echo htmlspecialchars($_POST['tracking_id'] ?? $row['tracking_id']); ?>" class="form-control" required>
-                    </div>
-                </div>
-            </div>
-        <?php endif; ?>
-
         <?php if (!empty($msg)): ?>
             <div class="alert alert-success"><?php echo $msg; ?></div>
         <?php endif; ?>
@@ -211,6 +200,14 @@ include 'header.php';
             <form method="POST" action="edit.php?edit=<?php echo htmlspecialchars($edit_id); ?>" enctype="multipart/form-data">
                 <main id="main" class="main">
                     <section class="section">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="tracking_id" class="form-label">Tracking ID</label>
+                                    <input type="text" id="tracking_id" name="tracking_id" value="<?php echo htmlspecialchars($_POST['tracking_id'] ?? $row['tracking_id']); ?>" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
                         <!-- Shipper and Receiver Cards -->
                         <div class="row">
                             <div class="col-lg-6">
