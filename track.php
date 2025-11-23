@@ -9,7 +9,7 @@ $result = mysqli_stmt_get_result($stmt);
 $row = mysqli_fetch_assoc($result);
 $site_logo = $row['site_logo'];
 $site_favicon = $row['site_favicon'];
-$geocode_api = $row['goecode_api_key'];
+$geocode_api = $row['geocode_api_key'];
 
 $tracking_details = null;
 
