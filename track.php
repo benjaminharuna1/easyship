@@ -218,7 +218,7 @@ if (isset($_POST['search'])) {
                             <div class="logo-box-one">
                                 <a href="index.php">
                                     <img src="<?php echo $site_logo; ?>" alt="Logo">
-                                a>
+                                </a>
                             </div>
                         </div>
                         <!--End Main Header one Inner Left -->
