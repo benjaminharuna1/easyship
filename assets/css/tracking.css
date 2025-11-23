@@ -179,3 +179,24 @@
     height: 400px;
     border-radius: 5px;
 }
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .tracking-body {
+        flex-direction: column;
+    }
+
+    .timeline li::before {
+        left: 178px; /* Adjust if necessary */
+    }
+}
+
+@media (max-width: 480px) {
+    .timeline .timeline-date {
+        flex-basis: 100px;
+    }
+
+    .timeline li::before {
+        left: 128px; /* Adjust for smaller date width */
+    }
+}
