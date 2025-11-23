@@ -65,6 +65,7 @@ if (isset($_POST['update'])) {
             mysqli_begin_transaction($con);
 
             $sender_name = text_input($_POST['sendername']);
+            $sender_email = text_input($_POST['senderemail']);
             $receiver_name = text_input($_POST['receivername']);
             $receiver_email = text_input($_POST['receiver_email']);
 
@@ -88,35 +89,13 @@ if (isset($_POST['update'])) {
             }
 
             $published = isset($_POST['publish']) ? 1 : 0;
-            $new_tracking_id = text_input($_POST['tracking_id']);
-
-            // Geocode locations
-            $coordinates = [];
-            $dispatch_coords = getCoordinates($_POST['dispatchlocation']);
-            if ($dispatch_coords) {
-                $coordinates['dispatch'] = $dispatch_coords;
-            }
-            $destination_coords = getCoordinates($_POST['destination']);
-            if ($destination_coords) {
-                $coordinates['destination'] = $destination_coords;
-            }
-            if (!empty($_POST['history_location'])) {
-                foreach ($_POST['history_location'] as $location) {
-                    $history_coords = getCoordinates($location);
-                    if ($history_coords) {
-                        $coordinates['history'][] = [
-                            'name' => $location,
-                            'lat' => $history_coords['lat'],
-                            'lon' => $history_coords['lon']
-                        ];
-                    }
-                }
-            }
+            $tracking_id_input = $_POST['tracking_id'];
+            $new_tracking_id = text_input($tracking_id_input);
 
             // Main tracking info update
-            $update_query = "UPDATE addtracking SET tracking_id=?, sender_name=?, sender_contact=?, sender_email=?, sender_address=?, dispatch_location=?, carrier=?, carrier_refrence_number=?, weight=?, payment_mode=?, total_cost=?, receiver_name=?, receiver_contact=?, receiver_email=?, receiver_address=?, destination=?, package_discription=?, dispatch_date=?, estimated_delivery_date=?, shipment_mode=?, quantity=?, total_freight=?, courier=?, comments=?, type_of_shipment=?, total_volumetric_weight=?, total_actual_weight=?, published=?, image=?, coordinates=? WHERE tracking_id=?";
+            $update_query = "UPDATE addtracking SET tracking_id=?, sender_name=?, sender_contact=?, sender_email=?, sender_address=?, dispatch_location=?, carrier=?, carrier_refrence_number=?, weight=?, payment_mode=?, total_cost=?, receiver_name=?, receiver_contact=?, receiver_email=?, receiver_address=?, destination=?, package_discription=?, dispatch_date=?, estimated_delivery_date=?, shipment_mode=?, quantity=?, total_freight=?, courier=?, comments=?, type_of_shipment=?, total_volumetric_weight=?, total_actual_weight=?, published=?, image=? WHERE tracking_id=?";
             $stmt_update = mysqli_prepare($con, $update_query);
-            mysqli_stmt_bind_param($stmt_update, "ssssssssssdssssssssssssssssisss", $new_tracking_id, $_POST['sendername'], $_POST['sendercontact'], $_POST['senderemail'], $_POST['senderaddress'], $_POST['dispatchlocation'], $_POST['carrier'], $_POST['carrierreferencenumber'], $_POST['weight'], $_POST['paymentmode'], $_POST['total_cost'], $receiver_name, $_POST['receivercontact'], $receiver_email, $_POST['receiveraddress'], $_POST['destination'], $_POST['packagedescription'], $_POST['dispatch_date'], $_POST['estimateddeliverydate'], $_POST['shipmentmethod'], $_POST['quantity'], $_POST['total_freight'], $_POST['courier'], $_POST['comments'], $_POST['type_of_shipment'], $_POST['total_volumetric_weight'], $_POST['total_actual_weight'], $published, $packageImage, json_encode($coordinates), $edit_id);
+            mysqli_stmt_bind_param($stmt_update, "ssssssssssdssssssssssssssssisss", $new_tracking_id, $_POST['sendername'], $_POST['sendercontact'], $_POST['senderemail'], $_POST['senderaddress'], $_POST['dispatchlocation'], $_POST['carrier'], $_POST['carrierreferencenumber'], $_POST['weight'], $_POST['paymentmode'], $_POST['total_cost'], $receiver_name, $_POST['receivercontact'], $receiver_email, $_POST['receiveraddress'], $_POST['destination'], $_POST['packagedescription'], $_POST['dispatch_date'], $_POST['estimateddeliverydate'], $_POST['shipmentmethod'], $_POST['quantity'], $_POST['total_freight'], $_POST['courier'], $_POST['comments'], $_POST['type_of_shipment'], $_POST['total_volumetric_weight'], $_POST['total_actual_weight'], $published, $packageImage, $edit_id);
             mysqli_stmt_execute($stmt_update);
 
             // If tracking ID was changed, update related tables
