@@ -28,11 +28,11 @@
     color: white;
     padding: 8px 15px;
     border-radius: 5px;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .tracking-id {
-    font-size: 18px;
+    font-size: 12px;
     margin-bottom: 30px;
 }
 
@@ -64,8 +64,9 @@
 }
 
 .timeline .timeline-date strong {
-    font-size: 16px;
+    font-size: 12px;
     display: block;
+    font-weight: bold;
 }
 
 .timeline-dot {
@@ -92,9 +93,10 @@
     top: -5px;
 }
 .timeline-content strong {
-    font-size: 16px;
+    font-size: 12px;
     display: block;
     margin-bottom: 5px;
+    font-weight: bold;
 }
 .timeline-content .location {
     font-style: italic;
@@ -146,7 +148,7 @@
 }
 
 .details-card h3, .map-card h3 {
-    font-size: 20px;
+    font-size: 24px;
     margin-bottom: 15px;
     border-bottom: 1px solid #eee;
     padding-bottom: 10px;
