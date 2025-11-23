@@ -1,6 +1,7 @@
 /* Add this to your existing CSS file or create a new one */
 
 .tracking-container {
+    max-width: 1200px;
     margin: 20px auto;
     padding: 20px;
     background-color: #f9f9f9;
