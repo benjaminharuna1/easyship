@@ -2,8 +2,6 @@
 session_start();
 include '../db.php';
 include '../functions.php';
-include '../header.php';
-
 
 if (!isset($_POST['search'])) {
     echo "<script>window.location.href='../track.html'</script>";
@@ -65,7 +63,58 @@ while ($history_row = mysqli_fetch_assoc($history_result)) {
 
 $_SESSION['search_P'] = $user_tracking;
 ?>
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="keywords" content="#1 Best Courier & Logistics Company in UK">
+  <meta name="description" content="#1 Best Courier & Logistics Company in UK">
+  <title>Tracking Result</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- styles -->
+  <link href="c/template.css" rel="stylesheet" type="text/css">
+  <link href="c/general.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="c/responsives.css">
+  <link rel="stylesheet" type="text/css" href="c/styl.css" media="all">
+  <link rel="stylesheet" type="text/css" href="c/custom-style.css">
+  <link rel="stylesheet" type="text/css" href="c/carousel.css">
+  <link href="images/favicon.png" rel="shortcut icon">
+  <link rel="icon" href="images/favicon.png" type="image/x-icon">
 
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+
+  <!-- Font Awesome CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+
+  <style>
+    /* ensure the map has height */
+    #map { width:100%; height:300px; }
+    table { font-family: arial, sans-serif; border-collapse: collapse; width: 100%; }
+    td, th { border: 1px solid #dddddd; text-align: left; padding: 8px; }
+    tr:nth-child(even) { background-color: #dddddd; }
+    .m-btm { text-align: center; margin-bottom: 35px; }
+    .mtn { text-align: center; }
+    .d-bl { display: block; margin-bottom: 25px; }
+    #btnal, #btn { background: teal; color: aqua; border-radius: 5px; padding: 0.5rem; font-size: 0.83rem; cursor: pointer; }
+  </style>
+</head>
+
+<body>
+  <div id="wrapper">
+    <div id="banner">
+      <div class="container"><div class="bg"></div></div>
+      <div class="block block-tracker">
+        <div class="h_container">
+          <form action="tracking.php" method="post" id="userForm">
+            <p>TRACK YOUR SHIPMENT
+              <input type="text" name="search_P" id="Consignment" placeholder="Enter Tracking number"  />
+              <input type="submit" name="search" id="send" value="TRACK NOW" />
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
 
   <?php
     // show content if search
@@ -184,6 +233,23 @@ $_SESSION['search_P'] = $user_tracking;
     </div>
 
   <?php } // end if POST search ?>
+
+    <footer id="footer">
+      <div class="container">
+        <div class="links-container">
+          <div class="social">
+            Always stay connected with us.. <br><br>
+            <a href="http://www.facebook.com/" target="_blank"><img src="image/facebook.png" width="20" height="20" border="0" title="Facebook"></a>
+            <a href="http://www.twitter.com/" target="_blank"><img src="image/twitter.png" width="20" height="20" border="0" title="Twitter"></a>
+            <a href="http://www.youtube.com/" target="_blank"><img src="image/youtube.png" width="20" height="20" border="0" title="Youtube"></a>
+          </div>
+
+          <div class="copyright clear">
+            Copyright &copy 2023 All Rights Reserved.
+          </div>
+        </div>
+      </div>
+    </footer>
 
   </div>
 
@@ -329,4 +395,3 @@ $_SESSION['search_P'] = $user_tracking;
 
 </body>
 </html>
-<?php include '../footer.php'; ?>
