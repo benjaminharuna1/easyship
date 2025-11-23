@@ -145,7 +145,7 @@ if (isset($_POST['update'])) {
 
             // Resubmitting shipment history
             $stmt_delete_history = mysqli_prepare($con, "DELETE FROM shipment_history WHERE tracking_id = ?");
-            mysqli_stmt_bind_param($stmt_delete_history, "s", $edit_id);
+            mysqli_stmt_bind_param($stmt_delete_history, "s", $new_tracking_id);
             mysqli_stmt_execute($stmt_delete_history);
 
             if (!empty($_POST['history_date'])) {
