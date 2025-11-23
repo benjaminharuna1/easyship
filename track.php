@@ -362,92 +362,96 @@ if (isset($_POST['search'])) {
         <span class="number"><?php echo htmlspecialchars($tracking_details['tracking_id'], ENT_QUOTES); ?></span>
     </p>
 
-    <ul class="timeline">
-        <?php foreach ($tracking_details['history'] as $history_row): ?>
-        <li>
-            <div class="timeline-date">
-                <strong><?php echo date('F dS, Y', strtotime($history_row['date'])); ?></strong>
-                <br>
-                <?php echo date("g:i A", strtotime($history_row['time'])); ?>
+    <div class="tracking-body">
+        <div class="tracking-main-content">
+            <ul class="timeline">
+                <?php foreach ($tracking_details['history'] as $history_row): ?>
+                <li>
+                    <div class="timeline-date">
+                        <strong><?php echo date('F dS, Y', strtotime($history_row['date'])); ?></strong>
+                        <br>
+                        <?php echo date("g:i A", strtotime($history_row['time'])); ?>
+                    </div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <strong><?php echo htmlspecialchars($history_row['remarks'], ENT_QUOTES); ?></strong>
+                        <div class="location"><?php echo htmlspecialchars($history_row['location'], ENT_QUOTES); ?></div>
+                        <span class="status"><?php echo htmlspecialchars($history_row['status'], ENT_QUOTES); ?></span>
+                    </div>
+                </li>
+                <?php endforeach; ?>
+            </ul>
+
+            <div class="map-card">
+                <h3>Current Location on Map</h3>
+                <div id="map"></div>
             </div>
-            <div class="timeline-dot"></div>
-            <div class="timeline-content">
-                <strong><?php echo htmlspecialchars($history_row['remarks'], ENT_QUOTES); ?></strong>
-                <div class="location"><?php echo htmlspecialchars($history_row['location'], ENT_QUOTES); ?></div>
-                <span class="status"><?php echo htmlspecialchars($history_row['status'], ENT_QUOTES); ?></span>
+        </div>
+
+        <div class="tracking-sidebar">
+            <div class="details-card">
+                <h3>Shipment Details</h3>
+                <img src="uploads/<?php echo htmlspecialchars($tracking_details['image'], ENT_QUOTES); ?>" alt="Package Image" class="shipment-image">
+                <p><strong>Content:</strong> <?php echo htmlspecialchars($tracking_details['package_discription'], ENT_QUOTES); ?></p>
+                <table>
+                    <tr>
+                        <th>Est. Delivery Date:</th>
+                        <td><?php echo htmlspecialchars($tracking_details['estimated_delivery_date'], ENT_QUOTES); ?></td>
+                    </tr>
+                    <tr>
+                        <th>Origin:</th>
+                        <td><?php echo htmlspecialchars($tracking_details['dispatch_location'], ENT_QUOTES); ?></td>
+                    </tr>
+                    <tr>
+                        <th>Destination:</th>
+                        <td><?php echo htmlspecialchars($tracking_details['destination'], ENT_QUOTES); ?></td>
+                    </tr>
+                </table>
             </div>
-        </li>
-        <?php endforeach; ?>
-    </ul>
 
-    <div class="details-grid">
-        <div class="details-card">
-            <h3>Shipment Details</h3>
-            <img src="uploads/<?php echo htmlspecialchars($tracking_details['image'], ENT_QUOTES); ?>" alt="Package Image" class="shipment-image">
-            <p><strong>Content:</strong> <?php echo htmlspecialchars($tracking_details['package_discription'], ENT_QUOTES); ?></p>
-            <table>
-                <tr>
-                    <th>Est. Delivery Date:</th>
-                    <td><?php echo htmlspecialchars($tracking_details['estimated_delivery_date'], ENT_QUOTES); ?></td>
-                </tr>
-                <tr>
-                    <th>Origin:</th>
-                    <td><?php echo htmlspecialchars($tracking_details['dispatch_location'], ENT_QUOTES); ?></td>
-                </tr>
-                <tr>
-                    <th>Destination:</th>
-                    <td><?php echo htmlspecialchars($tracking_details['destination'], ENT_QUOTES); ?></td>
-                </tr>
-            </table>
-        </div>
+            <div class="details-card">
+                <h3>Sender's Details</h3>
+                <table>
+                    <tr>
+                        <th>Name:</th>
+                        <td><?php echo htmlspecialchars($tracking_details['sender_name'], ENT_QUOTES); ?></td>
+                    </tr>
+                    <tr>
+                        <th>Email:</th>
+                        <td><?php echo htmlspecialchars($tracking_details['sender_email'], ENT_QUOTES); ?></td>
+                    </tr>
+                    <tr>
+                        <th>Address:</th>
+                        <td><?php echo htmlspecialchars($tracking_details['sender_address'], ENT_QUOTES); ?></td>
+                    </tr>
+                    <tr>
+                        <th>Mobile:</th>
+                        <td><?php echo htmlspecialchars($tracking_details['sender_contact'], ENT_QUOTES); ?></td>
+                    </tr>
+                </table>
+            </div>
 
-        <div class="map-card">
-            <h3>Current Location on Map</h3>
-            <div id="map"></div>
-        </div>
-
-        <div class="details-card">
-            <h3>Sender's Details</h3>
-            <table>
-                <tr>
-                    <th>Name:</th>
-                    <td><?php echo htmlspecialchars($tracking_details['sender_name'], ENT_QUOTES); ?></td>
-                </tr>
-                <tr>
-                    <th>Email:</th>
-                    <td><?php echo htmlspecialchars($tracking_details['sender_email'], ENT_QUOTES); ?></td>
-                </tr>
-                <tr>
-                    <th>Address:</th>
-                    <td><?php echo htmlspecialchars($tracking_details['sender_address'], ENT_QUOTES); ?></td>
-                </tr>
-                <tr>
-                    <th>Mobile:</th>
-                    <td><?php echo htmlspecialchars($tracking_details['sender_contact'], ENT_QUOTES); ?></td>
-                </tr>
-            </table>
-        </div>
-
-        <div class="details-card">
-            <h3>Receiver's Details</h3>
-            <table>
-                <tr>
-                    <th>Name:</th>
-                    <td><?php echo htmlspecialchars($tracking_details['receiver_name'], ENT_QUOTES); ?></td>
-                </tr>
-                <tr>
-                    <th>Email:</th>
-                    <td><?php echo htmlspecialchars($tracking_details['receiver_email'], ENT_QUOTES); ?></td>
-                </tr>
-                <tr>
-                    <th>Address:</th>
-                    <td><?php echo htmlspecialchars($tracking_details['receiver_address'], ENT_QUOTES); ?></td>
-                </tr>
-                <tr>
-                    <th>Mobile:</th>
-                    <td><?php echo htmlspecialchars($tracking_details['receiver_contact'], ENT_QUOTES); ?></td>
-                </tr>
-            </table>
+            <div class="details-card">
+                <h3>Receiver's Details</h3>
+                <table>
+                    <tr>
+                        <th>Name:</th>
+                        <td><?php echo htmlspecialchars($tracking_details['receiver_name'], ENT_QUOTES); ?></td>
+                    </tr>
+                    <tr>
+                        <th>Email:</th>
+                        <td><?php echo htmlspecialchars($tracking_details['receiver_email'], ENT_QUOTES); ?></td>
+                    </tr>
+                    <tr>
+                        <th>Address:</th>
+                        <td><?php echo htmlspecialchars($tracking_details['receiver_address'], ENT_QUOTES); ?></td>
+                    </tr>
+                    <tr>
+                        <th>Mobile:</th>
+                        <td><?php echo htmlspecialchars($tracking_details['receiver_contact'], ENT_QUOTES); ?></td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
 </div>

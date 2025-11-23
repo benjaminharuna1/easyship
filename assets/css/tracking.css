@@ -123,9 +123,19 @@
     background-color: #ddd;
 }
 
-.details-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+.tracking-body {
+    display: flex;
+    gap: 20px;
+}
+
+.tracking-main-content {
+    flex: 2; /* Takes up 2/3 of the space */
+}
+
+.tracking-sidebar {
+    flex: 1; /* Takes up 1/3 of the space */
+    display: flex;
+    flex-direction: column;
     gap: 20px;
 }
 
