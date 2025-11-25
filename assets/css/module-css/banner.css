@@ -63,6 +63,13 @@
 .banner-one__content {
     position: relative;
     display: block;
+    width: 100%;
+}
+
+@media (min-width: 992px) {
+    .banner-one__content {
+        width: 45%;
+    }
 }
 
 .banner-one__content .sub-title {
