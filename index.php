@@ -186,7 +186,7 @@ $site_favicon = $row['site_favicon'];
 
                                                 <li><a href="track.php">Track</a></li>
 
-                                                <li><a href="contact.php">contacts</a></li>
+                                                <li><a href="contact.php">contact</a></li>
 
                                             </ul>
                                         </div>

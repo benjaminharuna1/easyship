@@ -211,7 +211,7 @@ $geocode_api = $row['geocode_api_key'];
 
                                                 <li class="active"><a href="track.php">Track</a></li>
 
-                                                <li><a href="contact.php">contacts</a></li>
+                                                <li><a href="contact.php">contact</a></li>
 
                                             </ul>
                                         </div>
