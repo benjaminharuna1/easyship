@@ -1,11 +1,15 @@
 <?php
+session_start();
 include 'db.php';
+include 'functions.php';
+
 $stmt = mysqli_prepare($con, "SELECT * FROM setting");
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 $row = mysqli_fetch_assoc($result);
 $site_logo = $row['site_logo'];
 $site_favicon = $row['site_favicon'];
+$geocode_api = $row['geocode_api_key'];
 ?>
 <!doctype html>
 <html class="no-js" lang="en">
@@ -39,6 +43,25 @@ $site_favicon = $row['site_favicon'];
 
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/responsive.css">
+    <link rel="stylesheet" href="assets/css/tracking.css">
+
+      <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+
+<!-- Font Awesome CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+
+<style>
+  /* ensure the map has height */
+  #map { width:100%; height:300px; }
+  table { font-family: arial, sans-serif; border-collapse: collapse; width: 100%; }
+  td, th { border: 1px solid #dddddd; text-align: left; padding: 8px; }
+  tr:nth-child(even) { background-color: #dddddd; }
+  .m-btm { text-align: center; margin-bottom: 35px; }
+  .mtn { text-align: center; }
+  .d-bl { display: block; margin-bottom: 25px; }
+  #btnal, #btn { background: teal; color: aqua; border-radius: 5px; padding: 0.5rem; font-size: 0.83rem; cursor: pointer; }
+</style>
 </head>
 
 <body class="body-gray-bg">
@@ -276,7 +299,7 @@ $site_favicon = $row['site_favicon'];
 
         <div class="col-xl-12 col-lg-12">
             <div class="contact-one__form">
-                <form id="" action="track/tracking.php" method="POST">
+                <form id="" action="track/tracking.php" method="POST" target="_blank">
                     <div class="row">
                         <div class="col-xl-9 col-lg-9">
                             <div class="contact-one__input-box">
@@ -295,10 +318,6 @@ $site_favicon = $row['site_favicon'];
             </div>
         </div>
     
-
-
-
-
         
         <!--Start Footer One-->
         <footer class="footer-one">
