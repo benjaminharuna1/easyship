@@ -131,7 +131,7 @@ if (!$page) {
                 <div class="row">
                     <div class="col-xl-12">
                         <div class="legal-content-box">
-                            <?php echo $page['page_content']; // Outputting raw HTML content from DB ?>
+                            <?php echo process_shortcodes($page['page_content'], $settings); ?>
                         </div>
                     </div>
                 </div>
