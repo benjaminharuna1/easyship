@@ -1,13 +1,10 @@
 <?php
-include 'db.php';
+include 'includes/init.php'; // Includes session, DB, and settings
 
-// Fetch site settings
-$setting_stmt = mysqli_prepare($con, "SELECT * FROM setting");
-mysqli_stmt_execute($setting_stmt);
-$setting_result = mysqli_stmt_get_result($setting_stmt);
-$setting_row = mysqli_fetch_assoc($setting_result);
-$site_logo = $setting_row['site_logo'];
-$site_favicon = $setting_row['site_favicon'];
+// Use settings from init.php
+$site_logo = $settings['site_logo'];
+$site_favicon = $settings['site_favicon'];
+$setting_row = $settings; // For compatibility
 
 // Fetch the legal page content
 $page_slug = 'privacy-policy';
@@ -27,9 +24,14 @@ if (!$page) {
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title><?php echo htmlspecialchars($page['page_title']); ?> | <?php echo htmlspecialchars($setting_row['sitename']); ?></title>
+    <title><?php echo htmlspecialchars($page['page_title']); ?> | <?php echo htmlspecialchars($settings['site_title']); ?></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <?php if ($settings['search_engine_indexing'] == 0) : ?>
+    <meta name="robots" content="noindex, nofollow">
+    <?php endif; ?>
+
     <link rel="shortcut icon" type="image/x-icon" href="<?php echo $site_favicon; ?>">
     <!-- CSS here -->
     <link rel="stylesheet" href="assets/css/01-bootstrap.min.css">
@@ -129,7 +131,7 @@ if (!$page) {
                 <div class="row">
                     <div class="col-xl-12">
                         <div class="legal-content-box">
-                            <?php echo $page['page_content']; // Outputting raw HTML content from DB ?>
+                            <?php echo process_shortcodes($page['page_content'], $settings); ?>
                         </div>
                     </div>
                 </div>

@@ -63,6 +63,15 @@
 .banner-one__content {
     position: relative;
     display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding-right: 20px;
+}
+
+@media (min-width: 992px) {
+    .banner-one__content {
+        width: 45%;
+    }
 }
 
 .banner-one__content .sub-title {
@@ -88,6 +97,7 @@
 .banner-one__content .big-title h2 {
     font-size: 68px;
     line-height: 1.1em;
+    overflow-wrap: break-word;
 }
 
 .banner-one__content .text {
