@@ -219,8 +219,8 @@ $site_favicon = $row['site_favicon'];
                                     <span class="icon-phone-call-1"></span>
                                 </div>
                                 <div class="text-box">
-                                    <p>Requesting A Call:</p>
-                                    <h4><a href="tel:123456789">(629) 555-0129</a></h4>
+                                    <p>Need Assistance?</p>
+                                    <h4><a href="tel:<?php echo htmlspecialchars($row['phone_number']); ?>"><?php echo htmlspecialchars($row['phone_number']); ?></a></h4>
                                 </div>
                             </div>
                         </div>
@@ -335,9 +335,7 @@ $site_favicon = $row['site_favicon'];
                                 </h2>
                             </div>
                             <div class="text">
-                                <p>It is a long established fact that a reader will be distracted by the readablejk
-                                    content of a page when looking at its layout. Lorem Ipsum is simply dummyjl text of
-                                    the printing and typesetting industry.</p>
+                                <p>Welcome to <?php echo htmlspecialchars($row['sitename']); ?>, where we are redefining the world of logistics through a steadfast commitment to reliability, innovation, and customer-centric solutions. Our journey began over a decade ago with a simple mission: to provide a seamless, transparent, and efficient shipping experience for businesses and individuals alike. Today, we are proud to be a trusted partner for clients across the globe, delivering not just packages, but also peace of mind.</p>
                             </div>
 
                             <div class="about-one__futures1">
@@ -346,13 +344,13 @@ $site_favicon = $row['site_favicon'];
                                         <div class="icon">
                                             <span class="icon-cargo-ship"></span>
                                         </div>
-                                        <h3>RealTimeLogistics</h3>
+                                        <h3>Our Mission</h3>
                                     </li>
                                     <li>
                                         <div class="icon">
                                             <span class="icon-packages3"></span>
                                         </div>
-                                        <h3>OnPointLogistics</h3>
+                                        <h3>Our Vision</h3>
                                     </li>
                                 </ul>
                             </div>
@@ -363,19 +361,19 @@ $site_favicon = $row['site_favicon'];
                                         <div class="icon">
                                             <span class="icon-check-mark"></span>
                                         </div>
-                                        <p>Mistakes To Avoid Lorem ipsum dolor sit amet consectetur</p>
+                                        <p>To provide reliable and timely delivery services that exceed our customers' expectations.</p>
                                     </li>
                                     <li>
                                         <div class="icon">
                                             <span class="icon-check-mark"></span>
                                         </div>
-                                        <p>Your Startup Lorem ipsum dolor sit amet consectetur</p>
+                                        <p>To leverage cutting-edge technology to offer transparent and efficient logistics solutions.</p>
                                     </li>
                                     <li>
                                         <div class="icon">
                                             <span class="icon-check-mark"></span>
                                         </div>
-                                        <p>Knew About Fonts Lorem ipsum dolor sit amet consectetur</p>
+                                        <p>To build long-lasting partnerships with our clients based on trust and mutual success.</p>
                                     </li>
                                 </ul>
                             </div>
@@ -403,9 +401,7 @@ $site_favicon = $row['site_favicon'];
                             </div>
                             <div class="text">
                                 <p>
-                                    It is a long established fact that a reader will be distracted by the readablejk
-                                    content of a page when looking at its layout. Lorem Ipsum is simply dummyjl text of
-                                    the printing and typesetting industry.
+                                    Our team is composed of seasoned logistics professionals who are passionate about what they do. We combine our expertise with a customer-first approach, ensuring that we not only meet but exceed your expectations. From our dedicated customer service representatives to our experienced drivers and handlers, every member of the <?php echo htmlspecialchars($row['sitename']); ?> team is committed to providing you with a seamless and reliable shipping experience.
                                 </p>
                             </div>
                         </div>
@@ -437,7 +433,7 @@ $site_favicon = $row['site_favicon'];
                                     <i class="fa-solid fa-plus"></i>
                                 </div>
                                 <div class="text">
-                                    <p>It is a long established fact that a reader will be distracted by the</p>
+                                    <p>Happy Clients</p>
                                 </div>
                             </div>
                         </div>
@@ -454,7 +450,7 @@ $site_favicon = $row['site_favicon'];
                                     <i class="fa-solid fa-plus"></i>
                                 </div>
                                 <div class="text">
-                                    <p>It is a long established fact that a reader will be distracted by the</p>
+                                    <p>Parcels Delivered</p>
                                 </div>
                             </div>
                         </div>
@@ -470,7 +466,7 @@ $site_favicon = $row['site_favicon'];
                                     <i class="fa-solid fa-plus"></i>
                                 </div>
                                 <div class="text">
-                                    <p>It is a long established fact that a reader will be distracted by the</p>
+                                    <p>Global Destinations</p>
                                 </div>
                             </div>
                         </div>
@@ -486,7 +482,7 @@ $site_favicon = $row['site_favicon'];
                                     <i class="fa-solid fa-plus"></i>
                                 </div>
                                 <div class="text">
-                                    <p>It is a long established fact that a reader will be distracted by the</p>
+                                    <p>Team Members</p>
                                 </div>
                             </div>
                         </div>
@@ -624,9 +620,7 @@ $site_favicon = $row['site_favicon'];
                                     <div class="testimonials-two__single-content">
                                         <div class="text">
                                             <p>
-                                                It is a long established fact that a reader willklil beinl distracted by
-                                                the
-                                                hjkljli readable contentli of a page how to go
+                                                "The team at <?php echo htmlspecialchars($row['sitename']); ?> is a pleasure to work with. They are professional, responsive, and always willing to go the extra mile to ensure our shipments are handled with care. Their commitment to customer satisfaction is truly commendable."
                                             </p>
                                         </div>
                                         <div class="customer-info">
@@ -682,9 +676,7 @@ $site_favicon = $row['site_favicon'];
                                     <div class="testimonials-two__single-content">
                                         <div class="text">
                                             <p>
-                                                It is a long established fact that a reader willklil beinl distracted by
-                                                the
-                                                hjkljli readable contentli of a page how to go
+                                                "I was so impressed with the speed and efficiency of <?php echo htmlspecialchars($row['sitename']); ?>. I needed to send an urgent package across the country, and they made it happen without any hassle. Their online tracking was a fantastic feature, and my package arrived a day ahead of schedule. I'll definitely be using their services again!"
                                             </p>
                                         </div>
                                         <div class="customer-info">
@@ -742,9 +734,7 @@ $site_favicon = $row['site_favicon'];
                                     <div class="testimonials-two__single-content">
                                         <div class="text">
                                             <p>
-                                                It is a long established fact that a reader willklil beinl distracted by
-                                                the
-                                                hjkljli readable contentli of a page how to go
+                                                "Switching to <?php echo htmlspecialchars($row['sitename']); ?> for our business logistics has been a game-changer. Their rates are competitive, their service is reliable, and their team is always available to answer our questions. We've seen a noticeable improvement in our delivery times and customer satisfaction since we started working with them."
                                             </p>
                                         </div>
                                         <div class="customer-info">
@@ -800,9 +790,7 @@ $site_favicon = $row['site_favicon'];
                                     <div class="testimonials-two__single-content">
                                         <div class="text">
                                             <p>
-                                                It is a long established fact that a reader willklil beinl distracted by
-                                                the
-                                                hjkljli readable contentli of a page how to go
+                                                "I've used several courier services in the past, but none have matched the level of service I've received from <?php echo htmlspecialchars($row['sitename']); ?>. Their attention to detail and commitment to ensuring my packages arrive safely and on time is unmatched. I wouldn't trust my shipments with anyone else."
                                             </p>
                                         </div>
                                         <div class="customer-info">

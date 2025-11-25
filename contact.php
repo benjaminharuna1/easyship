@@ -246,7 +246,7 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
 
                                                 <li><a href="track.php">Track</a></li>
 
-                                                <li class="active"><a href="contact.php">contacts</a></li>
+                                                <li class="active"><a href="contact.php">Contact</a></li>
 
                                             </ul>
                                         </div>
@@ -278,8 +278,8 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
                                     <span class="icon-phone-call-1"></span>
                                 </div>
                                 <div class="text-box">
-                                    <p>Requesting A Call:</p>
-                                    <h4><a href="tel:123456789">(629) 555-0129</a></h4>
+                                    <p>Need Assistance?</p>
+                                    <h4><a href="tel:<?php echo htmlspecialchars($row['phone_number']); ?>"><?php echo htmlspecialchars($row['phone_number']); ?></a></h4>
                                 </div>
                             </div>
                         </div>
@@ -491,7 +491,7 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
                             </div>
                             <div class="text">
                                 <p>Need help?</p>
-                                <p><a href="tel:(808)555-0111">(808) 555-0111</a></p>
+                                <p><a href="tel:<?php echo htmlspecialchars($row['phone_number']); ?>"><?php echo htmlspecialchars($row['phone_number']); ?></a></p>
                             </div>
                         </div>
                     </div>
