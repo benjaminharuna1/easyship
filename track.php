@@ -242,8 +242,8 @@ $geocode_api = $row['geocode_api_key'];
                                     <span class="icon-phone-call-1"></span>
                                 </div>
                                 <div class="text-box">
-                                    <p>Requesting A Call:</p>
-                                    <h4><a href="tel:123456789">(629) 555-0129</a></h4>
+                                    <p>Need Assistance?</p>
+                                    <h4><a href="tel:<?php echo htmlspecialchars($row['phone_number']); ?>"><?php echo htmlspecialchars($row['phone_number']); ?></a></h4>
                                 </div>
                             </div>
                         </div>
@@ -299,11 +299,19 @@ $geocode_api = $row['geocode_api_key'];
 
         <div class="col-xl-12 col-lg-12">
             <div class="contact-one__form">
+                <div class="sec-title text-center">
+                    <div class="sub-title">
+                        <h4>Track Your Shipment</h4>
+                    </div>
+                    <h2>
+                        Enter Your Tracking Number
+                    </h2>
+                    <p>Enter the tracking number provided to you to see the real-time status of your shipment.</p>
+                </div>
                 <form id="" action="track/tracking.php" method="POST" target="_blank">
                     <div class="row">
                         <div class="col-xl-9 col-lg-9">
                             <div class="contact-one__input-box">
-                                <!-- <input type="text" class="form-control" name="search_P" placeholder="egq32232131" name="name"> -->
                                 <input type="text" class="form-control" name="search_P" placeholder="Enter Tracking number" >
                             </div>
                         </div>
@@ -312,7 +320,6 @@ $geocode_api = $row['geocode_api_key'];
                                 <button name="search" class=" thm-btn" style="padding: 10px; margin-top: 0px;" type="submit" ><b class="txt">Track</b></button>
                             </div>
                         </div>
-                        
                     </div>
                 </form>
             </div>
