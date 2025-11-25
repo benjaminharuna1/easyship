@@ -219,8 +219,8 @@ $site_favicon = $row['site_favicon'];
                                     <span class="icon-phone-call-1"></span>
                                 </div>
                                 <div class="text-box">
-                                    <p>Requesting A Call:</p>
-                                    <h4><a href="tel:123456789">(629) 555-0129</a></h4>
+                                    <p>Need Assistance?</p>
+                                    <h4><a href="tel:<?php echo htmlspecialchars($row['phone_number']); ?>"><?php echo htmlspecialchars($row['phone_number']); ?></a></h4>
                                 </div>
                             </div>
                         </div>
@@ -298,11 +298,11 @@ $site_favicon = $row['site_favicon'];
                                     <span class="icon-delivery-truck2"></span>
                                 </div>
                                 <div class="title">
-                                    <h3><a href="#">Express Transport</a></h3>
+                                    <h3><a href="#">Express Shipping</a></h3>
                                 </div>
                                 <div class="text">
                                     <p>
-                                        Your expedited solution for reliable logistics. Trust us for swift and secure delivery every time.
+                                        When time is of the essence, our Express Shipping service guarantees the fastest possible delivery. We leverage our extensive network and optimized routes to ensure your urgent packages arrive on time, every time.
                                     </p>
                                 </div>
                             </div>
@@ -322,11 +322,11 @@ $site_favicon = $row['site_favicon'];
                                     <span class="icon-shipping1"></span>
                                 </div>
                                 <div class="title">
-                                    <h3><a href="#">Aero Logix</a></h3>
+                                    <h3><a href="#">Standard Shipping</a></h3>
                                 </div>
                                 <div class="text">
                                     <p>
-                                     Your high-flying logistics partner. Trust us for fast and efficient delivery solutions.
+                                        Our Standard Shipping service offers a reliable and cost-effective solution for your less urgent delivery needs. We provide consistent, high-quality service with transparent tracking, ensuring your packages arrive safely and on schedule.
                                     </p>
                                 </div>
                             </div>
@@ -346,11 +346,11 @@ $site_favicon = $row['site_favicon'];
                                     <span class="icon-cancel"></span>
                                 </div>
                                 <div class="title">
-                                    <h3><a href="#">Speedy Transit</a></h3>
+                                    <h3><a href="#">International Shipping</a></h3>
                                 </div>
                                 <div class="text">
                                     <p>
-                                        Your fast, reliable logistics solution
+                                        Our International Shipping service connects you to the world. We handle all the complexities of customs and international logistics to ensure your packages reach their global destinations safely and efficiently.
                                     </p>
                                 </div>
                             </div>
@@ -372,11 +372,11 @@ $site_favicon = $row['site_favicon'];
                                     <span class="icon-cancel"></span>
                                 </div>
                                 <div class="title">
-                                    <h3><a href="#">Speedy Transit</a></h3>
+                                    <h3><a href="#">Freight Services</a></h3>
                                 </div>
                                 <div class="text">
                                     <p>
-                                        Your fast, reliable logistics solution.
+                                        We offer comprehensive freight services for your large or heavy shipments. Our team is equipped to handle all your freight needs, ensuring safe and timely delivery.
                                     </p>
                                 </div>
                             </div>
@@ -396,11 +396,11 @@ $site_favicon = $row['site_favicon'];
                                     <span class="icon-delivery-truck2"></span>
                                 </div>
                                 <div class="title">
-                                    <h3><a href="#">Express Transport</a></h3>
+                                    <h3><a href="#">Warehousing & Distribution</a></h3>
                                 </div>
                                 <div class="text">
                                     <p>
-                                        Your expedited solution for reliable logistics. Trust us for swift and secure delivery every time.
+                                        Our secure warehousing and efficient distribution services are designed to streamline your supply chain. We offer flexible storage solutions and timely distribution to meet your business needs.
                                     </p>
                                 </div>
                             </div>
@@ -420,11 +420,11 @@ $site_favicon = $row['site_favicon'];
                                     <span class="icon-shipping1"></span>
                                 </div>
                                 <div class="title">
-                                    <h3><a href="#">Aero Logix</a></h3>
+                                    <h3><a href="#">E-commerce Solutions</a></h3>
                                 </div>
                                 <div class="text">
                                     <p>
-                                        Your high-flying logistics partner. Trust us for fast and efficient delivery solutions.
+                                        We provide tailored logistics solutions for e-commerce businesses, including inventory management, order fulfillment, and last-mile delivery. Let us help you scale your business and delight your customers.
                                     </p>
                                 </div>
                             </div>
@@ -464,12 +464,11 @@ $site_favicon = $row['site_favicon'];
                                 <div class="accordion accordion-block">
                                     <div class="accord-btn">
                                         <h3>
-                                            <span>01.</span> What are the different modes of transportation used in
-                                            logistics?
+                                            <span>01.</span> How do I track my package?
                                         </h3>
                                     </div>
                                     <div class="accord-content">
-                                        <p>The different modes of transportation used in logistics include road, rail, air, sea, and multimodal options.</p>
+                                        <p>You can easily track your package in real-time by entering your tracking number on our "Track" page. Our system provides up-to-the-minute updates on the status and location of your shipment.</p>
                                     </div>
                                 </div>
                                 <!--End single accordion box-->
@@ -478,11 +477,11 @@ $site_favicon = $row['site_favicon'];
                                     <div class="accord-btn active">
                                         <h3>
                                             <span>02.</span>
-                                            How can logistics help businesses reduce costs?
+                                            What are your shipping rates?
                                         </h3>
                                     </div>
                                     <div class="accord-content collapsed">
-                                        <p>Logistics can help businesses reduce costs by optimizing transportation routes, inventory management, and warehouse operations.</p>
+                                        <p>Our shipping rates are based on a variety of factors, including the package weight, dimensions, destination, and the type of service selected. For a detailed quote, please use our online shipping calculator or contact our customer service team.</p>
                                     </div>
                                 </div>
                                 <!--End single accordion box-->
@@ -490,11 +489,11 @@ $site_favicon = $row['site_favicon'];
                                 <div class="accordion accordion-block">
                                     <div class="accord-btn">
                                         <h3>
-                                            <span>03.</span> What are some common challenges in supply chain management?
+                                            <span>03.</span> Do you offer international shipping?
                                         </h3>
                                     </div>
                                     <div class="accord-content">
-                                        <p>One common challenge in supply chain management is balancing inventory levels to meet demand while minimizing excess inventory costs.</p>
+                                        <p>Yes, we offer comprehensive international shipping services to destinations around the world. We handle all customs documentation and logistics to ensure a smooth and hassle-free delivery process for your global shipments.</p>
                                     </div>
                                 </div>
                                 <!--End single accordion box-->

@@ -217,8 +217,8 @@ $site_favicon = $row['site_favicon'];
                                     <span class="icon-phone-call-1"></span>
                                 </div>
                                 <div class="text-box">
-                                    <p>Requesting A Call:</p>
-                                    <h4><a href="tel:123456789">(629) 555-0129</a></h4>
+                                    <p>Need Assistance?</p>
+                                    <h4><a href="tel:<?php echo htmlspecialchars($row['phone_number']); ?>"><?php echo htmlspecialchars($row['phone_number']); ?></a></h4>
                                 </div>
                             </div>
                         </div>
@@ -405,9 +405,7 @@ $site_favicon = $row['site_favicon'];
                                 </h2>
                             </div>
                             <div class="text">
-                                <p>It is a long established fact that a reader will be distracted by the content of
-                                    a
-                                    page when looking at its layout. Lorem Ipsum is simply text of the printing</p>
+                                <p>At <?php echo htmlspecialchars($row['sitename']); ?>, we are more than just a courier service; we are your dedicated logistics partner. We understand that behind every package is a promise, a commitment, or a critical business need. That’s why we’ve built our reputation on a foundation of trust, reliability, and unparalleled customer service. Our global network and cutting-edge technology ensure that your shipments are handled with the utmost care and delivered on time, every time.</p>
                             </div>
                             <ul>
 
@@ -417,12 +415,10 @@ $site_favicon = $row['site_favicon'];
                                     </div>
                                     <div class="text-box">
                                         <h3>
-                                            Cold Chain Logistics
+                                            Global Network
                                         </h3>
                                         <p>
-                                            It is a long established fact that a reader will be distracted by the
-                                            content of a page when looking at its layout. Lorem Ipsum is simply text
-                                            of the printing
+                                            With a vast network of partners and agents worldwide, we offer seamless international shipping and customs clearance, connecting your business to every corner of the globe.
                                         </p>
                                     </div>
                                 </li>
@@ -432,13 +428,10 @@ $site_favicon = $row['site_favicon'];
                                     </div>
                                     <div class="text-box">
                                         <h3>
-                                            Project Cargo Handling
+                                            Advanced Tracking
                                         </h3>
                                         <p>
-                                            It is a long established fact that a reader will be distracted by the
-                                            content of a page when looking at its layout. Lorem Ipsum is simply text
-                                            of
-                                            the printing
+                                            Our state-of-the-art tracking system provides real-time updates, giving you complete visibility and peace of mind from pickup to delivery.
                                         </p>
                                     </div>
                                 </li>
@@ -545,8 +538,7 @@ $site_favicon = $row['site_favicon'];
                             </div>
                             <div class="text">
                                 <p>
-                                    It is a long established fact that a reader will be distracted by the content of a
-                                    page when looking at its layout. Lorem Ipsuply text of the printing
+                                    We specialize in providing tailored logistics solutions that meet the unique needs of our clients. From small parcels to large-scale freight, our experienced team is dedicated to ensuring your shipments are delivered safely and on schedule. Explore some of our recent projects to see how we’re delivering excellence across the globe.
                                 </p>
                             </div>
                         </div>
@@ -781,9 +773,7 @@ $site_favicon = $row['site_favicon'];
                                         </div>
                                         <div class="text">
                                             <p>
-                                                It is a long establishd fact that a reader will beinl distracted by the
-                                                hjli
-                                                readable content of a page jklilk when looking at its layout loren ipsum
+                                                "We've been using <?php echo htmlspecialchars($row['sitename']); ?> for all our international shipments, and their service is second to none. The real-time tracking is incredibly accurate, and their customer support is always responsive and helpful. They’ve become a vital partner for our business."
                                             </p>
                                         </div>
                                     </div>
@@ -841,9 +831,7 @@ $site_favicon = $row['site_favicon'];
                                         </div>
                                         <div class="text">
                                             <p>
-                                                It is a long establishd fact that a reader will beinl distracted by the
-                                                hjli
-                                                readable content of a page jklilk when looking at its layout loren ipsum
+                                                "As a small business, we need a courier service that is both reliable and affordable. <?php echo htmlspecialchars($row['sitename']); ?> has consistently exceeded our expectations. Their team is professional, and our packages always arrive on time and in perfect condition. Highly recommended!"
                                             </p>
                                         </div>
                                     </div>
@@ -978,7 +966,7 @@ $site_favicon = $row['site_favicon'];
                                     <div class="team-one__single-content">
                                         <div class="title-box">
                                             <h3><a href="#">Cameron Williamson</a></h3>
-                                            <p>Dog Trainer</p>
+                                            <p>Logistics Manager</p>
                                         </div>
                                     </div>
                                 </div>
@@ -1018,7 +1006,7 @@ $site_favicon = $row['site_favicon'];
                                     <div class="team-one__single-content">
                                         <div class="title-box">
                                             <h3><a href="#">Cameron Williamson</a></h3>
-                                            <p>Dog Trainer</p>
+                                            <p>Operations Head</p>
                                         </div>
                                     </div>
                                 </div>
@@ -1058,7 +1046,7 @@ $site_favicon = $row['site_favicon'];
                                     <div class="team-one__single-content">
                                         <div class="title-box">
                                             <h3><a href="#">Ronald Richards</a></h3>
-                                            <p>Nursing Assistant</p>
+                                            <p>Lead Dispatcher</p>
                                         </div>
                                     </div>
                                 </div>
