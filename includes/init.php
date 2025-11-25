@@ -8,7 +8,6 @@ if (session_status() == PHP_SESSION_NONE) {
 
 // Include the database connection
 require_once 'db.php';
-require_once 'functions.php';
 
 // Fetch settings from the database
 $settings_stmt = mysqli_prepare($con, "SELECT * FROM setting WHERE id = 1");
