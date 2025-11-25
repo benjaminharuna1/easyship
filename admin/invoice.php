@@ -65,6 +65,7 @@ if (isset($_GET['num']) &&  $_GET['num'] !="") {
 						<div class="invo-head-content">
                             <div class="site-details" style="text-align: left; margin-top: 10px; color: black; font-size: 12px;">
                                 <strong><?php echo htmlspecialchars($settings['sitename']); ?></strong><br>
+                                <?php echo nl2br(htmlspecialchars($settings['site_address'])); ?><br>
                                 <?php echo htmlspecialchars($settings['email_address']); ?><br>
                                 <a href="<?php echo htmlspecialchars($settings['site_url']); ?>"><?php echo htmlspecialchars($settings['site_url']); ?></a>
                             </div>

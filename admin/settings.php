@@ -41,6 +41,7 @@ try {
                 $email_address = trim($_POST['email']);
                 $phone_number = trim($_POST['phone_number']);
                 $fax_number = trim($_POST['fax_number']);
+                $site_address = trim($_POST['site_address']);
                 $site_currency = trim($_POST['site_currency']);
                 $geocode_api_key = trim($_POST['geocode_api_key']);
 
@@ -50,8 +51,8 @@ try {
                 if (!filter_var($site_url, FILTER_VALIDATE_URL)) throw new Exception("Invalid Site URL format.");
                 if (!filter_var($email_address, FILTER_VALIDATE_EMAIL)) throw new Exception("Invalid email address format.");
 
-                $update_stmt = mysqli_prepare($con, "UPDATE setting SET sitename = ?, site_title = ?, site_url = ?, email_name = ?, email_address = ?, phone_number = ?, fax_number = ?, site_currency = ?, geocode_api_key = ? WHERE id = 1");
-                mysqli_stmt_bind_param($update_stmt, "sssssssss", $site_name, $site_title, $site_url, $email_name, $email_address, $phone_number, $fax_number, $site_currency, $geocode_api_key);
+                $update_stmt = mysqli_prepare($con, "UPDATE setting SET sitename = ?, site_title = ?, site_url = ?, email_name = ?, email_address = ?, phone_number = ?, fax_number = ?, site_address = ?, site_currency = ?, geocode_api_key = ? WHERE id = 1");
+                mysqli_stmt_bind_param($update_stmt, "ssssssssss", $site_name, $site_title, $site_url, $email_name, $email_address, $phone_number, $fax_number, $site_address, $site_currency, $geocode_api_key);
                 mysqli_stmt_execute($update_stmt);
 
                 // Image upload/removal logic for Site Logo and Favicon
@@ -195,6 +196,10 @@ include 'header.php';
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label">Fax Number</label>
                                 <div class="col-sm-10"><input class="form-control" type="text" name="fax_number" value="<?php echo htmlspecialchars($_POST['fax_number'] ?? $settings['fax_number'] ?? ''); ?>" placeholder="Enter your contact fax number"></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">Site Address</label>
+                                <div class="col-sm-10"><textarea class="form-control" name="site_address" rows="3" placeholder="Enter your company address"><?php echo htmlspecialchars($_POST['site_address'] ?? $settings['site_address'] ?? ''); ?></textarea></div>
                             </div>
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label">Site Currency</label>

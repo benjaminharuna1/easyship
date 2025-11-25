@@ -361,7 +361,7 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
                                     <div class="text">
                                         <h4>Address</h4>
                                         <p>
-                                            Dhaka 102, 8000 sent behaibior utl<br>1216, road 45 house of street
+                                            <?php echo nl2br(htmlspecialchars($row['site_address'])); ?>
                                         </p>
                                     </div>
                                 </li>
