@@ -62,14 +62,11 @@ if (isset($_GET['num']) &&  $_GET['num'] !="") {
 					</div>
 					<div class="container">
 						<div class="invoice-agency-details">
-							<!-- <div class="invo-head-wrap">
-								<div class="color-light-black font-md wid-40">Invoice No:</div>
-								<div class="font-md-grey color-grey wid-20">#DI56789</div>
-							</div>
-							<div class="invo-head-wrap invoi-date-wrap invoi-date-wrap-agency">
-								<div class="color-light-black font-md wid-40">Invoice Date:</div>
-								<div class="font-md-grey color-grey wid-20">15/12/2024</div>
-							</div> -->
+                            <div class="site-details" style="text-align: center; margin-top: 10px; color: black; font-size: 12px;">
+                                <strong><?php echo htmlspecialchars($sitename); ?></strong><br>
+                                <?php echo htmlspecialchars($email_address); ?><br>
+                                <?php echo htmlspecialchars($settings['site_address'] ?? ''); ?>
+                            </div>
                             <h6 style="text-align: center;">SHIPMENT CONFIRMATION FOR ORDER No. <b style="font-size: 20px;"><?php echo $tracking_id ?></b> </h6> 
                             <h6 style="text-align: center;">You have created an order for a shipment with the following details</h6>
 						</div>
@@ -102,7 +99,8 @@ if (isset($_GET['num']) &&  $_GET['num'] !="") {
 								<div class="col-md-6">
 									<p><strong>Type of Shipment:</strong> <?php echo $row['type_of_shipment']; ?></p>
 									<p><strong>Payment Mode:</strong> <?php echo $row['payment_mode']; ?></p>
-									<p><strong>Total Cost:</strong> <?php echo $row['total_cost']; ?></p>
+									<p><strong>Total Cost:</strong> <?php echo htmlspecialchars($settings['site_currency']); ?><?php echo number_format($row['total_cost'], 2); ?></p>
+									<p><strong>Amount Paid:</strong> <?php echo htmlspecialchars($settings['site_currency']); ?><?php echo number_format($row['total_cost'], 2); ?></p>
 									<p><strong>Carrier:</strong> <?php echo $row['carrier']; ?></p>
 									<p><strong>Courier:</strong> <?php echo $row['courier']; ?></p>
 									<p><strong>Mode:</strong> <?php echo $row['shipment_mode']; ?></p>
