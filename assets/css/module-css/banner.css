@@ -95,6 +95,7 @@
 .banner-one__content .big-title h2 {
     font-size: 68px;
     line-height: 1.1em;
+    overflow-wrap: break-word;
 }
 
 .banner-one__content .text {
