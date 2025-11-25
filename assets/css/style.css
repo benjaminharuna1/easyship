@@ -1200,6 +1200,10 @@ label {
     transition: all 500ms ease;
 }
 
+.service-three__single {
+    margin-bottom: 30px;
+}
+
 .accordion-box-one .accordion .accord-btn.active h3 {
     color: var(--thm-primary);
 }
