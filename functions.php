@@ -165,6 +165,14 @@ function text_input($data) {
   $data = mysqli_real_escape_string($con,$data);
   return $data;
 }
+
+function sanitize_html_input($data) {
+    // A basic sanitizer to remove script tags and their content to prevent XSS.
+    // This is not a replacement for a full-fledged library like HTML Purifier,
+    // but it mitigates the most common XSS attack vector.
+    $data = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $data);
+    return $data;
+}
    
 function pageRedirect($sec, $route){
   $c = "<meta http-equiv='refresh' Content='".$sec."; url=".$route." ' />";

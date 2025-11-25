@@ -129,6 +129,20 @@
 						<div class="menu-title">Team</div>
 					</a>
 				</li>
+				<li>
+					<a class="" href="services.php">
+						<div class="parent-icon"><i class="bx bx-briefcase fs-5"></i>
+						</div>
+						<div class="menu-title">Services</div>
+					</a>
+				</li>
+				<li>
+					<a class="" href="legal.php">
+						<div class="parent-icon"><i class="bx bx-file fs-5"></i>
+						</div>
+						<div class="menu-title">Legal Pages</div>
+					</a>
+				</li>
 				
 				<li>
 					<a class="" href="logout.php">

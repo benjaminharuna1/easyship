@@ -307,64 +307,31 @@ $site_favicon = $row['site_favicon'];
                     </h2>
                 </div>
                 <div class="row">
-                    <!--Start Single Service One-->
-                    <div class="col-xl-4 col-lg-4 col-md-4 wow fadeInLeft" data-wow-delay="0ms"
-                        data-wow-duration="1500ms">
+                    <?php
+                    $services_result = mysqli_query($con, "SELECT * FROM services WHERE is_published = 1 ORDER BY created_at DESC LIMIT 3");
+                    $delay = 0;
+                    while ($service = mysqli_fetch_assoc($services_result)) :
+                    ?>
+                    <div class="col-xl-4 col-lg-4 col-md-4 wow fadeInLeft" data-wow-delay="<?php echo $delay; ?>ms" data-wow-duration="1500ms">
                         <div class="service-one__single">
                             <div class="service-one__single-icon-box">
                                 <div class="left-icon-box">
-                                    <span class="icon-cargo-ship"></span>
+                                    <span class="<?php echo htmlspecialchars($service['icon_class']); ?>"></span>
                                 </div>
                                 <div class="right-icon-box">
                                     <a href="services.php"><span class="icon-next"></span></a>
                                 </div>
                             </div>
                             <div class="service-one__single-content">
-                                <h3><a href="services.php">Swift Cargo</a></h3>
-                                <p>
-                                    Swift Cargo is a reliable partner for all your shipping needs. With a commitment to efficiency and safety, we ensure your cargo reaches its destination swiftly and securely.</p>
+                                <h3><a href="services.php"><?php echo htmlspecialchars($service['title']); ?></a></h3>
+                                <p><?php echo htmlspecialchars(substr($service['description'], 0, 150)) . '...'; ?></p>
                             </div>
                         </div>
                     </div>
-                    <!--End Single Service One-->
-                    <!--Start Single Service One-->
-                    <div class="col-xl-4 col-lg-4 col-md-4 wow fadeInRight" data-wow-delay="200ms"
-                        data-wow-duration="1500ms">
-                        <div class="service-one__single">
-                            <div class="service-one__single-icon-box">
-                                <div class="left-icon-box">
-                                    <span class="icon-packages3"></span>
-                                </div>
-                                <div class="right-icon-box">
-                                    <a href="services.php"><span class="icon-next"></span></a>
-                                </div>
-                            </div>
-                            <div class="service-one__single-content">
-                                <h3><a href="services.php">Cargo Xpress</a></h3>
-                                <p> Your express solution for all shipping needs. Fast, efficient, and reliable service tailored to meet your deadlines. Trust us to deliver your cargo swiftly and securely, wherever it needs to go. Experience the speed and precision of Cargo Xpress today.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!--End Single Service One-->
-                    <!--Start Single Service One-->
-                    <div class="col-xl-4 col-lg-4 col-md-4 wow fadeInLeft" data-wow-delay="400ms"
-                        data-wow-duration="1500ms">
-                        <div class="service-one__single">
-                            <div class="service-one__single-icon-box">
-                                <div class="left-icon-box">
-                                    <span class="icon-protected"></span>
-                                </div>
-                                <div class="right-icon-box">
-                                    <a href="services.php"><span class="icon-next"></span></a>
-                                </div>
-                            </div>
-                            <div class="service-one__single-content">
-                                <h3><a href="services.php">Aero Freight</a></h3>
-                                <p> Your wings in the world of logistics. With speed, reliability, and a dedication to excellence, we soar above the competition to deliver your cargo with precision and efficiency.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!--End Single Service One-->
+                    <?php
+                    $delay += 200;
+                    endwhile;
+                    ?>
                 </div>
             </div>
         </section>
@@ -1079,13 +1046,13 @@ $site_favicon = $row['site_favicon'];
                         <div class="copyright-menu">
                             <ul>
                                 <li>
-                                    <p><a href="#">Trams &amp; Condition</a></p>
+                                    <p><a href="terms.php">Terms &amp; Condition</a></p>
                                 </li>
                                 <li>
-                                    <p><a href="#">Privacy Policy</a></p>
+                                    <p><a href="privacy.php">Privacy Policy</a></p>
                                 </li>
                                 <li>
-                                    <p><a href="#">Contact Us</a></p>
+                                    <p><a href="contact.php">Contact Us</a></p>
                                 </li>
                             </ul>
                         </div>

@@ -11,8 +11,35 @@ if (isset($_POST['update_member'])) {
 
     $image = $_POST['current_image'];
     if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-        $image = 'uploads/' . basename($_FILES['image']['name']);
-        move_uploaded_file($_FILES['image']['tmp_name'], '../' . $image);
+        $target_dir = "../uploads/";
+        if (!is_dir($target_dir)) {
+            mkdir($target_dir, 0755, true);
+        }
+        $target_file = $target_dir . basename($_FILES["image"]["name"]);
+        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+        // Check file size (e.g., 2MB limit)
+        if ($_FILES["image"]["size"] > 2000000) {
+            $_SESSION['error_message'] = "Sorry, your file is too large.";
+            header("Location: edit-team.php?id=" . $id);
+            exit();
+        }
+
+        // Allow certain file formats
+        $allowed_extensions = ["jpg", "png", "jpeg", "gif"];
+        if (!in_array($imageFileType, $allowed_extensions)) {
+            $_SESSION['error_message'] = "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+            header("Location: edit-team.php?id=" . $id);
+            exit();
+        }
+
+        if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
+            $image = 'uploads/' . basename($_FILES["image"]["name"]);
+        } else {
+            $_SESSION['error_message'] = "Sorry, there was an error uploading your file.";
+            header("Location: edit-team.php?id=" . $id);
+            exit();
+        }
     }
 
     $stmt = mysqli_prepare($con, "UPDATE team_members SET name = ?, title = ?, image = ?, is_published = ? WHERE id = ?");

@@ -284,153 +284,35 @@ $site_favicon = $row['site_favicon'];
                     </h2>
                 </div>
                 <div class="row">
-
-                    <!--Start Single Service Three-->
-                    <div class="col-xl-4 col-lg-4 col-md-6 wow fadeInLeft" data-wow-delay="0ms"
-                        data-wow-duration="1500ms">
+                    <?php
+                    $services_result = mysqli_query($con, "SELECT * FROM services WHERE is_published = 1 ORDER BY created_at DESC");
+                    $delay = 0;
+                    while ($service = mysqli_fetch_assoc($services_result)) :
+                    ?>
+                    <div class="col-xl-4 col-lg-4 col-md-6 wow fadeInLeft" data-wow-delay="<?php echo $delay; ?>ms" data-wow-duration="1500ms">
                         <div class="service-three__single">
                             <div class="service-three__single-img">
-                                <img src="assets/img/service/service-three__img1.jpg" alt="#">
+                                <img src="<?php echo htmlspecialchars($service['image']); ?>" alt="<?php echo htmlspecialchars($service['title']); ?>">
                                 <div class="service-three__single-img-bg"></div>
                             </div>
                             <div class="service-three__single-content">
                                 <div class="icon">
-                                    <span class="icon-delivery-truck2"></span>
+                                    <span class="<?php echo htmlspecialchars($service['icon_class']); ?>"></span>
                                 </div>
                                 <div class="title">
-                                    <h3><a href="#">Express Shipping</a></h3>
+                                    <h3><a href="#"><?php echo htmlspecialchars($service['title']); ?></a></h3>
                                 </div>
                                 <div class="text">
-                                    <p>
-                                        When time is of the essence, our Express Shipping service guarantees the fastest possible delivery. We leverage our extensive network and optimized routes to ensure your urgent packages arrive on time, every time.
-                                    </p>
+                                    <p><?php echo htmlspecialchars($service['description']); ?></p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!--End Single Service Three-->
-                    <!--Start Single Service Three-->
-                    <div class="col-xl-4 col-lg-4 col-md-6 wow fadeInRight" data-wow-delay="200ms"
-                        data-wow-duration="1500ms">
-                        <div class="service-three__single">
-                            <div class="service-three__single-img">
-                                <img src="assets/img/service/service-three__img2.jpg" alt="#">
-                                <div class="service-three__single-img-bg"></div>
-                            </div>
-                            <div class="service-three__single-content">
-                                <div class="icon">
-                                    <span class="icon-shipping1"></span>
-                                </div>
-                                <div class="title">
-                                    <h3><a href="#">Standard Shipping</a></h3>
-                                </div>
-                                <div class="text">
-                                    <p>
-                                        Our Standard Shipping service offers a reliable and cost-effective solution for your less urgent delivery needs. We provide consistent, high-quality service with transparent tracking, ensuring your packages arrive safely and on schedule.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!--End Single Service Three-->
-                    <!--Start Single Service Three-->
-                    <div class="col-xl-4 col-lg-4 col-md-6 wow fadeInLeft" data-wow-delay="400ms"
-                        data-wow-duration="1500ms">
-                        <div class="service-three__single">
-                            <div class="service-three__single-img">
-                                <img src="assets/img/service/service-three__img3.jpg" alt="#">
-                                <div class="service-three__single-img-bg"></div>
-                            </div>
-                            <div class="service-three__single-content">
-                                <div class="icon">
-                                    <span class="icon-cancel"></span>
-                                </div>
-                                <div class="title">
-                                    <h3><a href="#">International Shipping</a></h3>
-                                </div>
-                                <div class="text">
-                                    <p>
-                                        Our International Shipping service connects you to the world. We handle all the complexities of customs and international logistics to ensure your packages reach their global destinations safely and efficiently.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!--End Single Service Three-->
-
-
-                    <!--Start Single Service Three-->
-                    <div class="col-xl-4 col-lg-4 col-md-6 wow fadeInLeft" data-wow-delay="400ms"
-                        data-wow-duration="1500ms">
-                        <div class="service-three__single">
-                            <div class="service-three__single-img">
-                                <img src="assets/img/service/service-three__img4.jpg" alt="#">
-                                <div class="service-three__single-img-bg"></div>
-                            </div>
-                            <div class="service-three__single-content">
-                                <div class="icon">
-                                    <span class="icon-cancel"></span>
-                                </div>
-                                <div class="title">
-                                    <h3><a href="#">Freight Services</a></h3>
-                                </div>
-                                <div class="text">
-                                    <p>
-                                        We offer comprehensive freight services for your large or heavy shipments. Our team is equipped to handle all your freight needs, ensuring safe and timely delivery.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!--End Single Service Three-->
-                    <!--Start Single Service Three-->
-                    <div class="col-xl-4 col-lg-4 col-md-6 wow fadeInLeft" data-wow-delay="0ms"
-                        data-wow-duration="1500ms">
-                        <div class="service-three__single">
-                            <div class="service-three__single-img">
-                                <img src="assets/img/service/service-three__img5.jpg" alt="#">
-                                <div class="service-three__single-img-bg"></div>
-                            </div>
-                            <div class="service-three__single-content">
-                                <div class="icon">
-                                    <span class="icon-delivery-truck2"></span>
-                                </div>
-                                <div class="title">
-                                    <h3><a href="#">Warehousing & Distribution</a></h3>
-                                </div>
-                                <div class="text">
-                                    <p>
-                                        Our secure warehousing and efficient distribution services are designed to streamline your supply chain. We offer flexible storage solutions and timely distribution to meet your business needs.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!--End Single Service Three-->
-                    <!--Start Single Service Three-->
-                    <div class="col-xl-4 col-lg-4 col-md-6 wow fadeInRight" data-wow-delay="200ms"
-                        data-wow-duration="1500ms">
-                        <div class="service-three__single">
-                            <div class="service-three__single-img">
-                                <img src="assets/img/service/service-three__img6.jpg" alt="#">
-                                <div class="service-three__single-img-bg"></div>
-                            </div>
-                            <div class="service-three__single-content">
-                                <div class="icon">
-                                    <span class="icon-shipping1"></span>
-                                </div>
-                                <div class="title">
-                                    <h3><a href="#">E-commerce Solutions</a></h3>
-                                </div>
-                                <div class="text">
-                                    <p>
-                                        We provide tailored logistics solutions for e-commerce businesses, including inventory management, order fulfillment, and last-mile delivery. Let us help you scale your business and delight your customers.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!--End Single Service Three-->
+                    <?php
+                        // Increment delay for staggered animation effect
+                        $delay = ($delay + 200) % 600;
+                    endwhile;
+                    ?>
                 </div>
             </div>
         </section>
@@ -563,13 +445,13 @@ $site_favicon = $row['site_favicon'];
                         <div class="copyright-menu copyright-menu--two">
                             <ul>
                                 <li>
-                                    <p><a href="#">Trams &amp; Condition</a></p>
+                                    <p><a href="terms.php">Terms &amp; Condition</a></p>
                                 </li>
                                 <li>
-                                    <p><a href="#">Privacy Policy</a></p>
+                                    <p><a href="privacy.php">Privacy Policy</a></p>
                                 </li>
                                 <li>
-                                    <p><a href="#">Contact Us</a></p>
+                                    <p><a href="contact.php">Contact Us</a></p>
                                 </li>
                             </ul>
                         </div>
