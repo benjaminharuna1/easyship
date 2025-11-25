@@ -723,122 +723,48 @@ $site_favicon = $row['site_favicon'];
                         }}'>
 
                         <div class="swiper-wrapper">
-                            <!--Start Single Testimonials One-->
+                            <?php
+                            $testimonials_result = mysqli_query($con, "SELECT * FROM testimonials WHERE is_published = 1 ORDER BY created_at DESC");
+                            while ($testimonial = mysqli_fetch_assoc($testimonials_result)) :
+                            ?>
                             <div class="swiper-slide">
                                 <div class="testimonials-one__single">
                                     <div class="testimonials-one__single-img">
                                         <div class="testimonials-one__single-img__inner">
                                             <div class="inner">
-                                                <img src="assets/img/testimonial/testimonials-one__img1.jpg" alt="">
+                                                <img src="<?php echo htmlspecialchars($testimonial['image']); ?>" alt="">
                                             </div>
                                             <div class="overlay-box">
                                                 <span class="icon-quote-right"></span>
                                             </div>
                                         </div>
                                         <div class="title-box">
-                                            <h3><a href="#">Savannah Nguyen</a></h3>
-                                            <p>President of Sales</p>
+                                            <h3><a href="#"><?php echo htmlspecialchars($testimonial['name']); ?></a></h3>
+                                            <p><?php echo htmlspecialchars($testimonial['title']); ?></p>
                                         </div>
                                     </div>
                                     <div class="testimonials-one__single-content">
                                         <div class="ster-icon">
                                             <ul>
+                                                <?php for ($i = 0; $i < $testimonial['rating']; $i++) : ?>
                                                 <li>
                                                     <div class="icon">
                                                         <span class="icon-star-1"></span>
                                                     </div>
                                                 </li>
-                                                <li>
-                                                    <div class="icon">
-                                                        <span class="icon-star-1"></span>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="icon">
-                                                        <span class="icon-star-1"></span>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="icon">
-                                                        <span class="icon-star-1"></span>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="icon">
-                                                        <span class="icon-star-1"></span>
-                                                    </div>
-                                                </li>
+                                                <?php endfor; ?>
                                             </ul>
-                                            <p>Reviews (05)</p>
+                                            <p>Reviews (0<?php echo htmlspecialchars($testimonial['rating']); ?>)</p>
                                         </div>
                                         <div class="text">
                                             <p>
-                                                "We've been using <?php echo htmlspecialchars($row['sitename']); ?> for all our international shipments, and their service is second to none. The real-time tracking is incredibly accurate, and their customer support is always responsive and helpful. They’ve become a vital partner for our business."
+                                                "<?php echo htmlspecialchars($testimonial['review_text']); ?>"
                                             </p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <!--End Single Testimonials One-->
-
-                            <!--Start Single Testimonials One-->
-                            <div class="swiper-slide">
-                                <div class="testimonials-one__single">
-                                    <div class="testimonials-one__single-img">
-                                        <div class="testimonials-one__single-img__inner">
-                                            <div class="inner">
-                                                <img src="assets/img/testimonial/testimonials-one__img2.jpg" alt="">
-                                            </div>
-                                            <div class="overlay-box">
-                                                <span class="icon-quote-right"></span>
-                                            </div>
-                                        </div>
-                                        <div class="title-box">
-                                            <h3><a href="#">Savannah Nguyen</a></h3>
-                                            <p>President of Sales</p>
-                                        </div>
-                                    </div>
-                                    <div class="testimonials-one__single-content">
-                                        <div class="ster-icon">
-                                            <ul>
-                                                <li>
-                                                    <div class="icon">
-                                                        <span class="icon-star-1"></span>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="icon">
-                                                        <span class="icon-star-1"></span>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="icon">
-                                                        <span class="icon-star-1"></span>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="icon">
-                                                        <span class="icon-star-1"></span>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="icon">
-                                                        <span class="icon-star-1"></span>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                            <p>Reviews (05)</p>
-                                        </div>
-                                        <div class="text">
-                                            <p>
-                                                "As a small business, we need a courier service that is both reliable and affordable. <?php echo htmlspecialchars($row['sitename']); ?> has consistently exceeded our expectations. Their team is professional, and our packages always arrive on time and in perfect condition. Highly recommended!"
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--End Single Testimonials One-->
-
+                            <?php endwhile; ?>
                         </div>
                     </div>
                 </div>
@@ -932,168 +858,41 @@ $site_favicon = $row['site_favicon'];
                         }'>
 
                         <div class="swiper-wrapper">
-                            <!--Start Team One Single-->
+                            <?php
+                            $team_result = mysqli_query($con, "SELECT * FROM team_members WHERE is_published = 1 ORDER BY created_at DESC");
+                            while ($member = mysqli_fetch_assoc($team_result)) :
+                            ?>
                             <div class="swiper-slide">
                                 <div class="team-one__single">
                                     <div class="team-one__single-img">
-                                        <img src="assets/img/team/team-1-1.png" alt="#">
+                                        <img src="<?php echo htmlspecialchars($member['image']); ?>" alt="#">
                                         <div class="social-share-box">
                                             <span class="icon-share"></span>
                                             <ul class="clearfix">
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-facebook-app-symbol"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-twitter"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-linked-in-logo-of-two-letters"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-pinterest"></i>
-                                                    </a>
-                                                </li>
+                                                <?php if (!empty($member['social_facebook'])) : ?>
+                                                <li><a href="<?php echo htmlspecialchars($member['social_facebook']); ?>"><i class="icon-facebook-app-symbol"></i></a></li>
+                                                <?php endif; ?>
+                                                <?php if (!empty($member['social_twitter'])) : ?>
+                                                <li><a href="<?php echo htmlspecialchars($member['social_twitter']); ?>"><i class="icon-twitter"></i></a></li>
+                                                <?php endif; ?>
+                                                <?php if (!empty($member['social_linkedin'])) : ?>
+                                                <li><a href="<?php echo htmlspecialchars($member['social_linkedin']); ?>"><i class="icon-linked-in-logo-of-two-letters"></i></a></li>
+                                                <?php endif; ?>
+                                                <?php if (!empty($member['social_pinterest'])) : ?>
+                                                <li><a href="<?php echo htmlspecialchars($member['social_pinterest']); ?>"><i class="icon-pinterest"></i></a></li>
+                                                <?php endif; ?>
                                             </ul>
                                         </div>
                                     </div>
                                     <div class="team-one__single-content">
                                         <div class="title-box">
-                                            <h3><a href="#">Cameron Williamson</a></h3>
-                                            <p>Logistics Manager</p>
+                                            <h3><a href="#"><?php echo htmlspecialchars($member['name']); ?></a></h3>
+                                            <p><?php echo htmlspecialchars($member['title']); ?></p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <!--End Team One Single-->
-                            <!--Start Team One Single-->
-                            <div class="swiper-slide">
-                                <div class="team-one__single">
-                                    <div class="team-one__single-img">
-                                        <img src="assets/img/team/team-1-2.png" alt="#">
-                                        <div class="social-share-box">
-                                            <span class="icon-share"></span>
-                                            <ul class="clearfix">
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-facebook-app-symbol"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-twitter"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-linked-in-logo-of-two-letters"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-pinterest"></i>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="team-one__single-content">
-                                        <div class="title-box">
-                                            <h3><a href="#">Cameron Williamson</a></h3>
-                                            <p>Operations Head</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--End Team One Single-->
-                            <!--Start Team One Single-->
-                            <div class="swiper-slide">
-                                <div class="team-one__single">
-                                    <div class="team-one__single-img">
-                                        <img src="assets/img/team/team-1-3.png" alt="#">
-                                        <div class="social-share-box">
-                                            <span class="icon-share"></span>
-                                            <ul class="clearfix">
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-facebook-app-symbol"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-twitter"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-linked-in-logo-of-two-letters"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-pinterest"></i>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="team-one__single-content">
-                                        <div class="title-box">
-                                            <h3><a href="#">Ronald Richards</a></h3>
-                                            <p>Lead Dispatcher</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--End Team One Single-->
-                            <!--Start Team One Single-->
-                            <div class="swiper-slide">
-                                <div class="team-one__single">
-                                    <div class="team-one__single-img">
-                                        <img src="assets/img/team/team-1-4.png" alt="#">
-                                        <div class="social-share-box">
-                                            <span class="icon-share"></span>
-                                            <ul class="clearfix">
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-facebook-app-symbol"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-twitter"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-linked-in-logo-of-two-letters"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-pinterest"></i>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="team-one__single-content">
-                                        <div class="title-box">
-                                            <h3><a href="#">Albert Flores</a></h3>
-                                            <p>Marketing Coordinator</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--End Team One Single-->
-
-
+                            <?php endwhile; ?>
                         </div>
                         <!-- If we need navigation buttons -->
                         <div class="swiper-pagination team-one__dot-style1" id="swiper-dot-style1"></div>

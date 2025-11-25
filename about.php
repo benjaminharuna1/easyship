@@ -605,13 +605,15 @@ $site_favicon = $row['site_favicon'];
                                 }'>
 
                         <div class="swiper-wrapper">
-
-                            <!--Start Single Testimonials Two-->
+                            <?php
+                            $testimonial_result = mysqli_query($con, "SELECT * FROM testimonials WHERE is_published = 1 ORDER BY created_at DESC");
+                            while ($testimonial = mysqli_fetch_assoc($testimonial_result)) :
+                            ?>
                             <div class="swiper-slide">
                                 <div class="testimonials-two__single">
                                     <div class="testimonials-two__single-img">
                                         <div class="inner">
-                                            <img src="assets/img/testimonial/testimonials-two__img1.jpg" alt="#">
+                                            <img src="<?php echo htmlspecialchars($testimonial['image']); ?>" alt="#">
                                         </div>
                                         <div class="overlay-icon">
                                             <span class="icon-quote-right"></span>
@@ -619,219 +621,32 @@ $site_favicon = $row['site_favicon'];
                                     </div>
                                     <div class="testimonials-two__single-content">
                                         <div class="text">
-                                            <p>
-                                                "The team at <?php echo htmlspecialchars($row['sitename']); ?> is a pleasure to work with. They are professional, responsive, and always willing to go the extra mile to ensure our shipments are handled with care. Their commitment to customer satisfaction is truly commendable."
-                                            </p>
+                                            <p><?php echo nl2br(htmlspecialchars($testimonial['review_text'])); ?></p>
                                         </div>
                                         <div class="customer-info">
                                             <div class="title">
-                                                <h3>Marvin McKinney</h3>
-                                                <p>Medical Assistant</p>
+                                                <h3><?php echo htmlspecialchars($testimonial['name']); ?></h3>
+                                                <p><?php echo htmlspecialchars($testimonial['title']); ?></p>
                                             </div>
                                             <div class="ster-icon">
                                                 <ul>
+                                                    <?php
+                                                    $rating = (int)$testimonial['rating'];
+                                                    for ($i = 0; $i < $rating; $i++) :
+                                                    ?>
                                                     <li>
                                                         <div class="icon">
                                                             <span class="icon-star-1"></span>
                                                         </div>
                                                     </li>
-                                                    <li>
-                                                        <div class="icon">
-                                                            <span class="icon-star-1"></span>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="icon">
-                                                            <span class="icon-star-1"></span>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="icon">
-                                                            <span class="icon-star-1"></span>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="icon">
-                                                            <span class="icon-star-1"></span>
-                                                        </div>
-                                                    </li>
+                                                    <?php endfor; ?>
                                                 </ul>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <!--End Single Testimonials Two-->
-                            <!--Start Single Testimonials Two-->
-                            <div class="swiper-slide">
-                                <div class="testimonials-two__single">
-                                    <div class="testimonials-two__single-img">
-                                        <div class="inner">
-                                            <img src="assets/img/testimonial/testimonials-two__img2.jpg" alt="#">
-                                        </div>
-                                        <div class="overlay-icon">
-                                            <span class="icon-quote-right"></span>
-                                        </div>
-                                    </div>
-                                    <div class="testimonials-two__single-content">
-                                        <div class="text">
-                                            <p>
-                                                "I was so impressed with the speed and efficiency of <?php echo htmlspecialchars($row['sitename']); ?>. I needed to send an urgent package across the country, and they made it happen without any hassle. Their online tracking was a fantastic feature, and my package arrived a day ahead of schedule. I'll definitely be using their services again!"
-                                            </p>
-                                        </div>
-                                        <div class="customer-info">
-                                            <div class="title">
-                                                <h3>Cody Fisher</h3>
-                                                <p>Web Designer</p>
-                                            </div>
-                                            <div class="ster-icon">
-                                                <ul>
-                                                    <li>
-                                                        <div class="icon">
-                                                            <span class="icon-star-1"></span>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="icon">
-                                                            <span class="icon-star-1"></span>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="icon">
-                                                            <span class="icon-star-1"></span>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="icon">
-                                                            <span class="icon-star-1"></span>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="icon">
-                                                            <span class="icon-star-1"></span>
-                                                        </div>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--End Single Testimonials Two-->
-
-
-                            <!--Start Single Testimonials Two-->
-                            <div class="swiper-slide">
-                                <div class="testimonials-two__single">
-                                    <div class="testimonials-two__single-img">
-                                        <div class="inner">
-                                            <img src="assets/img/testimonial/testimonials-two__img1.jpg" alt="#">
-                                        </div>
-                                        <div class="overlay-icon">
-                                            <span class="icon-quote-right"></span>
-                                        </div>
-                                    </div>
-                                    <div class="testimonials-two__single-content">
-                                        <div class="text">
-                                            <p>
-                                                "Switching to <?php echo htmlspecialchars($row['sitename']); ?> for our business logistics has been a game-changer. Their rates are competitive, their service is reliable, and their team is always available to answer our questions. We've seen a noticeable improvement in our delivery times and customer satisfaction since we started working with them."
-                                            </p>
-                                        </div>
-                                        <div class="customer-info">
-                                            <div class="title">
-                                                <h3>Marvin McKinney</h3>
-                                                <p>Medical Assistant</p>
-                                            </div>
-                                            <div class="ster-icon">
-                                                <ul>
-                                                    <li>
-                                                        <div class="icon">
-                                                            <span class="icon-star-1"></span>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="icon">
-                                                            <span class="icon-star-1"></span>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="icon">
-                                                            <span class="icon-star-1"></span>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="icon">
-                                                            <span class="icon-star-1"></span>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="icon">
-                                                            <span class="icon-star-1"></span>
-                                                        </div>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--End Single Testimonials Two-->
-                            <!--Start Single Testimonials Two-->
-                            <div class="swiper-slide">
-                                <div class="testimonials-two__single">
-                                    <div class="testimonials-two__single-img">
-                                        <div class="inner">
-                                            <img src="assets/img/testimonial/testimonials-two__img2.jpg" alt="#">
-                                        </div>
-                                        <div class="overlay-icon">
-                                            <span class="icon-quote-right"></span>
-                                        </div>
-                                    </div>
-                                    <div class="testimonials-two__single-content">
-                                        <div class="text">
-                                            <p>
-                                                "I've used several courier services in the past, but none have matched the level of service I've received from <?php echo htmlspecialchars($row['sitename']); ?>. Their attention to detail and commitment to ensuring my packages arrive safely and on time is unmatched. I wouldn't trust my shipments with anyone else."
-                                            </p>
-                                        </div>
-                                        <div class="customer-info">
-                                            <div class="title">
-                                                <h3>Cody Fisher</h3>
-                                                <p>Web Designer</p>
-                                            </div>
-                                            <div class="ster-icon">
-                                                <ul>
-                                                    <li>
-                                                        <div class="icon">
-                                                            <span class="icon-star-1"></span>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="icon">
-                                                            <span class="icon-star-1"></span>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="icon">
-                                                            <span class="icon-star-1"></span>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="icon">
-                                                            <span class="icon-star-1"></span>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="icon">
-                                                            <span class="icon-star-1"></span>
-                                                        </div>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--End Single Testimonials Two-->
+                            <?php endwhile; ?>
                         </div>
 
                         <div class="scroll-pagination">
