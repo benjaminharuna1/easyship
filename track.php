@@ -360,13 +360,13 @@ $geocode_api = $row['geocode_api_key'];
                         <div class="copyright-menu copyright-menu--two">
                             <ul>
                                 <li>
-                                    <p><a href="#">Trams &amp; Condition</a></p>
+                                    <p><a href="terms.php">Terms &amp; Condition</a></p>
                                 </li>
                                 <li>
-                                    <p><a href="#">Privacy Policy</a></p>
+                                    <p><a href="privacy.php">Privacy Policy</a></p>
                                 </li>
                                 <li>
-                                    <p><a href="#">Contact Us</a></p>
+                                    <p><a href="contact.php">Contact Us</a></p>
                                 </li>
                             </ul>
                         </div>
