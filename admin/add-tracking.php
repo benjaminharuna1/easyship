@@ -267,6 +267,7 @@ include 'header.php';
                                                 <option value="DHL" <?php if (($_POST['carrier'] ?? '') == 'DHL') echo 'selected'; ?>>DHL</option>
                                                 <option value="UPS" <?php if (($_POST['carrier'] ?? '') == 'UPS') echo 'selected'; ?>>UPS</option>
                                                 <option value="FedEx" <?php if (($_POST['carrier'] ?? '') == 'FedEx') echo 'selected'; ?>>FedEx</option>
+                                                    <option value="<?php echo htmlspecialchars($sitename); ?>" <?php if (($_POST['carrier'] ?? '') == $sitename) echo 'selected'; ?>><?php echo htmlspecialchars($sitename); ?></option>
                                             </select>
                                         </div>
                                     </div>
