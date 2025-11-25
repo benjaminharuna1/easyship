@@ -4,61 +4,27 @@ include '../db.php';
 include '../functions.php';
 
 if (isset($_GET['num']) &&  $_GET['num'] !="") {
-    $post_id = $_GET['num'];
+    $post_id = text_input($_GET['num']);
 
-    $sql = mysqli_query($con, "SELECT * FROM addtracking WHERE tracking_id = '$post_id' ");
-    if (mysqli_num_rows($sql) > 0 ) {
-        $row = mysqli_fetch_assoc($sql);
-        $tracking_id = $row['tracking_id'];
-        $sender_name = $row['sender_name'];
-        $sender_contact = $row ['sender_contact'];
-        $sender_email = $row['sender_email'];
-        $sender_address = $row['sender_address'];  
-        $status = $row['status'];
-        $dispatch_location = $row['dispatch_location'];                     
-        $carrier = $row['carrier'];
-        $carrier_refrence_number = $row['carrier_refrence_number'];
-        $weight = $row['weight'];
-        $payment_mode = $row['payment_mode'];
-        $total_cost = $row['total_cost'];
-        $image = $row['image'];
-        $receiver_name = $row['receiver_name'];
-        $receiver_contact = $row['receiver_contact'];
-        $receiver_email = $row['receiver_email'];
-        $receiver_address = $row['receiver_address'];
-        $package_discription = $row['package_discription'];
-        $dispatch_date = $row['dispatch_date'];
-        $destination = $row['destination'];
-        $estimated_delivery_date = $row['estimated_delivery_date'];
-        $shipment_mode = $row['shipment_mode'];
-        $quantity = $row['quantity'];
-        $delivery_time = $row ['delivery_time'];
-        $date_added = $row['date_added'];
-    }
+    // Fetch all site settings
+    $settings_stmt = mysqli_prepare($con, "SELECT * FROM setting WHERE id = 1");
+    mysqli_stmt_execute($settings_stmt);
+    $settings_result = mysqli_stmt_get_result($settings_stmt);
+    $settings = mysqli_fetch_assoc($settings_result);
 
+    // Fetch main tracking data
+    $stmt = mysqli_prepare($con, "SELECT * FROM addtracking WHERE tracking_id = ?");
+    mysqli_stmt_bind_param($stmt, "s", $post_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $row = mysqli_fetch_assoc($result);
+
+    // Fetch package items
     $stmt_items = mysqli_prepare($con, "SELECT * FROM package_items WHERE tracking_id = ?");
     mysqli_stmt_bind_param($stmt_items, "s", $post_id);
     mysqli_stmt_execute($stmt_items);
     $result_items = mysqli_stmt_get_result($stmt_items);
     $package_items = mysqli_fetch_all($result_items, MYSQLI_ASSOC);
-
-    $sqls = mysqli_query($con, "SELECT * FROM track_update  WHERE track_num = '$post_id' ORDER BY id DESC LIMIT 1  ");
-    if (mysqli_num_rows($sqls) > 0 ) {
-        $rows = mysqli_fetch_assoc($sqls);
-        $invoice_sub_total = $rows['invoice_sub_total'];
-        $discounts = $rows['discount'];
-        $tax = $rows['tax'];
-        $invoice_total = $rows['invoice_total'];
-    }
-
-    $sqlss = mysqli_query($con, "SELECT * FROM  setting  ORDER BY id DESC LIMIT 1  ");
-    if (mysqli_num_rows($sqlss) > 0 ) {
-        $rowss = mysqli_fetch_assoc($sqlss);
-        $email = $rowss['email_address'];
-        $site_url = $rowss['site_url'];
-        $sitename = $rowss['sitename'];
-
-    }
 }
 
 
@@ -153,23 +119,16 @@ if (isset($_GET['num']) &&  $_GET['num'] !="") {
 		
 			  <img class="pull-right"  src="image/banner.png" alt=""  height="185"/> 
 			  
-			  <h3 style="color:red;"><strong> Tracking Number:  <?php echo $tracking_id ?></strong>
+			  <div class="site-details" style="text-align: left; margin-top: 10px; color: black; font-size: 12px;">
+                <strong><?php echo htmlspecialchars($settings['sitename']); ?></strong><br>
+                <?php echo nl2br(htmlspecialchars($settings['site_address'])); ?><br>
+                <?php echo htmlspecialchars($settings['email_address']); ?><br>
+                <a href="<?php echo htmlspecialchars($settings['site_url']); ?>"><?php echo htmlspecialchars($settings['site_url']); ?></a>
+              </div>
+
+			  <h3 style="color:red;"><strong> Tracking Number:  <?php echo htmlspecialchars($row['tracking_id']); ?></strong>
 			  </h3></span>
 			  
-            </h2>
-          </div><!-- /.col -->
-        </div>
-        
-					
-
-         
-        <div class="row">
-          <div class="col-xs-12">
-            <h2 class="page-header">
-			   <center> 
-			       <strong style="color:green;"><?php echo $sitename ?><br>
-Email: <?php echo $email  ?><br>
-Company Website: <?php echo $site_url ?></strong></center>
             </h2>
           </div><!-- /.col -->
         </div>
@@ -180,21 +139,21 @@ Company Website: <?php echo $site_url ?></strong></center>
           <div class="col-sm-4 invoice-col">
             <strong style="color:blue;">FROM (SENDER)</strong>
             <address>
-              <h3><strong style="color:green;"><?php echo $sender_name ?></strong></h3><br>
+              <h3><strong style="color:green;"><?php echo htmlspecialchars($row['sender_name']); ?></strong></h3><br>
 
-              <b>Address:</b>&nbsp;&nbsp;<?php echo $sender_address ?><br/>
-			  <b>Phone No:</b>&nbsp;&nbsp;<?php echo $sender_contact ?><br/>
-			  <b>Origin </b> &nbsp;&nbsp;<?php echo $dispatch_location ?>   </address>
+              <b>Address:</b>&nbsp;&nbsp;<?php echo htmlspecialchars($row['sender_address']); ?><br/>
+			  <b>Phone No:</b>&nbsp;&nbsp;<?php echo htmlspecialchars($row['sender_contact']); ?><br/>
+			  <b>Origin </b> &nbsp;&nbsp;<?php echo htmlspecialchars($row['dispatch_location']); ?>   </address>
           </div><!-- /.col -->
           <div class="col-sm-4 invoice-col">
             <strong style="color:blue;">TO (CONSIGNEE)</strong>
             <address>
-              <h3><strong style="color:green;">&nbsp;&nbsp;<?php echo $receiver_name ?></strong></h3><br>
+              <h3><strong style="color:green;">&nbsp;&nbsp;<?php echo htmlspecialchars($row['receiver_name']); ?></strong></h3><br>
                
-			  <b>Address:</b>&nbsp;&nbsp;<?php echo $receiver_address ?><br/>
-              <b>Phone:</b> &nbsp;&nbsp;<?php echo $receiver_contact ?><br/>
+			  <b>Address:</b>&nbsp;&nbsp;<?php echo htmlspecialchars($row['receiver_address']); ?><br/>
+              <b>Phone:</b> &nbsp;&nbsp;<?php echo htmlspecialchars($row['receiver_contact']); ?><br/>
 			 
-              <b>Destination</b>&nbsp;&nbsp;<?php  echo $destination ?>   </address>
+              <b>Destination</b>&nbsp;&nbsp;<?php echo htmlspecialchars($row['destination']); ?>   </address>
           </div><!-- /.col -->
           <div class="col-sm-4 invoice-col">
 		  <table>
@@ -202,18 +161,18 @@ Company Website: <?php echo $site_url ?></strong></center>
                                                 <td>
                                                     <center>
                                                         <img src="image/barcode810e.png" alt="testing" /><br>
-                                                        <strong><?php echo $tracking_id ?></strong><br>
+                                                        <strong><?php echo htmlspecialchars($row['tracking_id']); ?></strong><br>
                                                     </center>
                                                 </td>
                                                 
                                             </tr>
                                         </table>
 			<br/>
-            <b>Order ID:</b>&nbsp;&nbsp;<?php echo $tracking_id  ?><br/>
-            <b>Est. Delivery Date:</b>&nbsp;<?php echo $estimated_delivery_date  ?><br/>
-			<b>Payment Mode:</b> <small class="label label-danger"><i class="fa fa-money"></i>&nbsp;&nbsp;<?php echo $payment_mode   ?></small><br/> 
-			<b>Total Amount Paid:</b>&nbsp;<?php echo $total_cost   ?><br/>
-			<b>Mode of Transport:</b>&nbsp;<?php echo $shipment_mode   ?><br/>
+            <b>Order ID:</b>&nbsp;&nbsp;<?php echo htmlspecialchars($row['tracking_id']); ?><br/>
+            <b>Est. Delivery Date:</b>&nbsp;<?php echo htmlspecialchars($row['estimated_delivery_date']); ?><br/>
+			<b>Payment Mode:</b> <small class="label label-danger"><i class="fa fa-money"></i>&nbsp;&nbsp;<?php echo htmlspecialchars($row['payment_mode']); ?></small><br/>
+			<b>Total Amount Paid:</b>&nbsp;<?php echo htmlspecialchars($settings['site_currency'] ?? '$'); ?><?php echo number_format($row['total_cost'], 2); ?><br/>
+			<b>Mode of Transport:</b>&nbsp;<?php echo htmlspecialchars($row['shipment_mode']); ?><br/>
 			
           </div><!-- /.col -->		 
         </div><!-- /.row -->

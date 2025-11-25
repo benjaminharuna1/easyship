@@ -3,6 +3,12 @@ include '../db.php';
 include '../functions.php';
 
 if (isset($_GET['num']) &&  $_GET['num'] !="") {
+    // Fetch all site settings first
+    $settings_stmt = mysqli_prepare($con, "SELECT * FROM setting WHERE id = 1");
+    mysqli_stmt_execute($settings_stmt);
+    $settings_result = mysqli_stmt_get_result($settings_stmt);
+    $settings = mysqli_fetch_assoc($settings_result);
+
     $post_id = text_input($_GET['num']);
 
     $stmt = mysqli_prepare($con, "SELECT * FROM addtracking WHERE tracking_id = ?");
@@ -57,19 +63,17 @@ if (isset($_GET['num']) &&  $_GET['num'] !="") {
 							</div>
 						</div>
 						<div class="invo-head-content">
+                            <div class="site-details" style="text-align: left; margin-top: 10px; color: black; font-size: 12px;">
+                                <strong><?php echo htmlspecialchars($settings['sitename']); ?></strong><br>
+                                <?php echo nl2br(htmlspecialchars($settings['site_address'])); ?><br>
+                                <?php echo htmlspecialchars($settings['email_address']); ?><br>
+                                <a href="<?php echo htmlspecialchars($settings['site_url']); ?>"><?php echo htmlspecialchars($settings['site_url']); ?></a>
+                            </div>
 							<div><h1 class="invoice-txt" style="font-size: 20px;">INVOICE</h1></div>
 						</div>
 					</div>
 					<div class="container">
 						<div class="invoice-agency-details">
-							<!-- <div class="invo-head-wrap">
-								<div class="color-light-black font-md wid-40">Invoice No:</div>
-								<div class="font-md-grey color-grey wid-20">#DI56789</div>
-							</div>
-							<div class="invo-head-wrap invoi-date-wrap invoi-date-wrap-agency">
-								<div class="color-light-black font-md wid-40">Invoice Date:</div>
-								<div class="font-md-grey color-grey wid-20">15/12/2024</div>
-							</div> -->
                             <h6 style="text-align: center;">SHIPMENT CONFIRMATION FOR ORDER No. <b style="font-size: 20px;"><?php echo $tracking_id ?></b> </h6> 
                             <h6 style="text-align: center;">You have created an order for a shipment with the following details</h6>
 						</div>
@@ -102,7 +106,8 @@ if (isset($_GET['num']) &&  $_GET['num'] !="") {
 								<div class="col-md-6">
 									<p><strong>Type of Shipment:</strong> <?php echo $row['type_of_shipment']; ?></p>
 									<p><strong>Payment Mode:</strong> <?php echo $row['payment_mode']; ?></p>
-									<p><strong>Total Cost:</strong> <?php echo $row['total_cost']; ?></p>
+									<p><strong>Total Cost:</strong> <?php echo htmlspecialchars($settings['site_currency'] ?? '$'); ?><?php echo number_format($row['total_cost'], 2); ?></p>
+									<p><strong>Amount Paid:</strong> <?php echo htmlspecialchars($settings['site_currency'] ?? '$'); ?><?php echo number_format($row['total_cost'], 2); ?></p>
 									<p><strong>Carrier:</strong> <?php echo $row['carrier']; ?></p>
 									<p><strong>Courier:</strong> <?php echo $row['courier']; ?></p>
 									<p><strong>Mode:</strong> <?php echo $row['shipment_mode']; ?></p>

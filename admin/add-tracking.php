@@ -125,16 +125,21 @@ if (isset($_POST['add']) || isset($_POST['publish'])) {
             mysqli_commit($con);
 
             if ($send_email_notification) {
-                $email_data = [
-                    'receiver_name' => $receiver_name,
+                $base_email_data = [
                     'tracking_id' => $tnumbs_final,
                     'status' => $status,
                     'package_description' => $package_discription,
                     'dispatch_location' => $dispatch_location,
                     'delivery_date' => $estimated_delivery_date
                 ];
-                sendMail($receiver_email, "Shipment Created: " . $tnumbs_final, 'shipment_creation', $email_data);
-                sendMail($sender_email, "Shipment Created: " . $tnumbs_final, 'shipment_creation', $email_data);
+
+                // Email to Receiver
+                $email_data_receiver = array_merge($base_email_data, ['name' => $receiver_name]);
+                sendMail($receiver_email, "Shipment Created: " . $tnumbs_final, 'shipment_creation', $email_data_receiver);
+
+                // Email to Sender
+                $email_data_sender = array_merge($base_email_data, ['name' => $sender_name]);
+                sendMail($sender_email, "Shipment Created: " . $tnumbs_final, 'shipment_creation', $email_data_sender);
             }
 
             $_SESSION['success_message'] = "Shipment created successfully with Tracking ID: " . htmlspecialchars($tnumbs_final);
@@ -262,13 +267,20 @@ include 'header.php';
                                                 <option value="DHL" <?php if (($_POST['carrier'] ?? '') == 'DHL') echo 'selected'; ?>>DHL</option>
                                                 <option value="UPS" <?php if (($_POST['carrier'] ?? '') == 'UPS') echo 'selected'; ?>>UPS</option>
                                                 <option value="FedEx" <?php if (($_POST['carrier'] ?? '') == 'FedEx') echo 'selected'; ?>>FedEx</option>
+                                                    <option value="<?php echo htmlspecialchars($sitename); ?>" <?php if (($_POST['carrier'] ?? '') == $sitename) echo 'selected'; ?>><?php echo htmlspecialchars($sitename); ?></option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="row mt-3">
                                         <div class="col-md-4">
                                             <label class="form-label">Courier</label>
-                                            <input type="text" class="form-control" name="courier" value="<?php echo htmlspecialchars($_POST['courier'] ?? ''); ?>" required>
+                                            <select class="form-control" name="courier" required>
+                                                <option value="">Select</option>
+                                                <option value="DHL" <?php if (($_POST['courier'] ?? '') == 'DHL') echo 'selected'; ?>>DHL</option>
+                                                <option value="UPS" <?php if (($_POST['courier'] ?? '') == 'UPS') echo 'selected'; ?>>UPS</option>
+                                                <option value="FedEx" <?php if (($_POST['courier'] ?? '') == 'FedEx') echo 'selected'; ?>>FedEx</option>
+                                                <option value="<?php echo htmlspecialchars($sitename); ?>" <?php if (($_POST['courier'] ?? '') == $sitename) echo 'selected'; ?>><?php echo htmlspecialchars($sitename); ?></option>
+                                            </select>
                                         </div>
                                         <div class="col-md-4">
                                             <label class="form-label">Mode</label>
@@ -407,10 +419,13 @@ include 'header.php';
                                                         <td><input type="text" class="form-control" name="history_location[]" value="<?php echo htmlspecialchars($_POST['history_location'][$i]); ?>"></td>
                                                         <td>
                                                             <select class="form-control" name="history_status[]">
-                                                                <option <?php if ($_POST['history_status'][$i] == 'Pending') echo 'selected'; ?>>Pending</option>
-                                                                <option <?php if ($_POST['history_status'][$i] == 'In Transit') echo 'selected'; ?>>In Transit</option>
-                                                                <option <?php if ($_POST['history_status'][$i] == 'Delivered') echo 'selected'; ?>>Delivered</option>
-                                                                <option <?php if ($_POST['history_status'][$i] == 'Cancelled') echo 'selected'; ?>>Cancelled</option>
+                                                                <option value="Pending" <?php if ($_POST['history_status'][$i] == 'Pending') echo 'selected'; ?>>Pending</option>
+                                                                <option value="In Process" <?php if ($_POST['history_status'][$i] == 'In Process') echo 'selected'; ?>>In Process</option>
+                                                                <option value="In Transit" <?php if ($_POST['history_status'][$i] == 'In Transit') echo 'selected'; ?>>In Transit</option>
+                                                                <option value="On Hold" <?php if ($_POST['history_status'][$i] == 'On Hold') echo 'selected'; ?>>On Hold</option>
+                                                                <option value="Delivered" <?php if ($_POST['history_status'][$i] == 'Delivered') echo 'selected'; ?>>Delivered</option>
+                                                                <option value="Cancelled" <?php if ($_POST['history_status'][$i] == 'Cancelled') echo 'selected'; ?>>Cancelled</option>
+                                                                <option value="Returned" <?php if ($_POST['history_status'][$i] == 'Returned') echo 'selected'; ?>>Returned</option>
                                                             </select>
                                                         </td>
                                                         <td><input type="text" class="form-control" name="history_updated_by[]" value="<?php echo htmlspecialchars($_POST['history_updated_by'][$i]); ?>"></td>
@@ -458,10 +473,13 @@ include 'header.php';
           <td><input type="text" class="form-control" name="history_location[]"></td>
           <td>
             <select class="form-control" name="history_status[]">
-              <option>Pending</option>
-              <option>In Transit</option>
-              <option>Delivered</option>
-              <option>Cancelled</option>
+              <option value="Pending">Pending</option>
+              <option value="In Process">In Process</option>
+              <option value="In Transit">In Transit</option>
+              <option value="On Hold">On Hold</option>
+              <option value="Delivered">Delivered</option>
+              <option value="Cancelled">Cancelled</option>
+              <option value="Returned">Returned</option>
             </select>
           </td>
           <td><input type="text" class="form-control" name="history_updated_by[]"></td>

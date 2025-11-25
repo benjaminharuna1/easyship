@@ -361,7 +361,7 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
                                     <div class="text">
                                         <h4>Address</h4>
                                         <p>
-                                            Dhaka 102, 8000 sent behaibior utl<br>1216, road 45 house of street
+                                            <?php echo nl2br(htmlspecialchars($row['site_address'])); ?>
                                         </p>
                                     </div>
                                 </li>
@@ -371,8 +371,8 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
                                     </div>
                                     <div class="text">
                                         <h4>Lets Talk us</h4>
-                                        <p>Phone number: <a href="tel:32566-800-890">+32566 - 800 - 890</a></p>
-                                        <p>Fax: <a href="tel:1234-58963-007">1234 -58963 - 007</a></p>
+                                        <p>Phone number: <a href="tel:<?php echo htmlspecialchars($row['phone_number']); ?>"><?php echo htmlspecialchars($row['phone_number']); ?></a></p>
+                                        <p>Fax: <a href="tel:<?php echo htmlspecialchars($row['fax_number']); ?>"><?php echo htmlspecialchars($row['fax_number']); ?></a></p>
                                     </div>
                                 </li>
                                 <li>
@@ -382,10 +382,7 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
                                     <div class="text">
                                         <h4>Send us email</h4>
                                         <p>
-                                            <a href="cargolink@gmail.com">cargolink@gmail.com</a>
-                                        </p>
-                                        <p>
-                                            <a href="cargolink@gmail.com">demo23yourmail.com</a>
+                                            <a href="mailto:<?php echo htmlspecialchars($row['email_address']); ?>"><?php echo htmlspecialchars($row['email_address']); ?></a>
                                         </p>
                                     </div>
                                 </li>
