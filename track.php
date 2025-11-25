@@ -1,15 +1,11 @@
 <?php
-session_start();
-include 'db.php';
+include 'includes/init.php'; // Includes session, DB, and settings
 include 'functions.php';
 
-$stmt = mysqli_prepare($con, "SELECT * FROM setting");
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
-$row = mysqli_fetch_assoc($result);
-$site_logo = $row['site_logo'];
-$site_favicon = $row['site_favicon'];
-$geocode_api = $row['geocode_api_key'];
+$site_logo = $settings['site_logo'];
+$site_favicon = $settings['site_favicon'];
+$row = $settings; // For compatibility with existing code using $row
+$geocode_api = $settings['geocode_api_key'];
 ?>
 <!doctype html>
 <html class="no-js" lang="en">
@@ -19,9 +15,13 @@ $geocode_api = $row['geocode_api_key'];
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Track | Page</title>
+    <title>Track | <?php echo htmlspecialchars($settings['site_title']); ?></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <?php if ($settings['search_engine_indexing'] == 0) : ?>
+    <meta name="robots" content="noindex, nofollow">
+    <?php endif; ?>
 
     <link rel="shortcut icon" type="image/x-icon" href="<?php echo $site_favicon; ?>">
     <!-- Place favicon.ico in the root directory -->
