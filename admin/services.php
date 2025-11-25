@@ -7,6 +7,7 @@ if (isset($_POST['add_service'])) {
     $description = text_input($_POST['description']);
     $icon_class = text_input($_POST['icon_class']);
     $is_published = isset($_POST['is_published']) ? 1 : 0;
+    $is_featured = isset($_POST['is_featured']) ? 1 : 0;
 
     $image = '';
     if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
@@ -41,8 +42,8 @@ if (isset($_POST['add_service'])) {
         }
     }
 
-    $stmt = mysqli_prepare($con, "INSERT INTO services (title, description, icon_class, image, is_published) VALUES (?, ?, ?, ?, ?)");
-    mysqli_stmt_bind_param($stmt, "ssssi", $title, $description, $icon_class, $image, $is_published);
+    $stmt = mysqli_prepare($con, "INSERT INTO services (title, description, icon_class, image, is_published, is_featured) VALUES (?, ?, ?, ?, ?, ?)");
+    mysqli_stmt_bind_param($stmt, "ssssii", $title, $description, $icon_class, $image, $is_published, $is_featured);
     mysqli_stmt_execute($stmt);
 
     $_SESSION['success_message'] = "Service added successfully.";
@@ -101,9 +102,19 @@ include 'header.php';
                         <label class="form-label">Image</label>
                         <input type="file" class="form-control" name="image">
                     </div>
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" name="is_published" id="is_published" value="1" checked>
-                        <label class="form-check-label" for="is_published">Publish</label>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" name="is_published" id="is_published" value="1" checked>
+                                <label class="form-check-label" for="is_published">Publish</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" name="is_featured" id="is_featured" value="1">
+                                <label class="form-check-label" for="is_featured">Feature on Homepage</label>
+                            </div>
+                        </div>
                     </div>
                     <button type="submit" name="add_service" class="btn btn-primary">Add Service</button>
                 </form>

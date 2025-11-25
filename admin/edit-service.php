@@ -9,6 +9,7 @@ if (isset($_POST['update_service'])) {
     $description = text_input($_POST['description']);
     $icon_class = text_input($_POST['icon_class']);
     $is_published = isset($_POST['is_published']) ? 1 : 0;
+    $is_featured = isset($_POST['is_featured']) ? 1 : 0;
 
     $image = $_POST['current_image'];
     if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
@@ -43,8 +44,8 @@ if (isset($_POST['update_service'])) {
         }
     }
 
-    $stmt = mysqli_prepare($con, "UPDATE services SET title = ?, description = ?, icon_class = ?, image = ?, is_published = ? WHERE id = ?");
-    mysqli_stmt_bind_param($stmt, "ssssii", $title, $description, $icon_class, $image, $is_published, $id);
+    $stmt = mysqli_prepare($con, "UPDATE services SET title = ?, description = ?, icon_class = ?, image = ?, is_published = ?, is_featured = ? WHERE id = ?");
+    mysqli_stmt_bind_param($stmt, "ssssiii", $title, $description, $icon_class, $image, $is_published, $is_featured, $id);
     mysqli_stmt_execute($stmt);
 
     $_SESSION['success_message'] = "Service updated successfully.";
@@ -95,9 +96,19 @@ include 'header.php';
                             <img src="../<?php echo htmlspecialchars($service['image']); ?>" width="100" class="mt-2">
                         <?php endif; ?>
                     </div>
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" name="is_published" id="is_published" value="1" <?php if ($service['is_published']) echo 'checked'; ?>>
-                        <label class="form-check-label" for="is_published">Publish</label>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" name="is_published" id="is_published" value="1" <?php if ($service['is_published']) echo 'checked'; ?>>
+                                <label class="form-check-label" for="is_published">Publish</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" name="is_featured" id="is_featured" value="1" <?php if ($service['is_featured']) echo 'checked'; ?>>
+                                <label class="form-check-label" for="is_featured">Feature on Homepage</label>
+                            </div>
+                        </div>
                     </div>
                     <button type="submit" name="update_service" class="btn btn-primary">Update Service</button>
                 </form>

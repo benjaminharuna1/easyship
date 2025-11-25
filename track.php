@@ -37,6 +37,7 @@ $geocode_api = $row['geocode_api_key'];
     <link rel="stylesheet" href="assets/css/08-custom-animate.css">
     <link rel="stylesheet" href="assets/css/09-slick.css">
     <link rel="stylesheet" href="assets/css/10-icomoon.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="assets/vendor/custom-animate/custom-animate.css">
     <link rel="stylesheet" href="assets/vendor/jarallax/jarallax.css">
     <link rel="stylesheet" href="assets/vendor/odometer/odometer.min.css">
@@ -210,7 +211,7 @@ $geocode_api = $row['geocode_api_key'];
 
                                                 <li class="active"><a href="track.php">Track</a></li>
 
-                                                <li><a href="contact.php">contacts</a></li>
+                                                <li><a href="contact.php">contact</a></li>
 
                                             </ul>
                                         </div>

@@ -35,6 +35,7 @@ if (!$page) {
     <link rel="stylesheet" href="assets/css/01-bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/02-all.min.css">
     <link rel="stylesheet" href="assets/css/10-icomoon.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
