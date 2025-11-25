@@ -31,6 +31,7 @@ $site_favicon = $row['site_favicon'];
     <link rel="stylesheet" href="assets/css/08-custom-animate.css">
     <link rel="stylesheet" href="assets/css/09-slick.css">
     <link rel="stylesheet" href="assets/css/10-icomoon.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="assets/vendor/custom-animate/custom-animate.css">
     <link rel="stylesheet" href="assets/vendor/jarallax/jarallax.css">
     <link rel="stylesheet" href="assets/vendor/odometer/odometer.min.css">
@@ -185,7 +186,7 @@ $site_favicon = $row['site_favicon'];
 
                                                 <li><a href="track.php">Track</a></li>
 
-                                                <li><a href="contact.php">contacts</a></li>
+                                                <li><a href="contact.php">contact</a></li>
 
                                             </ul>
                                         </div>
@@ -274,13 +275,13 @@ $site_favicon = $row['site_favicon'];
             <div class="container">
                 <div class="banner-one__content wow fadeInLeft" data-wow-delay="0ms" data-wow-duration="1500ms">
                     <div class="sub-title">
-                        <h5>Smart Solutions</h5>
+                        <h5><?php echo htmlspecialchars($row['hero_subtitle']); ?></h5>
                     </div>
                     <div class="big-title">
-                        <h2>Streamlined<br> transportation for<br> a better tomorrow</h2>
+                        <h2><?php echo $row['hero_title']; ?></h2>
                     </div>
                     <div class="text">
-                        <p>We have been operating for over a decade, providing top-notch</p>
+                        <p><?php echo htmlspecialchars($row['hero_text']); ?></p>
                     </div>
                     <div class="btn-box">
                         <a class="thm-btn" href="track.php">
@@ -307,64 +308,31 @@ $site_favicon = $row['site_favicon'];
                     </h2>
                 </div>
                 <div class="row">
-                    <!--Start Single Service One-->
-                    <div class="col-xl-4 col-lg-4 col-md-4 wow fadeInLeft" data-wow-delay="0ms"
-                        data-wow-duration="1500ms">
+                    <?php
+                    $services_result = mysqli_query($con, "SELECT * FROM services WHERE is_published = 1 AND is_featured = 1 ORDER BY created_at DESC LIMIT 3");
+                    $delay = 0;
+                    while ($service = mysqli_fetch_assoc($services_result)) :
+                    ?>
+                    <div class="col-xl-4 col-lg-4 col-md-4 wow fadeInLeft" data-wow-delay="<?php echo $delay; ?>ms" data-wow-duration="1500ms">
                         <div class="service-one__single">
                             <div class="service-one__single-icon-box">
                                 <div class="left-icon-box">
-                                    <span class="icon-cargo-ship"></span>
+                                    <span class="<?php echo htmlspecialchars($service['icon_class']); ?>"></span>
                                 </div>
                                 <div class="right-icon-box">
                                     <a href="services.php"><span class="icon-next"></span></a>
                                 </div>
                             </div>
                             <div class="service-one__single-content">
-                                <h3><a href="services.php">Swift Cargo</a></h3>
-                                <p>
-                                    Swift Cargo is a reliable partner for all your shipping needs. With a commitment to efficiency and safety, we ensure your cargo reaches its destination swiftly and securely.</p>
+                                <h3><a href="services.php"><?php echo htmlspecialchars($service['title']); ?></a></h3>
+                                <p><?php echo htmlspecialchars(substr($service['description'], 0, 150)) . '...'; ?></p>
                             </div>
                         </div>
                     </div>
-                    <!--End Single Service One-->
-                    <!--Start Single Service One-->
-                    <div class="col-xl-4 col-lg-4 col-md-4 wow fadeInRight" data-wow-delay="200ms"
-                        data-wow-duration="1500ms">
-                        <div class="service-one__single">
-                            <div class="service-one__single-icon-box">
-                                <div class="left-icon-box">
-                                    <span class="icon-packages3"></span>
-                                </div>
-                                <div class="right-icon-box">
-                                    <a href="services.php"><span class="icon-next"></span></a>
-                                </div>
-                            </div>
-                            <div class="service-one__single-content">
-                                <h3><a href="services.php">Cargo Xpress</a></h3>
-                                <p> Your express solution for all shipping needs. Fast, efficient, and reliable service tailored to meet your deadlines. Trust us to deliver your cargo swiftly and securely, wherever it needs to go. Experience the speed and precision of Cargo Xpress today.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!--End Single Service One-->
-                    <!--Start Single Service One-->
-                    <div class="col-xl-4 col-lg-4 col-md-4 wow fadeInLeft" data-wow-delay="400ms"
-                        data-wow-duration="1500ms">
-                        <div class="service-one__single">
-                            <div class="service-one__single-icon-box">
-                                <div class="left-icon-box">
-                                    <span class="icon-protected"></span>
-                                </div>
-                                <div class="right-icon-box">
-                                    <a href="services.php"><span class="icon-next"></span></a>
-                                </div>
-                            </div>
-                            <div class="service-one__single-content">
-                                <h3><a href="services.php">Aero Freight</a></h3>
-                                <p> Your wings in the world of logistics. With speed, reliability, and a dedication to excellence, we soar above the competition to deliver your cargo with precision and efficiency.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!--End Single Service One-->
+                    <?php
+                    $delay += 200;
+                    endwhile;
+                    ?>
                 </div>
             </div>
         </section>
@@ -384,7 +352,7 @@ $site_favicon = $row['site_favicon'];
                                 data-wow-duration="1500ms">
                                 <div class="outer-box">
                                     <div class="count-outer count-box">
-                                        <h2 class="odometer" data-count="10">00</h2>
+                                        <h2 class="odometer" data-count="<?php echo htmlspecialchars($row['years_experience']); ?>">00</h2>
                                         <i class="icon-add"></i>
                                     </div>
                                     <div class="title">
@@ -451,66 +419,50 @@ $site_favicon = $row['site_favicon'];
                         <ul class="clearfix">
                             <!--Start Single Fact Counter-->
                             <li class="single-fact-counter wow fadeInUp" data-wow-delay=".3s">
-                                <div class="icon">
-                                    <span class="icon-delivery"></span>
-                                </div>
+                                <div class="icon"><span class="icon-delivery"></span></div>
                                 <div class="outer-box">
                                     <div class="count-outer count-box">
-                                        <h2 class="odometer" data-count="250">00</h2>
+                                        <h2 class="odometer" data-count="<?php echo htmlspecialchars($row['achievement_1_num']); ?>">00</h2>
                                         <i class="icon-add"></i>
                                     </div>
-                                    <div class="title">
-                                        <p>Team member</p>
-                                    </div>
+                                    <div class="title"><p><?php echo htmlspecialchars($row['achievement_1_title']); ?></p></div>
                                 </div>
                             </li>
                             <!--End Single Fact Counter-->
                             <!--Start Single Fact Counter-->
                             <li class="single-fact-counter wow fadeInDown" data-wow-delay=".3s">
-                                <div class="icon">
-                                    <span class="icon-package"></span>
-                                </div>
+                                <div class="icon"><span class="icon-package"></span></div>
                                 <div class="outer-box">
                                     <div class="count-outer count-box">
-                                        <h2 class="odometer" data-count="300">00</h2>
+                                        <h2 class="odometer" data-count="<?php echo htmlspecialchars($row['achievement_2_num']); ?>">00</h2>
                                         <i class="icon-add"></i>
                                     </div>
-                                    <div class="title">
-                                        <p>Complete projectr</p>
-                                    </div>
+                                    <div class="title"><p><?php echo htmlspecialchars($row['achievement_2_title']); ?></p></div>
                                 </div>
                             </li>
                             <!--End Single Fact Counter-->
                             <!--Start Single Fact Counter-->
                             <li class="single-fact-counter wow fadeInUp" data-wow-delay=".3s">
-                                <div class="icon">
-                                    <span class="icon-packages2"></span>
-                                </div>
+                                <div class="icon"><span class="icon-packages2"></span></div>
                                 <div class="outer-box">
                                     <div class="count-outer count-box">
-                                        <h2 class="odometer" data-count="450">00</h2>
+                                        <h2 class="odometer" data-count="<?php echo htmlspecialchars($row['achievement_3_num']); ?>">00</h2>
                                         <i class="icon-add"></i>
                                     </div>
-                                    <div class="title">
-                                        <p>Winning award</p>
-                                    </div>
+                                    <div class="title"><p><?php echo htmlspecialchars($row['achievement_3_title']); ?></p></div>
                                 </div>
                             </li>
                             <!--End Single Fact Counter-->
                             <!--Start Single Fact Counter-->
                             <li class="single-fact-counter wow fadeInDown" data-wow-delay=".3s">
-                                <div class="icon">
-                                    <span class="icon-delivery-truck"></span>
-                                </div>
+                                <div class="icon"><span class="icon-delivery-truck"></span></div>
                                 <div class="outer-box">
                                     <div class="count-outer count-box">
-                                        <h2 class="odometer" data-count="1">00</h2>
-                                        <i class="k">k</i>
+                                        <h2 class="odometer" data-count="<?php echo htmlspecialchars($row['achievement_4_num']); ?>">00</h2>
+                                        <?php if (!empty($row['achievement_4_suffix'])): ?><i class="k"><?php echo htmlspecialchars($row['achievement_4_suffix']); ?></i><?php endif; ?>
                                         <i class="icon-add"></i>
                                     </div>
-                                    <div class="title">
-                                        <p>icon-delivery-truck</p>
-                                    </div>
+                                    <div class="title"><p><?php echo htmlspecialchars($row['achievement_4_title']); ?></p></div>
                                 </div>
                             </li>
                             <!--End Single Fact Counter-->
@@ -564,10 +516,10 @@ $site_favicon = $row['site_favicon'];
                                             <h3><a href="#">Express Logix</a></h3>
                                             <p>Swift, reliable, and efficient logistics solutions for your business needs. Trust us for timely and secure delivery every time.</p>
                                         </div>
-                                        <div class="btn-box">
+                                        <!-- <div class="btn-box">
                                             <a href="#">Read More <span
                                                     class="icon-right-arrow-2"></span></a>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                             </div>
@@ -590,10 +542,10 @@ $site_favicon = $row['site_favicon'];
                                             <h3><a href="#">Prime Cargo</a></h3>
                                             <p>Swift and reliable logistics partner for your shipping needs.</p>
                                         </div>
-                                        <div class="btn-box">
+                                        <!-- <div class="btn-box">
                                             <a href="#">Read More <span
                                                 class="icon-right-arrow-2"></span></a>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                             </div>
@@ -616,10 +568,10 @@ $site_favicon = $row['site_favicon'];
                                             <h3><a href="#">Speedy Transit</a></h3>
                                             <p>Your fast, reliable logistics solution.</p>
                                         </div>
-                                        <div class="btn-box">
+                                        <!-- <div class="btn-box">
                                             <a href="#">Read More <span
                                                     class="icon-right-arrow-2"></span></a>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                             </div>
@@ -642,10 +594,10 @@ $site_favicon = $row['site_favicon'];
                                             <h3><a href="#">Prime Cargo</a></h3>
                                             <p>Your premier logistics partner, ensuring fast and reliable delivery for your shipments.</p>
                                         </div>
-                                        <div class="btn-box">
+                                        <!-- <div class="btn-box">
                                             <a href="#">Read More <span
                                                     class="icon-right-arrow-2"></span></a>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                             </div>
@@ -662,9 +614,9 @@ $site_favicon = $row['site_favicon'];
         <!--Start Video One-->
         <section class="video-one">
             <div class="video-one__bg" data-jarallax data-speed="0.1" data-imgPosition="0% 0%"
-                style="background-image: url(assets/img/resource/video-one__img1.jpg);"></div>
+                style="background-image: url(<?php echo htmlspecialchars($row['video_bg_image']); ?>);"></div>
             <div class="icon wow zoomIn animated" data-wow-delay="300ms" data-wow-duration="1500ms">
-                <a class="video-popup" title="Video Gallery" href="https://www.youtube.com/watch?v=06dV9txztKY">
+                <a class="video-popup" title="Video Gallery" href="<?php echo htmlspecialchars($row['video_url']); ?>">
                     <span class="icon-play-button-arrowhead"></span>
                 </a>
             </div>
@@ -723,122 +675,48 @@ $site_favicon = $row['site_favicon'];
                         }}'>
 
                         <div class="swiper-wrapper">
-                            <!--Start Single Testimonials One-->
+                            <?php
+                            $testimonials_result = mysqli_query($con, "SELECT * FROM testimonials WHERE is_published = 1 ORDER BY created_at DESC");
+                            while ($testimonial = mysqli_fetch_assoc($testimonials_result)) :
+                            ?>
                             <div class="swiper-slide">
                                 <div class="testimonials-one__single">
                                     <div class="testimonials-one__single-img">
                                         <div class="testimonials-one__single-img__inner">
                                             <div class="inner">
-                                                <img src="assets/img/testimonial/testimonials-one__img1.jpg" alt="">
+                                                <img src="<?php echo htmlspecialchars($testimonial['image']); ?>" alt="">
                                             </div>
                                             <div class="overlay-box">
                                                 <span class="icon-quote-right"></span>
                                             </div>
                                         </div>
                                         <div class="title-box">
-                                            <h3><a href="#">Savannah Nguyen</a></h3>
-                                            <p>President of Sales</p>
+                                            <h3><a href="#"><?php echo htmlspecialchars($testimonial['name']); ?></a></h3>
+                                            <p><?php echo htmlspecialchars($testimonial['title']); ?></p>
                                         </div>
                                     </div>
                                     <div class="testimonials-one__single-content">
                                         <div class="ster-icon">
                                             <ul>
+                                                <?php for ($i = 0; $i < $testimonial['rating']; $i++) : ?>
                                                 <li>
                                                     <div class="icon">
                                                         <span class="icon-star-1"></span>
                                                     </div>
                                                 </li>
-                                                <li>
-                                                    <div class="icon">
-                                                        <span class="icon-star-1"></span>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="icon">
-                                                        <span class="icon-star-1"></span>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="icon">
-                                                        <span class="icon-star-1"></span>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="icon">
-                                                        <span class="icon-star-1"></span>
-                                                    </div>
-                                                </li>
+                                                <?php endfor; ?>
                                             </ul>
-                                            <p>Reviews (05)</p>
+                                            <p>Reviews (0<?php echo htmlspecialchars($testimonial['rating']); ?>)</p>
                                         </div>
                                         <div class="text">
                                             <p>
-                                                "We've been using <?php echo htmlspecialchars($row['sitename']); ?> for all our international shipments, and their service is second to none. The real-time tracking is incredibly accurate, and their customer support is always responsive and helpful. They’ve become a vital partner for our business."
+                                                "<?php echo htmlspecialchars($testimonial['review_text']); ?>"
                                             </p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <!--End Single Testimonials One-->
-
-                            <!--Start Single Testimonials One-->
-                            <div class="swiper-slide">
-                                <div class="testimonials-one__single">
-                                    <div class="testimonials-one__single-img">
-                                        <div class="testimonials-one__single-img__inner">
-                                            <div class="inner">
-                                                <img src="assets/img/testimonial/testimonials-one__img2.jpg" alt="">
-                                            </div>
-                                            <div class="overlay-box">
-                                                <span class="icon-quote-right"></span>
-                                            </div>
-                                        </div>
-                                        <div class="title-box">
-                                            <h3><a href="#">Savannah Nguyen</a></h3>
-                                            <p>President of Sales</p>
-                                        </div>
-                                    </div>
-                                    <div class="testimonials-one__single-content">
-                                        <div class="ster-icon">
-                                            <ul>
-                                                <li>
-                                                    <div class="icon">
-                                                        <span class="icon-star-1"></span>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="icon">
-                                                        <span class="icon-star-1"></span>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="icon">
-                                                        <span class="icon-star-1"></span>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="icon">
-                                                        <span class="icon-star-1"></span>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="icon">
-                                                        <span class="icon-star-1"></span>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                            <p>Reviews (05)</p>
-                                        </div>
-                                        <div class="text">
-                                            <p>
-                                                "As a small business, we need a courier service that is both reliable and affordable. <?php echo htmlspecialchars($row['sitename']); ?> has consistently exceeded our expectations. Their team is professional, and our packages always arrive on time and in perfect condition. Highly recommended!"
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--End Single Testimonials One-->
-
+                            <?php endwhile; ?>
                         </div>
                     </div>
                 </div>
@@ -932,168 +810,41 @@ $site_favicon = $row['site_favicon'];
                         }'>
 
                         <div class="swiper-wrapper">
-                            <!--Start Team One Single-->
+                            <?php
+                            $team_result = mysqli_query($con, "SELECT * FROM team_members WHERE is_published = 1 ORDER BY created_at DESC");
+                            while ($member = mysqli_fetch_assoc($team_result)) :
+                            ?>
                             <div class="swiper-slide">
                                 <div class="team-one__single">
                                     <div class="team-one__single-img">
-                                        <img src="assets/img/team/team-1-1.png" alt="#">
+                                        <img src="<?php echo htmlspecialchars($member['image']); ?>" alt="#">
                                         <div class="social-share-box">
                                             <span class="icon-share"></span>
                                             <ul class="clearfix">
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-facebook-app-symbol"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-twitter"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-linked-in-logo-of-two-letters"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-pinterest"></i>
-                                                    </a>
-                                                </li>
+                                                <?php if (!empty($member['social_facebook'])) : ?>
+                                                <li><a href="<?php echo htmlspecialchars($member['social_facebook']); ?>"><i class="icon-facebook-app-symbol"></i></a></li>
+                                                <?php endif; ?>
+                                                <?php if (!empty($member['social_twitter'])) : ?>
+                                                <li><a href="<?php echo htmlspecialchars($member['social_twitter']); ?>"><i class="icon-twitter"></i></a></li>
+                                                <?php endif; ?>
+                                                <?php if (!empty($member['social_linkedin'])) : ?>
+                                                <li><a href="<?php echo htmlspecialchars($member['social_linkedin']); ?>"><i class="icon-linked-in-logo-of-two-letters"></i></a></li>
+                                                <?php endif; ?>
+                                                <?php if (!empty($member['social_pinterest'])) : ?>
+                                                <li><a href="<?php echo htmlspecialchars($member['social_pinterest']); ?>"><i class="icon-pinterest"></i></a></li>
+                                                <?php endif; ?>
                                             </ul>
                                         </div>
                                     </div>
                                     <div class="team-one__single-content">
                                         <div class="title-box">
-                                            <h3><a href="#">Cameron Williamson</a></h3>
-                                            <p>Logistics Manager</p>
+                                            <h3><a href="#"><?php echo htmlspecialchars($member['name']); ?></a></h3>
+                                            <p><?php echo htmlspecialchars($member['title']); ?></p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <!--End Team One Single-->
-                            <!--Start Team One Single-->
-                            <div class="swiper-slide">
-                                <div class="team-one__single">
-                                    <div class="team-one__single-img">
-                                        <img src="assets/img/team/team-1-2.png" alt="#">
-                                        <div class="social-share-box">
-                                            <span class="icon-share"></span>
-                                            <ul class="clearfix">
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-facebook-app-symbol"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-twitter"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-linked-in-logo-of-two-letters"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-pinterest"></i>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="team-one__single-content">
-                                        <div class="title-box">
-                                            <h3><a href="#">Cameron Williamson</a></h3>
-                                            <p>Operations Head</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--End Team One Single-->
-                            <!--Start Team One Single-->
-                            <div class="swiper-slide">
-                                <div class="team-one__single">
-                                    <div class="team-one__single-img">
-                                        <img src="assets/img/team/team-1-3.png" alt="#">
-                                        <div class="social-share-box">
-                                            <span class="icon-share"></span>
-                                            <ul class="clearfix">
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-facebook-app-symbol"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-twitter"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-linked-in-logo-of-two-letters"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-pinterest"></i>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="team-one__single-content">
-                                        <div class="title-box">
-                                            <h3><a href="#">Ronald Richards</a></h3>
-                                            <p>Lead Dispatcher</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--End Team One Single-->
-                            <!--Start Team One Single-->
-                            <div class="swiper-slide">
-                                <div class="team-one__single">
-                                    <div class="team-one__single-img">
-                                        <img src="assets/img/team/team-1-4.png" alt="#">
-                                        <div class="social-share-box">
-                                            <span class="icon-share"></span>
-                                            <ul class="clearfix">
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-facebook-app-symbol"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-twitter"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-linked-in-logo-of-two-letters"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#">
-                                                        <i class="icon-pinterest"></i>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="team-one__single-content">
-                                        <div class="title-box">
-                                            <h3><a href="#">Albert Flores</a></h3>
-                                            <p>Marketing Coordinator</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--End Team One Single-->
-
-
+                            <?php endwhile; ?>
                         </div>
                         <!-- If we need navigation buttons -->
                         <div class="swiper-pagination team-one__dot-style1" id="swiper-dot-style1"></div>
@@ -1280,13 +1031,13 @@ $site_favicon = $row['site_favicon'];
                         <div class="copyright-menu">
                             <ul>
                                 <li>
-                                    <p><a href="#">Trams &amp; Condition</a></p>
+                                    <p><a href="terms.php">Terms &amp; Condition</a></p>
                                 </li>
                                 <li>
-                                    <p><a href="#">Privacy Policy</a></p>
+                                    <p><a href="privacy.php">Privacy Policy</a></p>
                                 </li>
                                 <li>
-                                    <p><a href="#">Contact Us</a></p>
+                                    <p><a href="contact.php">Contact Us</a></p>
                                 </li>
                             </ul>
                         </div>

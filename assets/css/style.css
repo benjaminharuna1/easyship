@@ -1200,6 +1200,10 @@ label {
     transition: all 500ms ease;
 }
 
+.service-three__single {
+    margin-bottom: 30px;
+}
+
 .accordion-box-one .accordion .accord-btn.active h3 {
     color: var(--thm-primary);
 }
@@ -3734,4 +3738,6 @@ label {
 .faq-one--faq .accordion-box-one .accordion .accord-btn.active:after {
     color: var(--thm-secondary);
     content: "\e94f";
-}
+}.service-one__single { display: flex; flex-direction: column; height: 100%; } .service-one__single-content { flex-grow: 1; }
+.project-one__single { display: flex; flex-direction: column; height: 100%; } .project-one__single-content { flex-grow: 1; }
+.service-three__single { display: flex; flex-direction: column; height: 100%; } .service-three__single-content { flex-grow: 1; }

@@ -113,6 +113,36 @@
 						<div class="menu-title">Support Messages</div>
 					</a>
 				</li>
+
+				<li class="menu-label">Site Content</li>
+				<li>
+					<a class="" href="testimonials.php">
+						<div class="parent-icon"><i class="bx bx-comment-detail fs-5"></i>
+						</div>
+						<div class="menu-title">Testimonials</div>
+					</a>
+				</li>
+				<li>
+					<a class="" href="team.php">
+						<div class="parent-icon"><i class="bx bx-user-pin fs-5"></i>
+						</div>
+						<div class="menu-title">Team</div>
+					</a>
+				</li>
+				<li>
+					<a class="" href="services.php">
+						<div class="parent-icon"><i class="bx bx-briefcase fs-5"></i>
+						</div>
+						<div class="menu-title">Services</div>
+					</a>
+				</li>
+				<li>
+					<a class="" href="legal.php">
+						<div class="parent-icon"><i class="bx bx-file fs-5"></i>
+						</div>
+						<div class="menu-title">Legal Pages</div>
+					</a>
+				</li>
 				
 				<li>
 					<a class="" href="logout.php">
