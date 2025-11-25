@@ -314,11 +314,6 @@ $site_favicon = $row['site_favicon'];
                                     <div class="title">
                                         <h4>Years Of Experiences</h4>
                                     </div>
-                                    <div class="text">
-                                        <p>
-                                            Lorem Ipsum is simply dummy text.
-                                        </p>
-                                    </div>
                                 </div>
                             </div>
                         </div>

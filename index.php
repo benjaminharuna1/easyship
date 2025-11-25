@@ -516,10 +516,10 @@ $site_favicon = $row['site_favicon'];
                                             <h3><a href="#">Express Logix</a></h3>
                                             <p>Swift, reliable, and efficient logistics solutions for your business needs. Trust us for timely and secure delivery every time.</p>
                                         </div>
-                                        <div class="btn-box">
+                                        <!-- <div class="btn-box">
                                             <a href="#">Read More <span
                                                     class="icon-right-arrow-2"></span></a>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                             </div>
@@ -542,10 +542,10 @@ $site_favicon = $row['site_favicon'];
                                             <h3><a href="#">Prime Cargo</a></h3>
                                             <p>Swift and reliable logistics partner for your shipping needs.</p>
                                         </div>
-                                        <div class="btn-box">
+                                        <!-- <div class="btn-box">
                                             <a href="#">Read More <span
                                                 class="icon-right-arrow-2"></span></a>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                             </div>
@@ -568,10 +568,10 @@ $site_favicon = $row['site_favicon'];
                                             <h3><a href="#">Speedy Transit</a></h3>
                                             <p>Your fast, reliable logistics solution.</p>
                                         </div>
-                                        <div class="btn-box">
+                                        <!-- <div class="btn-box">
                                             <a href="#">Read More <span
                                                     class="icon-right-arrow-2"></span></a>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                             </div>
@@ -594,10 +594,10 @@ $site_favicon = $row['site_favicon'];
                                             <h3><a href="#">Prime Cargo</a></h3>
                                             <p>Your premier logistics partner, ensuring fast and reliable delivery for your shipments.</p>
                                         </div>
-                                        <div class="btn-box">
+                                        <!-- <div class="btn-box">
                                             <a href="#">Read More <span
                                                     class="icon-right-arrow-2"></span></a>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                             </div>
