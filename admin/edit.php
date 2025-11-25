@@ -95,7 +95,7 @@ if (isset($_POST['update'])) {
             // Main tracking info update
             $update_query = "UPDATE addtracking SET tracking_id=?, sender_name=?, sender_contact=?, sender_email=?, sender_address=?, dispatch_location=?, carrier=?, carrier_refrence_number=?, weight=?, payment_mode=?, total_cost=?, receiver_name=?, receiver_contact=?, receiver_email=?, receiver_address=?, destination=?, package_discription=?, dispatch_date=?, estimated_delivery_date=?, shipment_mode=?, quantity=?, total_freight=?, courier=?, comments=?, type_of_shipment=?, total_volumetric_weight=?, total_actual_weight=?, published=?, image=? WHERE tracking_id=?";
             $stmt_update = mysqli_prepare($con, $update_query);
-            mysqli_stmt_bind_param($stmt_update, "ssssssssssdssssssssssssssssiss", $new_tracking_id, $_POST['sendername'], $_POST['sendercontact'], $_POST['senderemail'], $_POST['senderaddress'], $_POST['dispatchlocation'], $_POST['carrier'], $_POST['carrierreferencenumber'], $_POST['weight'], $_POST['paymentmode'], $_POST['total_cost'], $receiver_name, $_POST['receivercontact'], $receiver_email, $_POST['receiveraddress'], $_POST['destination'], $_POST['packagedescription'], $_POST['dispatch_date'], $_POST['estimateddeliverydate'], $_POST['shipmentmethod'], $_POST['quantity'], $_POST['total_freight'], $_POST['courier'], $_POST['comments'], $_POST['type_of_shipment'], $_POST['total_volumetric_weight'], $_POST['total_actual_weight'], $published, $packageImage, $edit_id);
+            mysqli_stmt_bind_param($stmt_update, "ssssssssssdssssssssssssssssisss", $new_tracking_id, $_POST['sendername'], $_POST['sendercontact'], $_POST['senderemail'], $_POST['senderaddress'], $_POST['dispatchlocation'], $_POST['carrier'], $_POST['carrierreferencenumber'], $_POST['weight'], $_POST['paymentmode'], $_POST['total_cost'], $receiver_name, $_POST['receivercontact'], $receiver_email, $_POST['receiveraddress'], $_POST['destination'], $_POST['packagedescription'], $_POST['dispatch_date'], $_POST['estimateddeliverydate'], $_POST['shipmentmethod'], $_POST['quantity'], $_POST['total_freight'], $_POST['courier'], $_POST['comments'], $_POST['type_of_shipment'], $_POST['total_volumetric_weight'], $_POST['total_actual_weight'], $published, $packageImage, $edit_id);
             mysqli_stmt_execute($stmt_update);
 
             // If tracking ID was changed, update related tables
@@ -139,14 +139,22 @@ if (isset($_POST['update'])) {
 
             // Send emails if checked
             if ($send_email_update) {
-                $email_data = ['receiver_name' => $receiver_name, 'tracking_id' => $new_tracking_id];
-                sendMail($receiver_email, "Shipment Update: " . $new_tracking_id, 'shipment_update', $email_data);
-                sendMail($sender_email, "Shipment Update: " . $new_tracking_id, 'shipment_update', $email_data);
+                // Email to Receiver
+                $email_data_receiver = ['name' => $receiver_name, 'tracking_id' => $new_tracking_id];
+                sendMail($receiver_email, "Shipment Update: " . $new_tracking_id, 'shipment_update', $email_data_receiver);
+
+                // Email to Sender
+                $email_data_sender = ['name' => $sender_name, 'tracking_id' => $new_tracking_id];
+                sendMail($sender_email, "Shipment Update: " . $new_tracking_id, 'shipment_update', $email_data_sender);
             }
             if ($send_email_history) {
-                $email_data = ['receiver_name' => $receiver_name, 'tracking_id' => $new_tracking_id];
-                sendMail($receiver_email, "Shipment History Update: " . $new_tracking_id, 'shipment_history_update', $email_data);
-                sendMail($sender_email, "Shipment History Update: " . $new_tracking_id, 'shipment_history_update', $email_data);
+                // Email to Receiver
+                $email_data_receiver = ['name' => $receiver_name, 'tracking_id' => $new_tracking_id];
+                sendMail($receiver_email, "Shipment History Update: " . $new_tracking_id, 'shipment_history_update', $email_data_receiver);
+
+                // Email to Sender
+                $email_data_sender = ['name' => $sender_name, 'tracking_id' => $new_tracking_id];
+                sendMail($sender_email, "Shipment History Update: " . $new_tracking_id, 'shipment_history_update', $email_data_sender);
             }
 
             $_SESSION['success_message'] = "Updated successfully";
@@ -278,7 +286,13 @@ include 'header.php';
                                         <div class="row mt-3">
                                             <div class="col-md-4">
                                                 <label class="form-label">Courier</label>
-                                                <input type="text" class="form-control" name="courier" value="<?php echo htmlspecialchars($_POST['courier'] ?? $row['courier']); ?>" required>
+                                                <select class="form-control" name="courier" required>
+                                                    <option value="">Select</option>
+                                                    <option value="DHL" <?php if (($_POST['courier'] ?? $row['courier']) == 'DHL') echo 'selected'; ?>>DHL</option>
+                                                    <option value="UPS" <?php if (($_POST['courier'] ?? $row['courier']) == 'UPS') echo 'selected'; ?>>UPS</option>
+                                                    <option value="FedEx" <?php if (($_POST['courier'] ?? $row['courier']) == 'FedEx') echo 'selected'; ?>>FedEx</option>
+                                                    <option value="<?php echo htmlspecialchars($sitename); ?>" <?php if (($_POST['courier'] ?? $row['courier']) == $sitename) echo 'selected'; ?>><?php echo htmlspecialchars($sitename); ?></option>
+                                                </select>
                                             </div>
                                             <div class="col-md-4">
                                                 <label class="form-label">Mode</label>
@@ -425,10 +439,13 @@ include 'header.php';
                                                         <td><input type="text" class="form-control" name="history_location[]" value="<?php echo htmlspecialchars($_POST['history_location'][$i] ?? $shipment_history[$i]['location']); ?>"></td>
                                                         <td>
                                                             <select class="form-control" name="history_status[]">
-                                                                <option <?php if (($_POST['history_status'][$i] ?? $shipment_history[$i]['status']) == 'Pending') echo 'selected'; ?>>Pending</option>
-                                                                <option <?php if (($_POST['history_status'][$i] ?? $shipment_history[$i]['status']) == 'In Transit') echo 'selected'; ?>>In Transit</option>
-                                                                <option <?php if (($_POST['history_status'][$i] ?? $shipment_history[$i]['status']) == 'Delivered') echo 'selected'; ?>>Delivered</option>
-                                                                <option <?php if (($_POST['history_status'][$i] ?? $shipment_history[$i]['status']) == 'Cancelled') echo 'selected'; ?>>Cancelled</option>
+                                                                <option value="Pending" <?php if (($_POST['history_status'][$i] ?? $shipment_history[$i]['status']) == 'Pending') echo 'selected'; ?>>Pending</option>
+                                                                <option value="In Process" <?php if (($_POST['history_status'][$i] ?? $shipment_history[$i]['status']) == 'In Process') echo 'selected'; ?>>In Process</option>
+                                                                <option value="In Transit" <?php if (($_POST['history_status'][$i] ?? $shipment_history[$i]['status']) == 'In Transit') echo 'selected'; ?>>In Transit</option>
+                                                                <option value="On Hold" <?php if (($_POST['history_status'][$i] ?? $shipment_history[$i]['status']) == 'On Hold') echo 'selected'; ?>>On Hold</option>
+                                                                <option value="Delivered" <?php if (($_POST['history_status'][$i] ?? $shipment_history[$i]['status']) == 'Delivered') echo 'selected'; ?>>Delivered</option>
+                                                                <option value="Cancelled" <?php if (($_POST['history_status'][$i] ?? $shipment_history[$i]['status']) == 'Cancelled') echo 'selected'; ?>>Cancelled</option>
+                                                                <option value="Returned" <?php if (($_POST['history_status'][$i] ?? $shipment_history[$i]['status']) == 'Returned') echo 'selected'; ?>>Returned</option>
                                                             </select>
                                                         </td>
                                                         <td><input type="text" class="form-control" name="history_updated_by[]" value="<?php echo htmlspecialchars($_POST['history_updated_by'][$i] ?? $shipment_history[$i]['updated_by']); ?>"></td>
@@ -482,10 +499,13 @@ include 'header.php';
           <td><input type="text" class="form-control" name="history_location[]"></td>
           <td>
             <select class="form-control" name="history_status[]">
-              <option>Pending</option>
-              <option>In Transit</option>
-              <option>Delivered</option>
-              <option>Cancelled</option>
+              <option value="Pending">Pending</option>
+              <option value="In Process">In Process</option>
+              <option value="In Transit">In Transit</option>
+              <option value="On Hold">On Hold</option>
+              <option value="Delivered">Delivered</option>
+              <option value="Cancelled">Cancelled</option>
+              <option value="Returned">Returned</option>
             </select>
           </td>
           <td><input type="text" class="form-control" name="history_updated_by[]"></td>
