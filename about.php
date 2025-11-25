@@ -308,7 +308,7 @@ $site_favicon = $row['site_favicon'];
                             <div class="overlay-box">
                                 <div class="outer-box">
                                     <div class="count-outer count-box">
-                                        <h2 class="odometer" data-count="10"></h2>
+                                        <h2 class="odometer" data-count="<?php echo htmlspecialchars($row['years_experience']); ?>"></h2>
                                         <i class="fa-solid fa-plus"></i>
                                     </div>
                                     <div class="title">

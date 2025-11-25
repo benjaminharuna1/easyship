@@ -275,13 +275,13 @@ $site_favicon = $row['site_favicon'];
             <div class="container">
                 <div class="banner-one__content wow fadeInLeft" data-wow-delay="0ms" data-wow-duration="1500ms">
                     <div class="sub-title">
-                        <h5>Smart Solutions</h5>
+                        <h5><?php echo htmlspecialchars($row['hero_subtitle']); ?></h5>
                     </div>
                     <div class="big-title">
-                        <h2>Streamlined<br> transportation for<br> a better tomorrow</h2>
+                        <h2><?php echo $row['hero_title']; ?></h2>
                     </div>
                     <div class="text">
-                        <p>We have been operating for over a decade, providing top-notch</p>
+                        <p><?php echo htmlspecialchars($row['hero_text']); ?></p>
                     </div>
                     <div class="btn-box">
                         <a class="thm-btn" href="track.php">
@@ -309,7 +309,7 @@ $site_favicon = $row['site_favicon'];
                 </div>
                 <div class="row">
                     <?php
-                    $services_result = mysqli_query($con, "SELECT * FROM services WHERE is_published = 1 ORDER BY created_at DESC LIMIT 3");
+                    $services_result = mysqli_query($con, "SELECT * FROM services WHERE is_published = 1 AND is_featured = 1 ORDER BY created_at DESC LIMIT 3");
                     $delay = 0;
                     while ($service = mysqli_fetch_assoc($services_result)) :
                     ?>
@@ -352,7 +352,7 @@ $site_favicon = $row['site_favicon'];
                                 data-wow-duration="1500ms">
                                 <div class="outer-box">
                                     <div class="count-outer count-box">
-                                        <h2 class="odometer" data-count="10">00</h2>
+                                        <h2 class="odometer" data-count="<?php echo htmlspecialchars($row['years_experience']); ?>">00</h2>
                                         <i class="icon-add"></i>
                                     </div>
                                     <div class="title">
@@ -419,66 +419,50 @@ $site_favicon = $row['site_favicon'];
                         <ul class="clearfix">
                             <!--Start Single Fact Counter-->
                             <li class="single-fact-counter wow fadeInUp" data-wow-delay=".3s">
-                                <div class="icon">
-                                    <span class="icon-delivery"></span>
-                                </div>
+                                <div class="icon"><span class="icon-delivery"></span></div>
                                 <div class="outer-box">
                                     <div class="count-outer count-box">
-                                        <h2 class="odometer" data-count="250">00</h2>
+                                        <h2 class="odometer" data-count="<?php echo htmlspecialchars($row['achievement_1_num']); ?>">00</h2>
                                         <i class="icon-add"></i>
                                     </div>
-                                    <div class="title">
-                                        <p>Team member</p>
-                                    </div>
+                                    <div class="title"><p><?php echo htmlspecialchars($row['achievement_1_title']); ?></p></div>
                                 </div>
                             </li>
                             <!--End Single Fact Counter-->
                             <!--Start Single Fact Counter-->
                             <li class="single-fact-counter wow fadeInDown" data-wow-delay=".3s">
-                                <div class="icon">
-                                    <span class="icon-package"></span>
-                                </div>
+                                <div class="icon"><span class="icon-package"></span></div>
                                 <div class="outer-box">
                                     <div class="count-outer count-box">
-                                        <h2 class="odometer" data-count="300">00</h2>
+                                        <h2 class="odometer" data-count="<?php echo htmlspecialchars($row['achievement_2_num']); ?>">00</h2>
                                         <i class="icon-add"></i>
                                     </div>
-                                    <div class="title">
-                                        <p>Complete projectr</p>
-                                    </div>
+                                    <div class="title"><p><?php echo htmlspecialchars($row['achievement_2_title']); ?></p></div>
                                 </div>
                             </li>
                             <!--End Single Fact Counter-->
                             <!--Start Single Fact Counter-->
                             <li class="single-fact-counter wow fadeInUp" data-wow-delay=".3s">
-                                <div class="icon">
-                                    <span class="icon-packages2"></span>
-                                </div>
+                                <div class="icon"><span class="icon-packages2"></span></div>
                                 <div class="outer-box">
                                     <div class="count-outer count-box">
-                                        <h2 class="odometer" data-count="450">00</h2>
+                                        <h2 class="odometer" data-count="<?php echo htmlspecialchars($row['achievement_3_num']); ?>">00</h2>
                                         <i class="icon-add"></i>
                                     </div>
-                                    <div class="title">
-                                        <p>Winning award</p>
-                                    </div>
+                                    <div class="title"><p><?php echo htmlspecialchars($row['achievement_3_title']); ?></p></div>
                                 </div>
                             </li>
                             <!--End Single Fact Counter-->
                             <!--Start Single Fact Counter-->
                             <li class="single-fact-counter wow fadeInDown" data-wow-delay=".3s">
-                                <div class="icon">
-                                    <span class="icon-delivery-truck"></span>
-                                </div>
+                                <div class="icon"><span class="icon-delivery-truck"></span></div>
                                 <div class="outer-box">
                                     <div class="count-outer count-box">
-                                        <h2 class="odometer" data-count="1">00</h2>
-                                        <i class="k">k</i>
+                                        <h2 class="odometer" data-count="<?php echo htmlspecialchars($row['achievement_4_num']); ?>">00</h2>
+                                        <?php if (!empty($row['achievement_4_suffix'])): ?><i class="k"><?php echo htmlspecialchars($row['achievement_4_suffix']); ?></i><?php endif; ?>
                                         <i class="icon-add"></i>
                                     </div>
-                                    <div class="title">
-                                        <p>icon-delivery-truck</p>
-                                    </div>
+                                    <div class="title"><p><?php echo htmlspecialchars($row['achievement_4_title']); ?></p></div>
                                 </div>
                             </li>
                             <!--End Single Fact Counter-->
@@ -630,9 +614,9 @@ $site_favicon = $row['site_favicon'];
         <!--Start Video One-->
         <section class="video-one">
             <div class="video-one__bg" data-jarallax data-speed="0.1" data-imgPosition="0% 0%"
-                style="background-image: url(assets/img/resource/video-one__img1.jpg);"></div>
+                style="background-image: url(<?php echo htmlspecialchars($row['video_bg_image']); ?>);"></div>
             <div class="icon wow zoomIn animated" data-wow-delay="300ms" data-wow-duration="1500ms">
-                <a class="video-popup" title="Video Gallery" href="https://www.youtube.com/watch?v=06dV9txztKY">
+                <a class="video-popup" title="Video Gallery" href="<?php echo htmlspecialchars($row['video_url']); ?>">
                     <span class="icon-play-button-arrowhead"></span>
                 </a>
             </div>

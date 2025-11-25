@@ -101,6 +101,46 @@ try {
                  exit();
             }
 
+            // Homepage content update
+            if (isset($_POST['save-homepage-content'])) {
+                $hero_subtitle = text_input($_POST['hero_subtitle']);
+                $hero_title = text_input($_POST['hero_title']);
+                $hero_text = text_input($_POST['hero_text']);
+                $years_experience = (int)$_POST['years_experience'];
+                $achievement_1_num = (int)$_POST['achievement_1_num'];
+                $achievement_1_title = text_input($_POST['achievement_1_title']);
+                $achievement_2_num = (int)$_POST['achievement_2_num'];
+                $achievement_2_title = text_input($_POST['achievement_2_title']);
+                $achievement_3_num = (int)$_POST['achievement_3_num'];
+                $achievement_3_title = text_input($_POST['achievement_3_title']);
+                $achievement_4_num = (int)$_POST['achievement_4_num'];
+                $achievement_4_suffix = text_input($_POST['achievement_4_suffix']);
+                $achievement_4_title = text_input($_POST['achievement_4_title']);
+                $video_url = text_input($_POST['video_url']);
+
+                // Handle video background image upload
+                $video_bg_image = $_POST['current_video_bg_image'];
+                if (isset($_FILES['video_bg_image']) && $_FILES['video_bg_image']['error'] == 0) {
+                    $target_dir = "uploads/";
+                    $filename = basename($_FILES["video_bg_image"]["name"]);
+                    $target_file = $target_dir . time() . '_' . $filename;
+                    if (move_uploaded_file($_FILES["video_bg_image"]["tmp_name"], '../' . $target_file)) {
+                        $video_bg_image = $target_file;
+                    } else {
+                        throw new Exception("Sorry, there was an error uploading the video background image.");
+                    }
+                }
+
+                $update_stmt = mysqli_prepare($con, "UPDATE setting SET hero_subtitle=?, hero_title=?, hero_text=?, years_experience=?, achievement_1_num=?, achievement_1_title=?, achievement_2_num=?, achievement_2_title=?, achievement_3_num=?, achievement_3_title=?, achievement_4_num=?, achievement_4_suffix=?, achievement_4_title=?, video_url=?, video_bg_image=? WHERE id=1");
+                mysqli_stmt_bind_param($update_stmt, "sssiisisiisssss", $hero_subtitle, $hero_title, $hero_text, $years_experience, $achievement_1_num, $achievement_1_title, $achievement_2_num, $achievement_2_title, $achievement_3_num, $achievement_3_title, $achievement_4_num, $achievement_4_suffix, $achievement_4_title, $video_url, $video_bg_image);
+                mysqli_stmt_execute($update_stmt);
+
+                mysqli_commit($con);
+                $_SESSION['success_message'] = "Homepage content updated successfully.";
+                header("Location: settings.php#homepage-content");
+                exit();
+            }
+
             // Email settings update
             if (isset($_POST['save-email-settings'])) {
                 $smtp_host = $_POST['smtp-host'];
@@ -157,6 +197,9 @@ include 'header.php';
                 <ul class="nav nav-tabs nav-tabs-bordered">
                     <li class="nav-item">
                         <a class="nav-link active" data-bs-toggle="tab" href="#site-settings">Site Settings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#homepage-content">Homepage Content</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="tab" href="#email-settings">Email Settings</a>
@@ -242,6 +285,79 @@ include 'header.php';
                             </div>
                             <div class="text-end">
                                 <button name="save-site-settings" type="submit" class="btn btn-primary">Save Settings</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Homepage Content Tab -->
+                    <div class="tab-pane fade" id="homepage-content">
+                        <h5 class="card-title">Manage the dynamic content on your homepage.</h5>
+                        <form method="POST" action="settings.php" enctype="multipart/form-data">
+                            <!-- Hero Section -->
+                            <h6 class="mb-3">Hero Section</h6>
+                            <div class="row mb-3">
+                                <label class="col-sm-3 col-form-label">Hero Subtitle</label>
+                                <div class="col-sm-9"><input class="form-control" type="text" name="hero_subtitle" value="<?php echo htmlspecialchars($settings['hero_subtitle'] ?? ''); ?>"></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-3 col-form-label">Hero Title</label>
+                                <div class="col-sm-9"><textarea class="form-control" name="hero_title" rows="3"><?php echo htmlspecialchars($settings['hero_title'] ?? ''); ?></textarea></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-3 col-form-label">Hero Text</label>
+                                <div class="col-sm-9"><textarea class="form-control" name="hero_text" rows="2"><?php echo htmlspecialchars($settings['hero_text'] ?? ''); ?></textarea></div>
+                            </div>
+                            <hr>
+                            <!-- Years of Experience -->
+                             <h6 class="mb-3">Experience Counter</h6>
+                             <div class="row mb-3">
+                                <label class="col-sm-3 col-form-label">Years of Experience</label>
+                                <div class="col-sm-9"><input class="form-control" type="number" name="years_experience" value="<?php echo htmlspecialchars($settings['years_experience'] ?? '10'); ?>"></div>
+                            </div>
+                            <hr>
+                            <!-- Achievements Section -->
+                            <h6 class="mb-3">Achievements Section</h6>
+                            <div class="row mb-3 align-items-center">
+                                <div class="col-sm-3"><label class="col-form-label">Achievement 1</label></div>
+                                <div class="col-sm-4"><input class="form-control" type="number" name="achievement_1_num" value="<?php echo htmlspecialchars($settings['achievement_1_num'] ?? ''); ?>" placeholder="Number"></div>
+                                <div class="col-sm-5"><input class="form-control" type="text" name="achievement_1_title" value="<?php echo htmlspecialchars($settings['achievement_1_title'] ?? ''); ?>" placeholder="Title"></div>
+                            </div>
+                             <div class="row mb-3 align-items-center">
+                                <div class="col-sm-3"><label class="col-form-label">Achievement 2</label></div>
+                                <div class="col-sm-4"><input class="form-control" type="number" name="achievement_2_num" value="<?php echo htmlspecialchars($settings['achievement_2_num'] ?? ''); ?>" placeholder="Number"></div>
+                                <div class="col-sm-5"><input class="form-control" type="text" name="achievement_2_title" value="<?php echo htmlspecialchars($settings['achievement_2_title'] ?? ''); ?>" placeholder="Title"></div>
+                            </div>
+                             <div class="row mb-3 align-items-center">
+                                <div class="col-sm-3"><label class="col-form-label">Achievement 3</label></div>
+                                <div class="col-sm-4"><input class="form-control" type="number" name="achievement_3_num" value="<?php echo htmlspecialchars($settings['achievement_3_num'] ?? ''); ?>" placeholder="Number"></div>
+                                <div class="col-sm-5"><input class="form-control" type="text" name="achievement_3_title" value="<?php echo htmlspecialchars($settings['achievement_3_title'] ?? ''); ?>" placeholder="Title"></div>
+                            </div>
+                             <div class="row mb-3 align-items-center">
+                                <div class="col-sm-3"><label class="col-form-label">Achievement 4</label></div>
+                                <div class="col-sm-3"><input class="form-control" type="number" name="achievement_4_num" value="<?php echo htmlspecialchars($settings['achievement_4_num'] ?? ''); ?>" placeholder="Number"></div>
+                                <div class="col-sm-2"><input class="form-control" type="text" name="achievement_4_suffix" value="<?php echo htmlspecialchars($settings['achievement_4_suffix'] ?? ''); ?>" placeholder="Suffix (e.g., k)"></div>
+                                <div class="col-sm-4"><input class="form-control" type="text" name="achievement_4_title" value="<?php echo htmlspecialchars($settings['achievement_4_title'] ?? ''); ?>" placeholder="Title"></div>
+                            </div>
+                            <hr>
+                            <!-- Video Section -->
+                            <h6 class="mb-3">Video Section</h6>
+                            <div class="row mb-3">
+                                <label class="col-sm-3 col-form-label">YouTube Video URL</label>
+                                <div class="col-sm-9"><input class="form-control" type="url" name="video_url" value="<?php echo htmlspecialchars($settings['video_url'] ?? ''); ?>"></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-3 col-form-label">Background Image</label>
+                                <div class="col-sm-9">
+                                    <input class="form-control" type="file" name="video_bg_image">
+                                    <input type="hidden" name="current_video_bg_image" value="<?php echo htmlspecialchars($settings['video_bg_image'] ?? ''); ?>">
+                                     <?php if (!empty($settings['video_bg_image'])): ?>
+                                        <img src="../<?php echo htmlspecialchars($settings['video_bg_image']); ?>" width="200" class="mt-2">
+                                     <?php endif; ?>
+                                </div>
+                            </div>
+
+                            <div class="text-end">
+                                <button name="save-homepage-content" type="submit" class="btn btn-primary">Save Homepage Content</button>
                             </div>
                         </form>
                     </div>
