@@ -254,4 +254,30 @@ function getCoordinates($place) {
 
     return ['lat' => $lat, 'lon' => $lon];
 }
+
+/**
+ * process_shortcodes($content, $settings)
+ * - Replaces shortcodes like [site-name] with values from the settings array.
+ */
+function process_shortcodes($content, $settings) {
+    if (empty($content) || empty($settings)) {
+        return $content;
+    }
+
+    $replacements = [
+        '[site-name]' => $settings['site_title'],
+        '[site-url]' => $settings['site_url'],
+        '[email-name]' => $settings['email_name'],
+        '[email-address]' => $settings['email_address'],
+        '[phone-number]' => $settings['phone_number'],
+        '[fax-number]' => $settings['fax_number'],
+        '[site-address]' => nl2br(htmlspecialchars($settings['site_address'])),
+    ];
+
+    foreach ($replacements as $shortcode => $value) {
+        $content = str_replace($shortcode, $value, $content);
+    }
+
+    return $content;
+}
 ?>
