@@ -1,5 +1,6 @@
 <?php
 include 'includes/init.php'; // Includes session, DB, and settings
+include 'functions.php';
 
 // Use settings from init.php
 $site_logo = $settings['site_logo'];
