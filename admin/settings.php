@@ -187,6 +187,7 @@ try {
                 $bot_blocking_rules = <<<EOT
 # BEGIN Block Bad Bots
 <IfModule mod_rewrite.c>
+RewriteEngine On
 RewriteCond %{HTTP_USER_AGENT} (googlebot|bingbot|slurp|duckduckbot|baiduspider|yandexbot|sogou|exabot|facebot|ia_archiver) [NC]
 RewriteRule ^.*$ - [F,L]
 </IfModule>
