@@ -334,7 +334,7 @@ $geocode_api = $settings['geocode_api_key'];
                 <div class="container">
                     <div class="footer-middle__inner">
                         <div class="footer-logo-box">
-                            <img src="assets/img/logo.png" style="width: 170px;" alt="#">
+                            <img src="<?php echo htmlspecialchars($settings['site_logo']); ?>" style="width: 170px;" alt="Site Logo">
                         </div>
                         <div class="phone-number-box phone-number-box--style2">
                             <div class="icon">
@@ -342,7 +342,7 @@ $geocode_api = $settings['geocode_api_key'];
                             </div>
                             <div class="text">
                                 <p>Need help?</p>
-                                <p><a href="tel:(808)555-0111">(808) 555-0111</a></p>
+                                <p><a href="tel:<?php echo htmlspecialchars($settings['phone_number']); ?>"><?php echo htmlspecialchars($settings['phone_number']); ?></a></p>
                             </div>
                         </div>
                     </div>
@@ -355,7 +355,7 @@ $geocode_api = $settings['geocode_api_key'];
                 <div class="container">
                     <div class="footer-bottom__inner">
                         <div class="copyright-text copyright-text--two">
-                            <p>© Cargo link 2023 | <a href="index.php">Cargolink</a>, All Rights Reserved.</p>
+                            <p>© <?php echo htmlspecialchars($settings['sitename']); ?> <?php echo date('Y'); ?> | All Rights Reserved.</p>
                         </div>
 
                         <div class="copyright-menu copyright-menu--two">
