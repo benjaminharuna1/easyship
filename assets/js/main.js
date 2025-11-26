@@ -329,7 +329,9 @@
         accordionActive();
 
         // Nice Select
-        $("select").niceSelect();
+        if ($("select").length) {
+            $("select").niceSelect();
+        }
 
         //Jquery Curved Circle
         if ($(".curved-circle").length) {
