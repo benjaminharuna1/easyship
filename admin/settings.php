@@ -44,6 +44,8 @@ try {
                 $site_address = trim($_POST['site_address']);
                 $site_currency = trim($_POST['site_currency']);
                 $geocode_api_key = trim($_POST['geocode_api_key']);
+                $working_days = trim($_POST['working_days']);
+                $working_hours = trim($_POST['working_hours']);
 
                 if (empty($site_name) || empty($site_title) || empty($site_url) || empty($email_name) || empty($email_address) || empty($site_currency)) {
                     throw new Exception("All general settings fields are required.");
@@ -51,8 +53,8 @@ try {
                 if (!filter_var($site_url, FILTER_VALIDATE_URL)) throw new Exception("Invalid Site URL format.");
                 if (!filter_var($email_address, FILTER_VALIDATE_EMAIL)) throw new Exception("Invalid email address format.");
 
-                $update_stmt = mysqli_prepare($con, "UPDATE setting SET sitename = ?, site_title = ?, site_url = ?, email_name = ?, email_address = ?, phone_number = ?, fax_number = ?, site_address = ?, site_currency = ?, geocode_api_key = ? WHERE id = 1");
-                mysqli_stmt_bind_param($update_stmt, "ssssssssss", $site_name, $site_title, $site_url, $email_name, $email_address, $phone_number, $fax_number, $site_address, $site_currency, $geocode_api_key);
+                $update_stmt = mysqli_prepare($con, "UPDATE setting SET sitename = ?, site_title = ?, site_url = ?, email_name = ?, email_address = ?, phone_number = ?, fax_number = ?, site_address = ?, site_currency = ?, geocode_api_key = ?, working_days = ?, working_hours = ? WHERE id = 1");
+                mysqli_stmt_bind_param($update_stmt, "ssssssssssss", $site_name, $site_title, $site_url, $email_name, $email_address, $phone_number, $fax_number, $site_address, $site_currency, $geocode_api_key, $working_days, $working_hours);
                 mysqli_stmt_execute($update_stmt);
 
                 // Image upload/removal logic for Site Logo and Favicon
@@ -305,6 +307,14 @@ include 'header.php';
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label">Geocode API Key</label>
                                 <div class="col-sm-10"><input class="form-control" type="password" name="geocode_api_key" value="<?php echo htmlspecialchars($_POST['geocode_api_key'] ?? $settings['geocode_api_key'] ?? ''); ?>" placeholder="Enter your LocationIQ API key"></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">Working Days</label>
+                                <div class="col-sm-10"><input class="form-control" type="text" name="working_days" value="<?php echo htmlspecialchars($_POST['working_days'] ?? $settings['working_days'] ?? ''); ?>" placeholder="e.g., Monday - Friday"></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">Working Hours</label>
+                                <div class="col-sm-10"><input class="form-control" type="text" name="working_hours" value="<?php echo htmlspecialchars($_POST['working_hours'] ?? $settings['working_hours'] ?? ''); ?>" placeholder="e.g., 9 AM - 5 PM"></div>
                             </div>
                             <hr>
                             <!-- Site Logo -->

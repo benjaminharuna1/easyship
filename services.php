@@ -80,14 +80,14 @@ $row = $settings; // For compatibility with existing code using $row
             </div>
             <!--Start Sidebar Contact Info -->
             <div class="sidebar-contact-info">
-                <h3>Conatct Us</h3>
+                <h3>Contact Us</h3>
                 <ul>
                     <li>
                         <div class="icon">
                             <span class="icon-open-mail"></span>
                         </div>
                         <div class="text">
-                            <p><a href="mailto:info@cargolink.com">info@cargolink.com</a></p>
+                            <p><a href="mailto:<?php echo htmlspecialchars($settings['email_address']); ?>"><?php echo htmlspecialchars($settings['email_address']); ?></a></p>
                         </div>
                     </li>
                     <li>
@@ -95,7 +95,7 @@ $row = $settings; // For compatibility with existing code using $row
                             <span class="icon-phone-call-1"></span>
                         </div>
                         <div class="text">
-                            <p><a href="tel:+8801682648101">+1800 456 7890</a></p>
+                            <p><a href="tel:<?php echo htmlspecialchars($settings['phone_number']); ?>"><?php echo htmlspecialchars($settings['phone_number']); ?></a></p>
                         </div>
                     </li>
                     <li>
@@ -103,50 +103,12 @@ $row = $settings; // For compatibility with existing code using $row
                             <span class="fa-regular fa-clock"></span>
                         </div>
                         <div class="text">
-                            <p>Working Hour : 7.00am to 4.00pm</p>
+                            <p><?php echo htmlspecialchars($settings['working_days']); ?> : <?php echo htmlspecialchars($settings['working_hours']); ?></p>
                         </div>
                     </li>
                 </ul>
             </div>
             <!--End Sidebar Contact Info -->
-            <div class="side-content-newsletter-box">
-                <h3>Newsletter Subscription</h3>
-                <form action="" method="post">
-                    <div class="form-group">
-                        <input type="email" name="email" placeholder="Enter Email Address" required="">
-                        <button class="thm-btn" type="submit">
-                            <span class="txt">
-                                <i class="icon-paper-plane"></i>
-                            </span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-            <!--Start Side Social Links -->
-            <div class="side-social-links">
-                <ul class="clearfix">
-                    <li>
-                        <a href="#">
-                            <i class="icon-facebook-app-symbol"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <i class="icon-twitter"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <i class="icon-linked-in-logo-of-two-letters"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <i class="icon-pinterest"></i>
-                        </a>
-                    </li>
-                </ul>
-            </div>
             <!--End Side Social Links -->
         </div>
     </div>
@@ -421,7 +383,7 @@ $row = $settings; // For compatibility with existing code using $row
                 <div class="container">
                     <div class="footer-middle__inner">
                         <div class="footer-logo-box">
-                            <img src="assets/img/logo.png" style="width: 170px;" alt="#">
+                            <img src="<?php echo htmlspecialchars($settings['site_logo']); ?>" style="width: 170px;" alt="Site Logo">
                         </div>
                         <div class="phone-number-box phone-number-box--style2">
                             <div class="icon">
@@ -429,7 +391,7 @@ $row = $settings; // For compatibility with existing code using $row
                             </div>
                             <div class="text">
                                 <p>Need help?</p>
-                                <p><a href="tel:(808)555-0111">(808) 555-0111</a></p>
+                                <p><a href="tel:<?php echo htmlspecialchars($settings['phone_number']); ?>"><?php echo htmlspecialchars($settings['phone_number']); ?></a></p>
                             </div>
                         </div>
                     </div>
@@ -442,7 +404,7 @@ $row = $settings; // For compatibility with existing code using $row
                 <div class="container">
                     <div class="footer-bottom__inner">
                         <div class="copyright-text copyright-text--two">
-                            <p>© Cargo link 2023 | <a href="index.php">cargolink</a>, All Rights Reserved.</p>
+                            <p>© <?php echo htmlspecialchars($settings['sitename']); ?> <?php echo date('Y'); ?> | All Rights Reserved.</p>
                         </div>
 
                         <div class="copyright-menu copyright-menu--two">

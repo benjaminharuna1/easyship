@@ -94,15 +94,6 @@ if (!$page) {
                         <a href="index.php"><img src="assets/img/resource/mobile-menu-logo.png" alt="Logo"></a>
                     </div>
                     <div class="menu-outer"></div>
-                    <div class="social-links">
-                        <ul class="clearfix list-wrap">
-                            <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-                            <li><a href="#"><i class="fab fa-twitter"></i></a></li>
-                            <li><a href="#"><i class="fab fa-instagram"></i></a></li>
-                            <li><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
-                            <li><a href="#"><i class="fab fa-youtube"></i></a></li>
-                        </ul>
-                    </div>
                 </nav>
             </div>
             <div class="menu-backdrop"></div>
@@ -145,7 +136,7 @@ if (!$page) {
                 <div class="container">
                     <div class="footer-bottom__inner">
                         <div class="copyright-text copyright-text--two">
-                             <p>&copy; <?php echo date("Y"); ?> <?php echo htmlspecialchars($setting_row['sitename']); ?> | All Rights Reserved.</p>
+                             <p>© <?php echo htmlspecialchars($settings['sitename']); ?> <?php echo date('Y'); ?> | All Rights Reserved.</p>
                         </div>
                         <div class="copyright-menu copyright-menu--two">
                             <ul>
