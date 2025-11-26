@@ -1,11 +1,9 @@
 <?php
-include 'db.php';
-$stmt = mysqli_prepare($con, "SELECT * FROM setting");
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
-$row = mysqli_fetch_assoc($result);
-$site_logo = $row['site_logo'];
-$site_favicon = $row['site_favicon'];
+include 'includes/init.php'; // Includes session, DB, and settings
+
+$site_logo = $settings['site_logo'];
+$site_favicon = $settings['site_favicon'];
+$row = $settings; // For compatibility with existing code using $row
 ?>
 <!doctype html>
 <html class="no-js" lang="en">
@@ -13,9 +11,13 @@ $site_favicon = $row['site_favicon'];
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Home | Page</title>
+    <title><?php echo htmlspecialchars($settings['site_title']); ?></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <?php if ($settings['search_engine_indexing'] == 0) : ?>
+    <meta name="robots" content="noindex, nofollow">
+    <?php endif; ?>
 
     <link rel="shortcut icon" type="image/x-icon" href="<?php echo $site_favicon; ?>">
     <!-- Place favicon.ico in the root directory -->
