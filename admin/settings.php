@@ -159,6 +159,56 @@ try {
                 exit();
             }
 
+            // General settings update
+            if (isset($_POST['save-general-settings'])) {
+                // Checkboxes send 'on' or nothing. We convert to boolean 1 or 0.
+                $maintenance_mode = isset($_POST['maintenance_mode']) ? 1 : 0;
+                $search_indexing = isset($_POST['search_engine_indexing']) ? 1 : 0;
+
+                $update_stmt = mysqli_prepare($con, "UPDATE setting SET maintenance_mode = ?, search_engine_indexing = ? WHERE id = 1");
+                mysqli_stmt_bind_param($update_stmt, "ii", $maintenance_mode, $search_indexing);
+                mysqli_stmt_execute($update_stmt);
+
+                // Also update robots.txt based on the search indexing setting
+                $robots_content = $search_indexing ? "User-agent: *\nAllow: /" : "User-agent: *\nDisallow: /";
+                if (file_put_contents('../robots.txt', $robots_content) === false) {
+                    throw new Exception("Could not write to robots.txt. Please check file permissions.");
+                }
+
+                // Update .htaccess to block or allow bots
+                $htaccess_path = '../.htaccess';
+                if (!is_writable($htaccess_path)) {
+                    throw new Exception(".htaccess file is not writable. Please check file permissions.");
+                }
+                $htaccess_content = file_get_contents($htaccess_path);
+                if ($htaccess_content === false) {
+                    throw new Exception("Could not read from .htaccess. Please check file permissions.");
+                }
+                $bot_blocking_rules = <<<EOT
+# BEGIN Block Bad Bots
+<IfModule mod_rewrite.c>
+RewriteCond %{HTTP_USER_AGENT} (googlebot|bingbot|slurp|duckduckbot|baiduspider|yandexbot|sogou|exabot|facebot|ia_archiver) [NC]
+RewriteRule ^.*$ - [F,L]
+</IfModule>
+# END Block Bad Bots
+EOT;
+
+                // Remove existing bot blocking rules
+                $htaccess_content = preg_replace('/# BEGIN Block Bad Bots.*?# END Block Bad Bots\n?/s', '', $htaccess_content);
+
+                if (!$search_indexing) {
+                    // Add the bot blocking rules
+                    $htaccess_content .= "\n" . $bot_blocking_rules;
+                }
+
+                file_put_contents($htaccess_path, $htaccess_content);
+
+                mysqli_commit($con);
+                $_SESSION['success_message'] = "General settings updated successfully.";
+                header("Location: settings.php#general-settings");
+                exit();
+            }
+
         } catch (Exception $e) {
             mysqli_rollback($con);
             // Stay on page to show error, don't redirect
@@ -203,6 +253,9 @@ include 'header.php';
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="tab" href="#email-settings">Email Settings</a>
+                    </li>
+                     <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#general-settings">General</a>
                     </li>
                 </ul>
 
@@ -391,6 +444,41 @@ include 'header.php';
                             </div>
                         </form>
                     </div>
+
+                    <!-- General Settings Tab -->
+                    <div class="tab-pane fade" id="general-settings">
+                        <h5 class="card-title">Manage general site settings.</h5>
+                        <form method="POST" action="settings.php">
+                            <!-- Maintenance Mode -->
+                            <div class="row mb-3">
+                                <label class="col-sm-4 col-form-label">Maintenance Mode</label>
+                                <div class="col-sm-8">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="maintenance_mode" id="maintenance_mode" <?php echo ($settings['maintenance_mode'] ?? 0) ? 'checked' : ''; ?>>
+                                        <label class="form-check-label" for="maintenance_mode">Enable maintenance mode</label>
+                                    </div>
+                                    <small class="form-text text-muted">When enabled, only admins can access the site. A maintenance page will be shown to all other visitors.</small>
+                                </div>
+                            </div>
+
+                            <!-- Search Engine Indexing -->
+                            <div class="row mb-3">
+                                <label class="col-sm-4 col-form-label">Search Engine Indexing</label>
+                                <div class="col-sm-8">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="search_engine_indexing" id="search_engine_indexing" <?php echo ($settings['search_engine_indexing'] ?? 1) ? 'checked' : ''; ?>>
+                                        <label class="form-check-label" for="search_engine_indexing">Allow search engine indexing</label>
+                                    </div>
+                                    <small class="form-text text-muted">When disabled, search engines will be discouraged from indexing your site via meta tags and an updated robots.txt.</small>
+                                </div>
+                            </div>
+
+                            <div class="text-end">
+                                <button name="save-general-settings" type="submit" class="btn btn-primary">Save General Settings</button>
+                            </div>
+                        </form>
+                    </div>
+
                 </div>
             </div>
         </div>
