@@ -796,7 +796,7 @@ label {
 	Extra Info Css
 ===============================*/
 .extra-info {
-    background: var(--thm-secondary) none repeat scroll 0 0;
+    background: #000000 none repeat scroll 0 0;
     height: 100%;
     padding: 50px;
     position: fixed;
