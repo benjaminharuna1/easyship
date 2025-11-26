@@ -612,18 +612,21 @@ $row = $settings; // For compatibility with existing code using $row
 
 
         <!--Start Cta One-->
-        <section class="cta-one cta-one--style2">
+        <section class="cta-one">
             <div class="container">
-                <div class="cta-one__inner cta-one__inner--style2">
-                    <div class="cta-one__inner-box cta-one__inner-box--style2">
+                <div class="cta-one__inner">
+                    <div class="cta-one__inner-box">
                         <div class="title-box">
-                            <h2>Efficiency in Motion Connecting the<br>World One Delivery at a Time!</h2>
+                            <h2>Logistics Solutions for Success</h2>
+                            <p>Embracing real-time tracking, collaborative partnerships, and data-driven insights for seamless logistics success.</p>
                         </div>
                     </div>
-                    <div class="cta-one__btn cta-one__btn--style2">
-                        <a href="#" class="thm-btn">
+
+                    <div class="btn-box">
+                        <a class="thm-btn" href="contact.php">
                             <span class="txt">
-                                contact us
+                                Get in touch
+                                <i class="icon-next"></i>
                             </span>
                         </a>
                     </div>

@@ -690,18 +690,13 @@ $row = $settings; // For compatibility with existing code using $row
                         </div>
                     </div>
 
-                    <div class="cta-one__newsletter-box">
-                        <form action="https://itcroctheme.com/nocimon/nocimon-html/index.html" method="post">
-                            <div class="cta-one__form-group">
-                                <input type="email" name="email" placeholder="Enter Email Address" required="">
-                                <button class="thm-btn" type="submit">
-                                    <span class="txt">
-                                        <i class="icon-paper-plane"></i>
-                                        Browse More
-                                    </span>
-                                </button>
-                            </div>
-                        </form>
+                    <div class="btn-box">
+                        <a class="thm-btn" href="contact.php">
+                            <span class="txt">
+                                Get in touch
+                                <i class="icon-next"></i>
+                            </span>
+                        </a>
                     </div>
 
                 </div>
