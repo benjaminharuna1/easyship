@@ -57,6 +57,9 @@ try {
 include 'header.php';
 ?>
 
+<!-- Quill.js CSS -->
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+
 <div class="page-wrapper">
     <div class="page-content">
         <h1>Manage Legal Pages</h1>
@@ -97,12 +100,19 @@ include 'header.php';
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Page Content</label>
-                                <textarea class="form-control" name="terms_content" rows="15"><?php echo htmlspecialchars($terms['page_content']); ?></textarea>
+                                <div id="terms_editor" style="height: 300px;"><?php echo $terms['page_content']; ?></div>
+                                <input type="hidden" name="terms_content" id="terms_content">
                             </div>
                             <div class="text-end">
                                 <button name="update_terms" type="submit" class="btn btn-primary">Save Terms</button>
                             </div>
                         </form>
+                        <div class="mt-3">
+                            <small class="form-text text-muted">
+                                <strong>Note:</strong> You can use the following shortcodes to display dynamic information:
+                                <code>[site-name]</code>, <code>[site-url]</code>, <code>[email-name]</code>, <code>[email-address]</code>, <code>[phone-number]</code>, <code>[fax-number]</code>, <code>[site-address]</code>.
+                            </small>
+                        </div>
                     </div>
 
                     <!-- Privacy Policy Tab -->
@@ -115,12 +125,19 @@ include 'header.php';
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Page Content</label>
-                                <textarea class="form-control" name="privacy_content" rows="15"><?php echo htmlspecialchars($privacy['page_content']); ?></textarea>
+                                <div id="privacy_editor" style="height: 300px;"><?php echo $privacy['page_content']; ?></div>
+                                <input type="hidden" name="privacy_content" id="privacy_content">
                             </div>
                              <div class="text-end">
                                 <button name="update_privacy" type="submit" class="btn btn-primary">Save Privacy Policy</button>
                             </div>
                         </form>
+                        <div class="mt-3">
+                            <small class="form-text text-muted">
+                                <strong>Note:</strong> You can use the following shortcodes to display dynamic information:
+                                <code>[site-name]</code>, <code>[site-url]</code>, <code>[email-name]</code>, <code>[email-address]</code>, <code>[phone-number]</code>, <code>[fax-number]</code>, <code>[site-address]</code>.
+                            </small>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -137,6 +154,57 @@ document.addEventListener('DOMContentLoaded', function() {
             new bootstrap.Tab(tabTrigger).show();
         }
     }
+});
+</script>
+
+<!-- Quill.js JS -->
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Define the toolbar options
+    var toolbarOptions = [
+        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'script': 'sub'}, { 'script': 'super' }],
+        [{ 'indent': '-1'}, { 'indent': '+1' }],
+        [{ 'direction': 'rtl' }],
+        [{ 'size': ['small', false, 'large', 'huge'] }],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'font': [] }],
+        [{ 'align': [] }],
+        ['clean'],
+        ['link', 'image', 'video']
+    ];
+
+    // Initialize Quill editor for Terms & Conditions
+    var termsEditor = new Quill('#terms_editor', {
+        theme: 'snow',
+        modules: {
+            toolbar: toolbarOptions
+        }
+    });
+
+    // Initialize Quill editor for Privacy Policy
+    var privacyEditor = new Quill('#privacy_editor', {
+        theme: 'snow',
+        modules: {
+            toolbar: toolbarOptions
+        }
+    });
+
+    // Update hidden inputs on form submit
+    var termsForm = document.querySelector('#terms form');
+    termsForm.onsubmit = function() {
+        var content = document.querySelector('input[name=terms_content]');
+        content.value = termsEditor.root.innerHTML;
+    };
+
+    var privacyForm = document.querySelector('#privacy form');
+    privacyForm.onsubmit = function() {
+        var content = document.querySelector('input[name=privacy_content]');
+        content.value = privacyEditor.root.innerHTML;
+    };
 });
 </script>
 
