@@ -64,7 +64,7 @@ $row = $settings; // For compatibility with existing code using $row
             </button>
         </div>
         <div class="logo-side">
-            <a href="index.php"><img src="assets/img/logo.png" alt="#"></a>
+            <a href="index.php"><img src="<?php echo $site_logo; ?>" alt="Logo"></a>
         </div>
         <div class="side-info">
             <div class="content-box">

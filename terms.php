@@ -91,7 +91,7 @@ if (!$page) {
                 <nav class="menu-box">
                     <div class="close-btn"><i class="fas fa-times"></i></div>
                     <div class="nav-logo">
-                        <a href="index.php"><img src="assets/img/resource/mobile-menu-logo.png" alt="Logo"></a>
+                        <a href="index.php"><img src="<?php echo $site_logo; ?>" alt="Logo"></a>
                     </div>
                     <div class="menu-outer"></div>
                 </nav>

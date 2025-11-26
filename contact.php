@@ -126,7 +126,7 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
             </button>
         </div>
         <div class="logo-side">
-            <a href="index.php"><img src="assets/img/logo.png" alt="#"></a>
+            <a href="index.php"><img src="<?php echo $site_logo; ?>" alt="Logo"></a>
         </div>
         <div class="side-info">
             <div class="content-box">
