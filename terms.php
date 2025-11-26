@@ -145,7 +145,7 @@ if (!$page) {
                 <div class="container">
                     <div class="footer-bottom__inner">
                         <div class="copyright-text copyright-text--two">
-                             <p>&copy; <?php echo date("Y"); ?> <?php echo htmlspecialchars($setting_row['sitename']); ?> | All Rights Reserved.</p>
+                             <p>© <?php echo htmlspecialchars($settings['sitename']); ?> <?php echo date('Y'); ?> | All Rights Reserved.</p>
                         </div>
                         <div class="copyright-menu copyright-menu--two">
                             <ul>
