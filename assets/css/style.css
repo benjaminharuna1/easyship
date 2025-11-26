@@ -1065,6 +1065,7 @@ label {
     position: relative;
     display: flex;
     align-items: center;
+    justify-content: space-between;
 }
 
 .side-social-links ul li {
