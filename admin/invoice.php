@@ -25,11 +25,22 @@ if (isset($_GET['num']) &&  $_GET['num'] !="") {
     $package_items_result = mysqli_stmt_get_result($stmt);
     $package_items = mysqli_fetch_all($package_items_result, MYSQLI_ASSOC);
 
-    $stmt = mysqli_prepare($con, "SELECT * FROM shipment_history WHERE tracking_id = ?");
+    $stmt = mysqli_prepare($con, "SELECT * FROM shipment_history WHERE tracking_id = ? ORDER BY date ASC, time ASC");
     mysqli_stmt_bind_param($stmt, "s", $post_id);
     mysqli_stmt_execute($stmt);
     $shipment_history_result = mysqli_stmt_get_result($stmt);
     $shipment_history = mysqli_fetch_all($shipment_history_result, MYSQLI_ASSOC);
+
+    // Get creation date from the first history record
+    $creation_date_formatted = 'N/A';
+    if (!empty($shipment_history)) {
+        try {
+            $date_obj = new DateTime($shipment_history[0]['date']);
+            $creation_date_formatted = $date_obj->format('l, d.M.Y');
+        } catch (Exception $e) {
+            // Keep 'N/A' on formatting error
+        }
+    }
 }
 
 ?>
@@ -47,6 +58,23 @@ if (isset($_GET['num']) &&  $_GET['num'] !="") {
 	<link rel="stylesheet" href="css/custom.css">
 	<link rel="stylesheet" href="css/media-query.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+        .header-green { color: green !important; }
+
+        @media print {
+            /* Force all text to be black in print */
+            * {
+                color: #000 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            /* Overwrite headers to be black for print */
+            .header-green {
+                color: #000 !important;
+            }
+        }
+    </style>
 </head>
 <body>
 	<!--Invoice wrap start here -->
@@ -58,8 +86,7 @@ if (isset($_GET['num']) &&  $_GET['num'] !="") {
 					<div class="invoice-logo-content bg-black ">
 						<div class="invoice-logo" style="font-size: 15px;">
 							<div class="agency-logo">
-								<!-- <a href="#"><img src="image/logo.png" alt="logo"></a> -->
-                                <h2 style="color: white" >Express Delivery</h2>
+								<a href="#"><img src="../<?php echo htmlspecialchars($settings['site_logo']); ?>" alt="logo"></a>
 							</div>
 						</div>
 						<div class="invo-head-content">
@@ -87,15 +114,15 @@ if (isset($_GET['num']) &&  $_GET['num'] !="") {
 						<div class="invo-to-wrap">
 								<div class="invoice-to-content">
 									<p class="font-md color-light-black" style="font-size: 15px;">Invoice From:</p>
-									<h2 class="font-lg color-blue pt-10" style="font-size: 15px;"><?php echo $sender_name ?></h2>
-									<p class="font-md-grey color-grey pt-10" style="font-size: 15px;"><?php  echo $sender_address ?></p>
+									<h2 class="font-lg pt-10 header-green" style="font-size: 15px;"><?php echo $row['sender_name']; ?></h2>
+									<p class="font-md-grey color-grey pt-10" style="font-size: 15px;"><?php echo $row['sender_address']; ?></p>
 								</div>
 							</div>
 							<div class="invo-pay-to-wrap">
 								<div class="invoice-pay-content">
 									<p class="font-md color-light-black" style="font-size: 15px;">Invoice To:</p>
-									<h2 class="font-lg color-blue pt-10" style="font-size: 15px;"><?php  echo $receiver_name ?></h2>
-									<p class="font-md-grey color-grey pt-10" style="font-size: 15px;"><?php echo $receiver_address ?></p>
+									<h2 class="font-lg pt-10 header-green" style="font-size: 15px;"><?php echo $row['receiver_name']; ?></h2>
+									<p class="font-md-grey color-grey pt-10" style="font-size: 15px;"><?php echo $row['receiver_address']; ?></p>
 								</div>
 							</div>
 						</div>
@@ -223,19 +250,16 @@ if (isset($_GET['num']) &&  $_GET['num'] !="") {
    <div class="con">
     <div class="container" id="con">
             <div class="col-md-3">
-                <img class="images" src="image/image1.png" alt="" width="60" height="80">
+                <img class="images" src="../<?php echo htmlspecialchars($settings['payment_methods_image']); ?>" alt="" width="60" height="80">
             </div>
 
             <div class="col-md-3">
-                <img class="images" src="image/image2.png" alt="" width="60" height="80">
+                <img class="images" src="../<?php echo htmlspecialchars($settings['invoice_banner']); ?>" alt="" width="60" height="80">
             </div>
 
             <div class="col-md-3">
-                <img class="images" src="image/image3.png" alt="" width="60" height="80">
-            </div>
-
-            <div class="col-md-3">
-                <img class="images" src="image/image4.png" alt="" width="60" height="80">
+                <img class="images" src="../<?php echo htmlspecialchars($settings['invoice_stamp']); ?>" alt="" width="60" height="80">
+                <p class="text-center">Official Stamp <br> <?php echo htmlspecialchars($creation_date_formatted); ?></p>
             </div>
         </div>
    </div>
