@@ -25,11 +25,22 @@ if (isset($_GET['num']) &&  $_GET['num'] !="") {
     $package_items_result = mysqli_stmt_get_result($stmt);
     $package_items = mysqli_fetch_all($package_items_result, MYSQLI_ASSOC);
 
-    $stmt = mysqli_prepare($con, "SELECT * FROM shipment_history WHERE tracking_id = ?");
+    $stmt = mysqli_prepare($con, "SELECT * FROM shipment_history WHERE tracking_id = ? ORDER BY date ASC, time ASC");
     mysqli_stmt_bind_param($stmt, "s", $post_id);
     mysqli_stmt_execute($stmt);
     $shipment_history_result = mysqli_stmt_get_result($stmt);
     $shipment_history = mysqli_fetch_all($shipment_history_result, MYSQLI_ASSOC);
+
+    // Get creation date from the first history record
+    $creation_date_formatted = 'N/A';
+    if (!empty($shipment_history)) {
+        try {
+            $date_obj = new DateTime($shipment_history[0]['date']);
+            $creation_date_formatted = $date_obj->format('l, d.M.Y');
+        } catch (Exception $e) {
+            // Keep 'N/A' on formatting error
+        }
+    }
 }
 
 ?>
@@ -231,6 +242,7 @@ if (isset($_GET['num']) &&  $_GET['num'] !="") {
 
             <div class="col-md-3">
                 <img class="images" src="../<?php echo htmlspecialchars($settings['invoice_stamp']); ?>" alt="" width="60" height="80">
+                <p class="text-center">Official Stamp <br> <?php echo htmlspecialchars($creation_date_formatted); ?></p>
             </div>
         </div>
    </div>
