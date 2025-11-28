@@ -57,8 +57,14 @@ try {
                 mysqli_stmt_bind_param($update_stmt, "ssssssssssss", $site_name, $site_title, $site_url, $email_name, $email_address, $phone_number, $fax_number, $site_address, $site_currency, $geocode_api_key, $working_days, $working_hours);
                 mysqli_stmt_execute($update_stmt);
 
-                // Image upload/removal logic for Site Logo and Favicon
-                $image_fields = ['site-logo' => 'site_logo', 'site-favicon' => 'site_favicon'];
+                // Image upload/removal logic for Site Logo, Favicon, and Invoice Images
+                $image_fields = [
+                    'site-logo' => 'site_logo',
+                    'site-favicon' => 'site_favicon',
+                    'invoice-stamp' => 'invoice_stamp',
+                    'invoice-banner' => 'invoice_banner',
+                    'payment-methods-image' => 'payment_methods_image'
+                ];
                 foreach ($image_fields as $input_name => $db_column) {
                     $current_image = $settings[$db_column] ?? '';
 
@@ -345,6 +351,53 @@ include 'header.php';
                                      <?php if (!empty($favicon_src)): ?>
                                      <button type="button" class="btn btn-danger btn-sm mt-2" onclick="removeImage('site-favicon-input', 'favicon-preview', 'remove_site_favicon_input')">Remove Current Favicon</button>
                                      <?php endif; ?>
+                                </div>
+                            </div>
+                            <hr>
+                            <h5 class="card-title">Invoice Images</h5>
+                            <!-- Invoice Stamp -->
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">Invoice Stamp</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" type="file" id="invoice-stamp-input" name="invoice-stamp" onchange="previewImage(event, 'invoice-stamp-preview')">
+                                    <input type="hidden" name="remove_invoice_stamp" id="remove_invoice_stamp_input" value="">
+                                    <?php $stamp_src = !empty($settings['invoice_stamp']) ? '../' . htmlspecialchars($settings['invoice_stamp']) : ''; ?>
+                                    <div class="mt-2">
+                                        <img id="invoice-stamp-preview" src="<?php echo $stamp_src; ?>" alt="Stamp Preview" style="max-width: 150px; max-height: 150px; <?php echo empty($stamp_src) ? 'display: none;' : ''; ?>">
+                                    </div>
+                                    <?php if (!empty($stamp_src)): ?>
+                                    <button type="button" class="btn btn-danger btn-sm mt-2" onclick="removeImage('invoice-stamp-input', 'invoice-stamp-preview', 'remove_invoice_stamp_input')">Remove Current Stamp</button>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <!-- Invoice Banner -->
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">Invoice Banner</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" type="file" id="invoice-banner-input" name="invoice-banner" onchange="previewImage(event, 'invoice-banner-preview')">
+                                    <input type="hidden" name="remove_invoice_banner" id="remove_invoice_banner_input" value="">
+                                    <?php $banner_src = !empty($settings['invoice_banner']) ? '../' . htmlspecialchars($settings['invoice_banner']) : ''; ?>
+                                    <div class="mt-2">
+                                        <img id="invoice-banner-preview" src="<?php echo $banner_src; ?>" alt="Banner Preview" style="max-width: 300px; max-height: 100px; <?php echo empty($banner_src) ? 'display: none;' : ''; ?>">
+                                    </div>
+                                    <?php if (!empty($banner_src)): ?>
+                                    <button type="button" class="btn btn-danger btn-sm mt-2" onclick="removeImage('invoice-banner-input', 'invoice-banner-preview', 'remove_invoice_banner_input')">Remove Current Banner</button>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <!-- Payment Methods Image -->
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">Payment Methods</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" type="file" id="payment-methods-image-input" name="payment-methods-image" onchange="previewImage(event, 'payment-methods-image-preview')">
+                                    <input type="hidden" name="remove_payment_methods_image" id="remove_payment_methods_image_input" value="">
+                                    <?php $payment_src = !empty($settings['payment_methods_image']) ? '../' . htmlspecialchars($settings['payment_methods_image']) : ''; ?>
+                                    <div class="mt-2">
+                                        <img id="payment-methods-image-preview" src="<?php echo $payment_src; ?>" alt="Payment Methods Preview" style="max-width: 300px; max-height: 100px; <?php echo empty($payment_src) ? 'display: none;' : ''; ?>">
+                                    </div>
+                                    <?php if (!empty($payment_src)): ?>
+                                    <button type="button" class="btn btn-danger btn-sm mt-2" onclick="removeImage('payment-methods-image-input', 'payment-methods-image-preview', 'remove_payment_methods_image_input')">Remove Current Image</button>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                             <div class="text-end">

@@ -25,6 +25,26 @@ if (isset($_GET['num']) &&  $_GET['num'] !="") {
     mysqli_stmt_execute($stmt_items);
     $result_items = mysqli_stmt_get_result($stmt_items);
     $package_items = mysqli_fetch_all($result_items, MYSQLI_ASSOC);
+
+    // Fetch the first shipment history record to get the creation date
+    $stmt_history = mysqli_prepare($con, "SELECT date FROM shipment_history WHERE tracking_id = ? ORDER BY date ASC, time ASC LIMIT 1");
+    mysqli_stmt_bind_param($stmt_history, "s", $post_id);
+    mysqli_stmt_execute($stmt_history);
+    $history_result = mysqli_stmt_get_result($stmt_history);
+    $first_history = mysqli_fetch_assoc($history_result);
+    $creation_date_str = $first_history ? $first_history['date'] : 'N/A';
+
+    // Format the date
+    $creation_date_formatted = 'N/A';
+    if ($creation_date_str !== 'N/A') {
+        try {
+            // Assuming the date is in a format DateTime can parse, like Y-m-d
+            $date_obj = new DateTime($creation_date_str);
+            $creation_date_formatted = $date_obj->format('l, d.M.Y'); // e.g., Wednesday, 27.Mar.2024
+        } catch (Exception $e) {
+            // If date format is invalid, it remains 'N/A'
+        }
+    }
 }
 
 
@@ -111,13 +131,13 @@ if (isset($_GET['num']) &&  $_GET['num'] !="") {
         <div class="row"  >
           <div class="col-xs-12">
             <h2 class="page-header">
-			  <span><img src="image/logo.png"
+			  <span><img src="../<?php echo htmlspecialchars($settings['site_logo']); ?>"
                                 alt="Air shipment tracking system, Sea shipment tracking system, Cargo tracking system"
                                 title="Worldwide ExpressForce & shpiment tracking system" width="190" height="85" border="0"> 
 			  
 			  
 		
-			  <img class="pull-right"  src="image/banner.png" alt=""  height="185"/> 
+			  <img class="pull-right"  src="../<?php echo htmlspecialchars($settings['invoice_banner']); ?>" alt=""  height="185"/>
 			  
 			  <div class="site-details" style="text-align: left; margin-top: 10px; color: black; font-size: 12px;">
                 <strong><?php echo htmlspecialchars($settings['sitename']); ?></strong><br>
@@ -216,14 +236,14 @@ if (isset($_GET['num']) &&  $_GET['num'] !="") {
           <!-- accepted payments column -->
           <div class="col-xs-6">
             <p class="lead"><strong>Payment Methods:</strong></p>
-            <img src="image/securepayment.png" alt="Methods payments" /> 
+            <img src="../<?php echo htmlspecialchars($settings['payment_methods_image']); ?>" alt="Methods payments" />
            
          
           </div>
           
           <div class="col-xs-6">
-            <p class="lead"><strong>Official Stamp/ Wednesday, 27.Mar.2024 </strong></p>
-            <img src="image/stamp1.png" alt="" height="100" />           
+            <p class="lead"><strong>Official Stamp/ <?php echo htmlspecialchars($creation_date_formatted); ?> </strong></p>
+            <img src="../<?php echo htmlspecialchars($settings['invoice_stamp']); ?>" alt="" height="100" />
              
           </div>
           
