@@ -4,12 +4,12 @@ include '../db.php';
 include '../functions.php';
 
 if (!isset($_POST['search'])) {
-    echo "<script>window.location.href='../track.html'</script>";
+    echo "<script>window.location.href='../track.php'</script>";
     exit;
 }
 $tracking_pr = trim($_POST['search_P'] ?? '');
 if ($tracking_pr === '') {
-    echo "<script>alert('Insert a tracking number'); window.location.href='../track.html'</script>";
+    echo "<script>alert('Insert a tracking number'); window.location.href='../track.php'</script>";
     exit;
 }
 
@@ -19,7 +19,7 @@ mysqli_stmt_bind_param($stmt, "s", $tracking_pr);
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 if (mysqli_num_rows($result) === 0) {
-    echo "<script>alert('Tracking id Not Found'); window.location.href='../track.html'</script>";
+    echo "<script>alert('Tracking id Not Found'); window.location.href='../track.php'</script>";
     exit;
 }
 $row = mysqli_fetch_assoc($result);
