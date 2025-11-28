@@ -111,13 +111,13 @@ if (isset($_GET['num']) &&  $_GET['num'] !="") {
         <div class="row"  >
           <div class="col-xs-12">
             <h2 class="page-header">
-			  <span><img src="image/logo.png"
+			  <span><img src="../<?php echo htmlspecialchars($settings['site_logo']); ?>"
                                 alt="Air shipment tracking system, Sea shipment tracking system, Cargo tracking system"
                                 title="Worldwide ExpressForce & shpiment tracking system" width="190" height="85" border="0"> 
 			  
 			  
 		
-			  <img class="pull-right"  src="image/banner.png" alt=""  height="185"/> 
+			  <img class="pull-right"  src="../<?php echo htmlspecialchars($settings['invoice_banner']); ?>" alt=""  height="185"/>
 			  
 			  <div class="site-details" style="text-align: left; margin-top: 10px; color: black; font-size: 12px;">
                 <strong><?php echo htmlspecialchars($settings['sitename']); ?></strong><br>
@@ -216,14 +216,14 @@ if (isset($_GET['num']) &&  $_GET['num'] !="") {
           <!-- accepted payments column -->
           <div class="col-xs-6">
             <p class="lead"><strong>Payment Methods:</strong></p>
-            <img src="image/securepayment.png" alt="Methods payments" /> 
+            <img src="../<?php echo htmlspecialchars($settings['payment_methods_image']); ?>" alt="Methods payments" />
            
          
           </div>
           
           <div class="col-xs-6">
             <p class="lead"><strong>Official Stamp/ Wednesday, 27.Mar.2024 </strong></p>
-            <img src="image/stamp1.png" alt="" height="100" />           
+            <img src="../<?php echo htmlspecialchars($settings['invoice_stamp']); ?>" alt="" height="100" />
              
           </div>
           

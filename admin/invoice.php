@@ -58,8 +58,7 @@ if (isset($_GET['num']) &&  $_GET['num'] !="") {
 					<div class="invoice-logo-content bg-black ">
 						<div class="invoice-logo" style="font-size: 15px;">
 							<div class="agency-logo">
-								<!-- <a href="#"><img src="image/logo.png" alt="logo"></a> -->
-                                <h2 style="color: white" >Express Delivery</h2>
+								<a href="#"><img src="../<?php echo htmlspecialchars($settings['site_logo']); ?>" alt="logo"></a>
 							</div>
 						</div>
 						<div class="invo-head-content">
@@ -223,19 +222,15 @@ if (isset($_GET['num']) &&  $_GET['num'] !="") {
    <div class="con">
     <div class="container" id="con">
             <div class="col-md-3">
-                <img class="images" src="image/image1.png" alt="" width="60" height="80">
+                <img class="images" src="../<?php echo htmlspecialchars($settings['payment_methods_image']); ?>" alt="" width="60" height="80">
             </div>
 
             <div class="col-md-3">
-                <img class="images" src="image/image2.png" alt="" width="60" height="80">
+                <img class="images" src="../<?php echo htmlspecialchars($settings['invoice_banner']); ?>" alt="" width="60" height="80">
             </div>
 
             <div class="col-md-3">
-                <img class="images" src="image/image3.png" alt="" width="60" height="80">
-            </div>
-
-            <div class="col-md-3">
-                <img class="images" src="image/image4.png" alt="" width="60" height="80">
+                <img class="images" src="../<?php echo htmlspecialchars($settings['invoice_stamp']); ?>" alt="" width="60" height="80">
             </div>
         </div>
    </div>
