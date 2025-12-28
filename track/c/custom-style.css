@@ -224,20 +224,50 @@ a:focus {
 }
 
 .delivered-grid-box {
-    float: left;
     position: relative;
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
 .delivered-grid-box li {
-    float: left;
-    margin-bottom: 35px;
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 40px;
+    position: relative;
+    padding-left: 0;
+    min-height: 60px;
+    gap: 20px;
+}
+
+.delivered-grid-box li::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 30px;
+    bottom: -40px;
+    width: 2px;
+    background: #cccccc;
+    z-index: 1;
+    transform: translateX(-50%);
+}
+
+.delivered-grid-box li:first-child::before {
+    top: 50%;
+}
+
+.delivered-grid-box li:last-child::before {
+    display: none;
 }
 
 .delivered-grid-box li .delivered-left {
     font-size: 12px;
-    float: left;
-    width: 160px;
+    position: relative;
+    width: 140px;
     text-align: right;
+    flex-shrink: 0;
+    order: 1;
+    padding-top: 5px;
 }
 
 .delivered-grid-box li .delivered-left span {
@@ -248,28 +278,37 @@ a:focus {
 }
 
 .delivered-grid-box li .d-bulte {
-    width: 70px;
-    float: left;
+    position: absolute;
+    left: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 30px;
+    transform: translateX(-50%);
+    z-index: 5;
+    order: 2;
+    flex-shrink: 0;
 }
 
 /* pro */
 
 .delivered-grid-box li .d-bulte i {
     width: 18px;
-    border-radius: 20px;
-    background: url('../image/pro1.png') no-repeat center;
-    float: left;
-    cursor: pointer;
-    margin-left: 30px;
-    margin-top: 2px;
     height: 18px;
+    border-radius: 50%;
+    background: url('../image/pro1.png') no-repeat center;
+    cursor: pointer;
     position: relative;
-    z-index: 3;
+    z-index: 10;
+    flex-shrink: 0;
+    background-color: white;
+    border: 3px solid white;
 }
-.delivered-grid-box li .d-bulte i:hover {
-    background: #3b5c88
-    
 
+.delivered-grid-box li .d-bulte i:hover {
+    background: #3b5c88;
 }
 
 .delivered-grid-box li .d-bulte i.current {
@@ -279,19 +318,18 @@ a:focus {
 /* end of pro */
 
 .delivered-grid-box li .delivered-right {
-    float: right;
-    width: 220px;
+    flex: 1;
     font-size: 13px;
+    padding-top: 0;
+    position: relative;
+    order: 3;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
 }
 
 .delivered-grid-box li .delivered-right strong {
     display: inline-block;
     width: 100%;
-}
-
-.delivered-grid-box li:last-child .d-bulte {
-    background: #FFF;
-    padding-bottom: 38px;
 }
 
 .delivered-grid-box li:last-child {
@@ -521,19 +559,6 @@ input.checkbox-order {
 .delivered-grid-box li .delivered-right {
     position: relative;
 }
-
-.delivered-grid-box li:after {
-    content: '';
-    position: absolute;
-    background: #d2d2d2;
-    width: 3px;
-    height: 100%;
-    left: 198px;
-    top: 4px;
-    z-index: 2;
-}
-
-
 
 /*------Middle Section End---------*/
 
@@ -788,10 +813,6 @@ input.checkbox-order {
         padding-right: 2px;
     }
 
-    .delivered-grid-box li::after {
-        left: 40%;
-    }
-
     .panel-body .delivered-grid-box li .d-bulte {
         margin-left: 0px;
     }
@@ -802,10 +823,6 @@ input.checkbox-order {
         background-position: -1px 0;
         margin-left: 16%;
         width: 84%
-    }
-
-    .delivered-grid-box li::after {
-        left: 43%;
     }
 
     .search-box {
@@ -930,10 +947,6 @@ input.checkbox-order {
 
     .google-play-btn {
         margin-top: 20px;
-    }
-
-    .delivered-grid-box li::after {
-        left: 43.5%;
     }
 
     .search-box {

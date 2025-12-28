@@ -145,14 +145,16 @@ $_SESSION['search_P'] = $user_tracking;
                   </strong><br /><br />
 
                   <?php
-                  $stmt = mysqli_prepare($con, "SELECT * FROM shipment_history WHERE tracking_id = ? ORDER BY date DESC, time DESC");
+                  $stmt = mysqli_prepare($con, "SELECT * FROM shipment_history WHERE tracking_id = ? ORDER BY date ASC, time ASC");
                   mysqli_stmt_bind_param($stmt, "s", $tracking_pr);
                   mysqli_stmt_execute($stmt);
                   $result = mysqli_stmt_get_result($stmt);
                   if (mysqli_num_rows($result) > 0) {
-                      while ($row_history = mysqli_fetch_assoc($result)) {
                   ?>
                   <ul class="delivered-grid-box">
+                  <?php
+                      while ($row_history = mysqli_fetch_assoc($result)) {
+                  ?>
                     <li>
                       <div class="delivered-left">
                         <span><strong><?php echo date('F dS, Y', strtotime($row_history['date'])); ?></strong>,<br> <?php echo date("G:i A", strtotime($row_history['time'])); ?></span>
@@ -163,9 +165,13 @@ $_SESSION['search_P'] = $user_tracking;
                         <?php echo htmlspecialchars($row_history['location'], ENT_QUOTES); ?><br>
                         <span id="order-status" class="default"><?php echo htmlspecialchars($row_history['status'], ENT_QUOTES); ?></span>
                       </div>
-                    </li><br><br>
+                    </li>
+                  <?php
+                      }
+                  ?>
                   </ul>
-                <?php }}?>
+                  <?php
+                  }?>
                   <br /><br />
                 </div>
 
