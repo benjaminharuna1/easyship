@@ -754,33 +754,49 @@ input.checkbox-order {
 
 @media only screen and (max-width :767px) {
     .delivered-grid-box li {
-        grid-template-columns: 1fr;
-        gap: 10px;
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
     }
 
     .delivered-grid-box li .delivered-left {
-        grid-column: 1;
-        grid-row: 1;
-        text-align: left;
-        width: 100%;
+        font-size: 12px;
+        position: relative;
+        width: 120px;
+        text-align: right;
+        flex-shrink: 0;
+        padding-top: 5px;
+        order: 1;
+        padding-right: 20px;
     }
 
     .delivered-grid-box li .d-bulte {
-        grid-column: 1;
-        grid-row: 2;
-        justify-content: flex-start;
-        padding-left: 0;
+        position: absolute;
+        left: 131px;
+        top: 0px;
+        width: 18px;
+        height: 18px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 15;
+        flex-shrink: 0;
     }
 
     .delivered-grid-box li .delivered-right {
-        grid-column: 1;
-        grid-row: 3;
-        width: 100%;
+        flex: 1;
+        font-size: 13px;
+        padding-top: 5px;
+        position: relative;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #f0f0f0;
+        order: 3;
+        margin-left: 20px;
     }
 
     .delivered-grid-box li::before {
-        left: 9px;
-        top: auto;
+        left: 140px;
+        top: 9px;
         bottom: -30px;
     }
 
@@ -882,24 +898,31 @@ input.checkbox-order {
     }
 
     .delivered-grid-box li {
-        grid-template-columns: 1fr;
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
     }
 
     .delivered-grid-box li .delivered-left {
-        width: 100%;
-        text-align: left;
+        width: 120px;
+        text-align: right;
+        flex-shrink: 0;
+        padding-right: 20px;
     }
 
     .delivered-grid-box li .delivered-left span {
-        font-size: 11px;
+        font-size: 12px;
     }
 
     .delivered-grid-box li .d-bulte {
-        justify-content: flex-start;
+        position: absolute;
+        left: 131px;
+        flex-shrink: 0;
     }
 
     .delivered-grid-box li .delivered-right {
-        width: 100%;
+        flex: 1;
+        margin-left: 20px;
     }
 
     .f-track-nav li {
@@ -939,14 +962,17 @@ input.checkbox-order {
     }
 
     .delivered-grid-box li {
-        grid-template-columns: 1fr;
-        gap: 8px;
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
     }
 
     .delivered-grid-box li .delivered-left {
         font-size: 12px;
-        width: 100%;
-        text-align: left;
+        width: 120px;
+        text-align: right;
+        flex-shrink: 0;
+        padding-right: 20px;
     }
 
     .delivered-grid-box li .delivered-left span {
@@ -954,12 +980,15 @@ input.checkbox-order {
     }
 
     .delivered-grid-box li .d-bulte {
-        justify-content: flex-start;
+        position: absolute;
+        left: 131px;
+        flex-shrink: 0;
     }
 
     .delivered-grid-box li .delivered-right {
         font-size: 12px;
-        width: 100%;
+        flex: 1;
+        margin-left: 20px;
     }
 
     .copyright-grid-box .copyright-test {
@@ -1002,14 +1031,17 @@ input.checkbox-order {
     }
 
     .delivered-grid-box li {
-        grid-template-columns: 1fr;
-        gap: 8px;
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
     }
 
     .delivered-grid-box li .delivered-left {
         font-size: 12px;
-        width: 100%;
-        text-align: left;
+        width: 120px;
+        text-align: right;
+        flex-shrink: 0;
+        padding-right: 20px;
     }
 
     .delivered-grid-box li .delivered-left span {
@@ -1017,12 +1049,15 @@ input.checkbox-order {
     }
 
     .delivered-grid-box li .d-bulte {
-        justify-content: flex-start;
+        position: absolute;
+        left: 131px;
+        flex-shrink: 0;
     }
 
     .delivered-grid-box li .delivered-right {
         font-size: 12px;
-        width: 100%;
+        flex: 1;
+        margin-left: 20px;
     }
 
     .copyright-grid-box .copyright-test {
