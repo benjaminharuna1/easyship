@@ -423,8 +423,9 @@ include 'header.php';
                                                                 <option value="In Process" <?php if ($_POST['history_status'][$i] == 'In Process') echo 'selected'; ?>>In Process</option>
                                                                 <option value="In Transit" <?php if ($_POST['history_status'][$i] == 'In Transit') echo 'selected'; ?>>In Transit</option>
                                                                 <option value="On Hold" <?php if ($_POST['history_status'][$i] == 'On Hold') echo 'selected'; ?>>On Hold</option>
-                                                                <option value="Delivered" <?php if ($_POST['history_status'][$i] == 'Delivered') echo 'selected'; ?>>Delivered</option>
-                                                                <option value="Cancelled" <?php if ($_POST['history_status'][$i] == 'Cancelled') echo 'selected'; ?>>Cancelled</option>
+                                                                 <option value="Delivered" <?php if ($_POST['history_status'][$i] == 'Delivered') echo 'selected'; ?>>Delivered</option>
+                                                                 <option value="Completed" <?php if ($_POST['history_status'][$i] == 'Completed') echo 'selected'; ?>>Completed</option>
+                                                                 <option value="Cancelled" <?php if ($_POST['history_status'][$i] == 'Cancelled') echo 'selected'; ?>>Cancelled</option>
                                                                 <option value="Returned" <?php if ($_POST['history_status'][$i] == 'Returned') echo 'selected'; ?>>Returned</option>
                                                             </select>
                                                         </td>
@@ -478,6 +479,7 @@ include 'header.php';
               <option value="In Transit">In Transit</option>
               <option value="On Hold">On Hold</option>
               <option value="Delivered">Delivered</option>
+              <option value="Completed">Completed</option>
               <option value="Cancelled">Cancelled</option>
               <option value="Returned">Returned</option>
             </select>
