@@ -12,12 +12,15 @@ class ContactController extends Controller
     public function __invoke(Request $request)
     {
         $settings = Setting::find(1);
+        $title = 'Contact';
+        $msg = session('success');
+        $err = session('error');
 
         if ($request->ajax()) {
             return $this->submitAjax($request);
         }
 
-        return view('contact', compact('settings'));
+        return view('contact', compact('settings', 'title', 'msg', 'err'));
     }
 
     protected function submitAjax(Request $request)

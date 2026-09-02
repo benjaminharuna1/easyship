@@ -11,7 +11,8 @@ class AboutController extends Controller
     {
         $settings = Setting::find(1);
         $testimonials = Testimonial::where('is_published', 1)->orderBy('created_at', 'desc')->get();
+        $title = 'About Us';
 
-        return view('about', compact('settings', 'testimonials'));
+        return view('about', compact('settings', 'testimonials', 'title'));
     }
 }
