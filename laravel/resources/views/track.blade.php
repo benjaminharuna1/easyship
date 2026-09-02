@@ -21,12 +21,11 @@
                             </h2>
                             <p>Enter the tracking number provided to you to see the real-time status of your shipment.</p>
                         </div>
-                        <form id="track-form" method="POST" action="{{ route('track.results') }}">
-                            @csrf
+                        <form id="track-form" method="GET" action="{{ route('track') }}">
                             <div class="row">
                                 <div class="col-xl-9 col-lg-9">
                                     <div class="contact-one__input-box">
-                                        <input type="text" class="form-control" name="search_P" placeholder="Enter Tracking number" required>
+                                        <input type="text" class="form-control" name="search_P" placeholder="Enter Tracking number" value="{{ old('search_P', request('search_P')) }}" required>
                                     </div>
                                 </div>
                                 <div class="col-xl-3 col-lg-3">

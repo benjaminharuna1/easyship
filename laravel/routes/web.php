@@ -23,8 +23,27 @@ Route::get('/terms', [LegalController::class, 'terms'])->name('terms');
 Route::get('/privacy', [LegalController::class, 'privacy'])->name('privacy');
 
 Route::get('/track', [TrackController::class, 'index'])->name('track');
-Route::post('/track/results', [TrackController::class, 'results'])->name('track.results');
-Route::get('/track/print', [PrintController::class, 'invoice'])->name('track.print');
+
+// Legacy: /track/print?num=CL... redirects to the new pretty print URL.
+Route::get('/track/print', function (\Illuminate\Http\Request $request) {
+    $num = trim((string) $request->query('num', ''));
+
+    if ($num !== '') {
+        return redirect()->route('track.print', $num);
+    }
+
+    return redirect()->route('track');
+})->name('track.print.legacy');
+
+// Legacy POST: /track/results (the old search form) now lands on /track which
+// performs the same lookup and redirects to the canonical /track/{id}.
+Route::post('/track/results', function (\Illuminate\Http\Request $request) {
+    $tracking = trim((string) $request->input('search_P', ''));
+    return redirect()->route('track', $tracking === '' ? [] : ['search_P' => $tracking]);
+})->name('track.results.legacy');
+
+Route::get('/track/{trackingId}', [TrackController::class, 'show'])->name('track.show');
+Route::get('/track/{trackingId}/print', [PrintController::class, 'invoice'])->name('track.print');
 
 // Admin
 Route::prefix('admin')->name('admin.')->group(function () {

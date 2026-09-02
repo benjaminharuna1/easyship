@@ -58,7 +58,7 @@
                                     <button type="button" class="badge rounded-pill bg-info border-0" onclick="copyContent('{{ $row->tracking_id }}')">Copy Tracking Number</button>
                                 </td>
                                 <td>
-                                    <a class="badge rounded-pill bg-primary p-2 text-white text-decoration-none" target="_blank" href="{{ route('track.print', ['num' => $row->tracking_id]) }}">Print Receipt</a>
+                                    <a class="badge rounded-pill bg-primary p-2 text-white text-decoration-none" target="_blank" href="{{ route('track.print', $row->tracking_id) }}">Print Receipt</a>
                                 </td>
                             </tr>
                         @empty

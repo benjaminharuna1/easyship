@@ -53,12 +53,12 @@
                     <div class="track-no">
                         <h1>
                             Tracking Shipment
-                            <a href="{{ route('track.print', ['num' => $tracking]) }}" target="_blank" class="thm-btn print-btn">
+                            <a href="{{ route('track.print', $shipment->tracking_id) }}" target="_blank" class="thm-btn print-btn">
                                 <span class="txt">Print-Invoice</span>
                             </a>
                         </h1>
                         <strong style="font-size:18px;">Tracking No:</strong>
-                        <strong style="font-size:22px; color:#C40202;">{{ $tracking }}</strong>
+                        <strong style="font-size:22px; color:#C40202;">{{ $shipment->tracking_id }}</strong>
                     </div>
 
                     @php
@@ -133,7 +133,7 @@
 @push('scripts')
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        const LOCATIONIQ_KEY = 'pk.01682cb67d93596fbb5d646c24723c75';
+        const LOCATIONIQ_KEY = @json($geocodeApiKey ?? '');
         const DEFAULT_CENTER = [9.0820, 8.6753];
         const DEFAULT_ZOOM = 6;
 
@@ -151,6 +151,10 @@
 
         async function geocode(query) {
             if (!query || !query.trim()) return null;
+            if (!LOCATIONIQ_KEY) {
+                console.warn('Geocode API key is not configured; skipping geocoding for "' + query + '"');
+                return null;
+            }
             const url = `https://us1.locationiq.com/v1/search.php?key=${encodeURIComponent(LOCATIONIQ_KEY)}&q=${encodeURIComponent(query)}&format=json&limit=1`;
             try {
                 const resp = await fetch(url);

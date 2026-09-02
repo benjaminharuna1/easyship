@@ -35,7 +35,7 @@
 
     <p>
         For more information visit the
-        <a href="{{ $settings->site_url ?? '' }}/track" style="color:#f6a400;">Tracking Page</a>.
+        <a href="{{ rtrim($settings->site_url ?? '', '/') }}/track/{{ $tracking_id }}" style="color:#f6a400;">Tracking Page</a>.
     </p>
     <p>Thank you for choosing {{ $settings->sitename ?? 'EasyShip' }}.</p>
 @endsection
