@@ -1,0 +1,202 @@
+<style type="text/css">
+    /* Mobile device portrait */
+     @media(min-width: 200px){
+        .top-text{
+            color:white;
+            text-transform: uppercase;
+            font-weight: bold;
+           
+            margin-top: 10rem;
+    
+            font-size: 3rem;
+            margin-bottom: auto;
+            font-family: Aharoni;
+            line-height: 1;
+            letter-spacing: 0.2rem;
+
+        
+    }
+
+.my-btn{
+     color:white;
+     background-image: linear-gradient(to right, #4facfe 0%, #00f2fe 100%) !important;
+     font-family: arial;
+     margin-top: 2rem !important;
+     margin-bottom:auto;
+     border: none;
+     font-size: 1.5rem !important;
+     width:180px;
+     height: 50px !important;
+     border-radius: 2rem !important;
+     outline-style: none;
+    
+     text-align: center;
+       
+    }
+
+    .my-btn:hover{
+
+    color:white;
+    background-image: linear-gradient(to right, #43e97b 3%, #38f9d7 100%) !important;
+     font-family: arial;
+     
+     margin-bottom:auto;
+     border: solid 1px  white !important;
+     font-size: 1.5rem;
+     width:180px;
+     height: 50px;
+     border-radius: 2rem;
+     outline-style: none;
+   
+    }
+     
+    .bottom-text{
+     color:white;
+     font-family: Calibri Body;
+ 
+     margin-top: 2rem;
+   
+     font-weight: lighter;
+       line-height: 1.5;
+
+    }
+
+
+
+    }
+/* Mobile device Lanscape */
+     @media(min-width: 768px){
+       .top-text{
+            color:white;
+            text-transform: uppercase;
+            font-weight: bold;
+           
+            margin-top: 10rem;
+    
+            font-size: 5rem;
+            margin-bottom: auto;
+            font-family: Aharoni;
+            line-height: 1;
+            letter-spacing: 0.2rem;
+            align-content: center;
+        
+    }
+
+
+    .my-btn{
+     color:white;
+     background-image: linear-gradient(to right, #4facfe 0%, #00f2fe 100%) !important;
+     font-family: arial;
+     margin-top: 2rem !important;
+     margin-bottom:auto;
+     border: none;
+     font-size: 1.5rem !important;
+     width:180px;
+     height: 50px !important;
+     border-radius: 2rem !important;
+     outline-style: none;
+    
+     text-align: center;
+       
+    }
+
+    .my-btn:hover{
+
+    color:white;
+    background-image: linear-gradient(to right, #43e97b 3%, #38f9d7 100%) !important;
+     font-family: arial;
+     
+     margin-bottom:auto;
+     border: solid 1px  white !important;
+     font-size: 1.5rem;
+     width:180px;
+     height: 50px;
+     border-radius: 2rem;
+     outline-style: none;
+   
+    }
+     
+    .bottom-text{
+     color:white;
+    
+     margin-top: 2rem;
+     
+     font-weight: lighter;
+       line-height: 1;
+
+    }
+
+
+
+    }
+
+
+    /* Mobile laptop devices Lanscape */
+     @media(min-width: 992px){
+        .top-text{
+            color:white;
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-left: 6rem;
+            
+       
+            font-size: 5rem;
+            margin-bottom: auto;
+            font-family: Aharoni;
+            line-height: 1;
+            letter-spacing: 0.2rem;
+            align-content: center;
+
+        
+    }
+
+
+    .my-btn{
+     color:white;
+     background-image: linear-gradient(to right, #4facfe 0%, #00f2fe 100%) !important;
+     font-family: arial;
+     margin-top: 2rem !important;
+     margin-bottom:auto;
+     border: none;
+     font-size: 1.5rem !important;
+     width:180px;
+     height: 50px !important;
+     border-radius: 2rem !important;
+     outline-style: none;
+    
+     text-align: center;
+       
+    }
+
+    .my-btn:hover{
+
+    color:white;
+    background-image: linear-gradient(to right, #43e97b 3%, #38f9d7 100%) !important;
+     font-family: arial;
+     
+     margin-bottom:auto;
+     border: solid 1px  white !important;
+     font-size: 1.5rem;
+     width:180px;
+     height: 50px;
+     border-radius: 2rem;
+     outline-style: none;
+   
+    }
+     
+    .bottom-text{
+     color:white;
+     font-family: run;
+     
+     margin-top:1rem;
+     font-weight: lighter;
+       line-height: 1;
+
+    }
+
+
+
+    } 
+
+
+</style>
