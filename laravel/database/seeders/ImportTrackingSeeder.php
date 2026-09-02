@@ -2,6 +2,9 @@
 
 namespace Database\Seeders;
 
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+
 class ImportTrackingSeeder extends LegacySqlSeeder
 {
     /**
@@ -9,6 +12,10 @@ class ImportTrackingSeeder extends LegacySqlSeeder
      * (dest => source). Only the fields used by the new app are imported;
      * legacy-only columns (delivery_time, updated_time) are omitted and any
      * Laravel-specific columns are left to their defaults.
+     *
+     * NOTE: track_update is intentionally NOT listed here. Its legacy rows are
+     * folded into shipment_history by run() so every shipment's tracking
+     * timeline lives in a single table (shipment_history) in the new app.
      */
     protected function tables(): array
     {
@@ -78,20 +85,78 @@ class ImportTrackingSeeder extends LegacySqlSeeder
                 'created_at' => '__NOW__',
                 'updated_at' => '__NOW__',
             ],
-            'track_update' => [
-                'track_num' => 'track_num',
-                'status' => 'status',
-                'date' => 'date',
-                'time' => 'time',
-                'note' => 'note',
-                'current_location' => 'current_location',
-                'invoice_sub_total' => 'invoice_sub_total',
-                'discount' => 'discount',
-                'tax' => 'tax',
-                'invoice_total' => 'invoice_total',
-                'created_at' => 'updated_at',
-                'updated_at' => 'updated_at',
-            ],
         ];
+    }
+
+    /**
+     * Import the standard tracking tables, then fold any legacy track_update
+     * rows into shipment_history so the timeline is not "missing" for
+     * shipments whose history lived only in the old track_update table.
+     */
+    public function run(): void
+    {
+        $path = database_path('legacy/exprkfmf_easyship.sql');
+        if (!is_file($path) && is_file(base_path('exprkfmf_easyship.sql'))) {
+            $path = base_path('exprkfmf_easyship.sql');
+        }
+
+        parent::run();
+
+        if (!is_file($path)) {
+            return;
+        }
+
+        $content = file_get_contents($path);
+        $parsed = $this->extractInsert($content, 'track_update');
+
+        if ($parsed === null) {
+            return;
+        }
+
+        [$columns, $rows] = $parsed;
+
+        $shipmentIds = DB::table('addtracking')
+            ->pluck('tracking_id')
+            ->map(fn ($v) => (string) $v)
+            ->all();
+
+        // Only fold in a track_update timeline for shipments that have no
+        // shipment_history rows yet, to avoid duplicating an existing timeline.
+        $histIds = DB::table('shipment_history')
+            ->pluck('tracking_id')
+            ->map(fn ($v) => (string) $v)
+            ->unique()
+            ->flip()
+            ->all();
+
+        $inserts = [];
+        foreach ($rows as $row) {
+            $src = array_combine($columns, $row);
+            $trackNum = trim((string) ($src['track_num'] ?? ''));
+
+            if ($trackNum === '' || !in_array($trackNum, $shipmentIds, true)) {
+                continue;
+            }
+            if (isset($histIds[$trackNum])) {
+                continue;
+            }
+
+            $inserts[] = [
+                'tracking_id' => $trackNum,
+                'date' => $src['date'] ?? null,
+                'time' => $src['time'] ?? null,
+                'location' => $src['current_location'] ?? '',
+                'status' => $src['status'] ?? '',
+                'updated_by' => 'Admin',
+                'remarks' => $src['note'] ?? '',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ];
+        }
+
+        if (!empty($inserts)) {
+            DB::table('shipment_history')->insert($inserts);
+            $this->command?->info("Folded track_update into shipment_history (" . count($inserts) . " rows)");
+        }
     }
 }

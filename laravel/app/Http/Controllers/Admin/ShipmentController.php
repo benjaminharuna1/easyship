@@ -229,6 +229,36 @@ class ShipmentController extends Controller
         return $status;
     }
 
+    /**
+     * Replace the shipment's whole history with the submitted rows, mirroring
+     * the legacy edit page: delete the existing timeline, then re-insert the
+     * rows present in the form.
+     */
+    protected function replaceShipmentHistory(string $trackingId, Request $request): void
+    {
+        ShipmentHistory::where('tracking_id', $trackingId)->delete();
+
+        $dates = $request->input('history_date', []);
+        if (empty($dates) || !is_array($dates)) {
+            return;
+        }
+
+        foreach ($dates as $i => $date) {
+            if ($date === null || $date === '') {
+                continue;
+            }
+            ShipmentHistory::create([
+                'tracking_id' => $trackingId,
+                'date' => $date,
+                'time' => $request->input("history_time.$i", ''),
+                'location' => $request->input("history_location.$i", ''),
+                'status' => $request->input("history_status.$i", 'Pending'),
+                'updated_by' => $request->input("history_updated_by.$i", ''),
+                'remarks' => $request->input("history_remarks.$i", ''),
+            ]);
+        }
+    }
+
     public function edit(string $trackingId)
     {
         $shipment = Addtracking::with(['packageItems', 'shipmentHistory'])
@@ -316,8 +346,10 @@ class ShipmentController extends Controller
                 $this->insertPackageItems($trackingId, $request);
             }
 
-            if ($request->input('history_date')) {
-                $this->insertShipmentHistory($trackingId, $request, $data['dispatchlocation']);
+            // Replace shipment history exactly like the legacy edit page:
+            // delete the existing timeline and re-insert the submitted rows.
+            if ($request->has('history_date')) {
+                $this->replaceShipmentHistory($trackingId, $request);
             }
 
             DB::commit();
@@ -332,7 +364,17 @@ class ShipmentController extends Controller
 
     public function destroy(string $trackingId)
     {
-        Addtracking::where('tracking_id', $trackingId)->delete();
+        DB::beginTransaction();
+        try {
+            PackageItem::where('tracking_id', $trackingId)->delete();
+            ShipmentHistory::where('tracking_id', $trackingId)->delete();
+            Addtracking::where('tracking_id', $trackingId)->delete();
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return back()->withErrors(['db_error' => 'DATABASE ERROR: ' . $e->getMessage()]);
+        }
+
         return redirect()->route('admin.dashboard');
     }
 

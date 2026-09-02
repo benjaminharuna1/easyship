@@ -263,6 +263,24 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @forelse($shipment->shipmentHistory as $h)
+                                <tr>
+                                    <td><input type="date" class="form-control" name="history_date[]" value="{{ $h->date }}"></td>
+                                    <td><input type="time" class="form-control" name="history_time[]" value="{{ $h->time }}"></td>
+                                    <td><input type="text" class="form-control" name="history_location[]" value="{{ $h->location }}"></td>
+                                    <td>
+                                        <select class="form-control" name="history_status[]">
+                                            @foreach($statuses as $st)
+                                            <option value="{{ $st }}" {{ $st === $h->status ? 'selected' : '' }}>{{ $st }}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-control" name="history_updated_by[]" value="{{ $h->updated_by }}"></td>
+                                    <td><input type="text" class="form-control" name="history_remarks[]" value="{{ $h->remarks }}"></td>
+                                    <td><button type="button" class="btn btn-danger btn-sm remove_row" title="Delete item"><i class="bx bx-trash"></i></button></td>
+                                </tr>
+                                @empty
+                                @endforelse
                             </tbody>
                         </table>
                         <button type="button" class="btn btn-primary" id="add_history_row">Add Row</button>
