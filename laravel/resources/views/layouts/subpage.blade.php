@@ -8,7 +8,3 @@
 @section('footer')
     @include('partials.footer', ['footerVariant' => '--two'])
 @endsection
-
-@section('scripts')
-    @stack('page_scripts')
-@endsection

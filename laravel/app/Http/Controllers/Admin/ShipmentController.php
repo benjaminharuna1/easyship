@@ -33,6 +33,13 @@ class ShipmentController extends Controller
         return view('admin.add-tracking', compact('settings', 'trackingNumber'))->with('statuses', $this->statuses);
     }
 
+    public function list()
+    {
+        $shipments = Addtracking::orderBy('created_at', 'desc')->paginate(15);
+
+        return view('admin.shipments-list', compact('shipments'));
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([

@@ -36,6 +36,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/', App\Http\Controllers\Admin\DashboardController::class)->name('dashboard');
 
         // Shipments
+        Route::get('/shipments', [App\Http\Controllers\Admin\ShipmentController::class, 'list'])->name('shipments.list');
         Route::get('/shipments/create', [App\Http\Controllers\Admin\ShipmentController::class, 'create'])->name('shipments.create');
         Route::post('/shipments', [App\Http\Controllers\Admin\ShipmentController::class, 'store'])->name('shipments.store');
         Route::get('/shipments/{trackingId}/edit', [App\Http\Controllers\Admin\ShipmentController::class, 'edit'])->name('shipments.edit');

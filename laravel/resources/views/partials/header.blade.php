@@ -33,11 +33,6 @@
                     </div>
 
                     <div class="main-menu-right-box-one">
-                        <div class="search-box-one">
-                            <a href="#" class="main-menu__search search-toggler">
-                                <span class="icon-search-interface-symbol"></span>
-                            </a>
-                        </div>
                         <div class="side-content-button-one">
                             <a class="menu-tigger" href="#">
                                 <span class="line"></span>
@@ -46,18 +41,6 @@
                         </div>
                     </div>
 
-                </div>
-
-                <div class="main-header-style4__right">
-                    <div class="contact-box">
-                        <div class="icon">
-                            <span class="icon-phone-call-1"></span>
-                        </div>
-                        <div class="text-box">
-                            <p>Need Assistance?</p>
-                            <h4><a href="tel:{{ $settings->phone_number }}">{{ $settings->phone_number }}</a></h4>
-                        </div>
-                    </div>
                 </div>
 
             </div>
@@ -79,3 +62,18 @@
     <!-- End Mobile Menu -->
 </header>
 <!--End Main Header One -->
+
+<style>
+    /* Only show the navigation hamburger on mobile */
+    .main-header-style4__middle .side-content-button-one {
+        display: none;
+    }
+    @media (max-width: 991.98px) {
+        .main-header-style4__middle .side-content-button-one {
+            display: block;
+        }
+        .main-header-style4__middle .mobile-nav-toggler {
+            display: none !important;
+        }
+    }
+</style>

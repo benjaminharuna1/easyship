@@ -25,6 +25,8 @@ class LegalController extends Controller
 
         $page->page_content = process_shortcodes($page->page_content);
 
-        return view('legal', compact('settings', 'page'));
+        $title = $page->page_title;
+
+        return view('legal', compact('settings', 'page', 'title'));
     }
 }

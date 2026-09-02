@@ -10,6 +10,8 @@ class Admin extends Model implements Authenticatable
 {
     use Notifiable;
 
+    protected $table = 'admin';
+
     protected $fillable = ['email', 'password'];
     protected $hidden = ['password'];
 

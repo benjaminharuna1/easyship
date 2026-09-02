@@ -64,8 +64,6 @@
         <i class="icon-arrowhead-up"></i>
     </button>
 
-    @include('partials.search')
-
     <!-- JS here -->
     <script src="{{ asset('assets/js/jquery-3.6.0.min.js') }}"></script>
     <script src="{{ asset('assets/js/01-ajax-form.js') }}"></script>
