@@ -10,6 +10,13 @@
             display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
         }
         .thm-btn.print-btn { padding: 8px 16px; font-size: 14px; }
+        .h1-actions { display: inline-flex; gap: 10px; flex-wrap: wrap; }
+        .thm-btn.track-another-btn {
+            padding: 8px 16px; font-size: 14px;
+            background: #041e42; color: #fff; border: 1px solid #041e42;
+        }
+        .thm-btn.track-another-btn:hover { background: #0b2c5c; color: #fff; }
+        .thm-btn.track-another-btn .txt i { margin-right: 5px; }
         .track-no {
             background: #fff; border: 1px solid #eee; padding: 20px 25px; border-radius: 10px;
             margin-bottom: 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.03);
@@ -30,6 +37,18 @@
             display: inline-block; background: #f6a400; color: #fff; font-size: 12px;
             padding: 2px 10px; border-radius: 20px; margin-top: 6px;
         }
+        .history-item-old { display: none; }
+        .timeline-list.show-old .history-item-old { display: block; }
+        .history-more-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: none; border: 1px dashed #c8cdd5; color: #041e42;
+            font-size: 14px; font-weight: 600; padding: 8px 18px;
+            border-radius: 8px; margin: 0 0 20px 10px; cursor: pointer;
+            transition: all .2s ease;
+        }
+        .history-more-btn:hover { border-color: #041e42; background: #f5f7fa; }
+        .history-more-btn .chev { display: inline-block; transition: transform .25s ease; font-size: 12px; }
+        .history-more-btn.expanded .chev { transform: rotate(180deg); }
         .track-side { background: #fff; border: 1px solid #eee; border-radius: 10px; padding: 25px; margin-bottom: 30px; }
         .track-side h3 { font-size: 16px; color: #041e42; margin-bottom: 15px; }
         .track-side table { width: 100%; }
@@ -53,22 +72,29 @@
                     <div class="track-no">
                         <h1>
                             Tracking Shipment
-                            <a href="{{ route('track.print', $shipment->tracking_id) }}" target="_blank" class="thm-btn print-btn">
-                                <span class="txt">Print-Invoice</span>
-                            </a>
+                            <span class="h1-actions">
+                                <a href="{{ route('track') }}" class="thm-btn track-another-btn">
+                                    <span class="txt"><i class="icon-next"></i>Track Another Shipment</span>
+                                </a>
+                                <a href="{{ route('track.print', $shipment->tracking_id) }}" target="_blank" class="thm-btn print-btn">
+                                    <span class="txt">Print-Invoice</span>
+                                </a>
+                            </span>
                         </h1>
                         <strong style="font-size:18px;">Tracking No:</strong>
                         <strong style="font-size:22px; color:#C40202;">{{ $shipment->tracking_id }}</strong>
                     </div>
 
                     @php
-                        $history = $shipment->shipmentHistory;
+                        $history = $shipment->shipmentHistory; // ascending by date/time
+                        $oldCount = max(0, $history->count() - 5);
                     @endphp
 
                     @if($history->isNotEmpty())
-                    <ul class="timeline-list">
-                        @foreach($history as $h)
-                        <li class="{{ strtolower($h->status) === 'delivered' ? 'delivered' : '' }}">
+                    <ul class="timeline-list" id="history-list">
+                        @foreach($history as $index => $h)
+                        @php $isRecent = $index >= $history->count() - 5; @endphp
+                        <li class="{{ $isRecent ? '' : 'history-item-old' }} {{ strtolower($h->status) === 'delivered' ? 'delivered' : '' }}">
                             <div class="tl-date">
                                 {{ \Illuminate\Support\Carbon::parse($h->date)->format('F dS, Y') }},
                                 {{ \Illuminate\Support\Carbon::parse($h->time)->format('g:i A') }}
@@ -79,6 +105,13 @@
                         </li>
                         @endforeach
                     </ul>
+
+                    @if($oldCount > 0)
+                    <button type="button" class="history-more-btn" id="history-more-btn" aria-expanded="false" aria-controls="history-list" data-old-count="{{ $oldCount }}">
+                        <span class="chev">&#9660;</span>
+                        <span class="more-label">View Older Updates ({{ $oldCount }})</span>
+                    </button>
+                    @endif
                     @else
                         <p>No tracking history available yet for this shipment.</p>
                     @endif
@@ -133,6 +166,24 @@
 @push('scripts')
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
+        // Toggle: show/hide older shipment updates
+        (function () {
+            const btn = document.getElementById('history-more-btn');
+            const list = document.getElementById('history-list');
+            if (!btn || !list) return;
+
+            const oldCount = parseInt(btn.dataset.oldCount || '0', 10);
+
+            btn.addEventListener('click', function () {
+                const expanded = list.classList.toggle('show-old');
+                btn.classList.toggle('expanded', expanded);
+                btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+                btn.querySelector('.more-label').textContent = expanded
+                    ? 'Hide Older Updates'
+                    : 'View Older Updates (' + oldCount + ')';
+            });
+        })();
+
         const LOCATIONIQ_KEY = @json($geocodeApiKey ?? '');
         const DEFAULT_CENTER = [9.0820, 8.6753];
         const DEFAULT_ZOOM = 6;

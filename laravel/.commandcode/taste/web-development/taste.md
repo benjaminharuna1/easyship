@@ -8,3 +8,4 @@
 - When an HTML file is given as a design reference ("take note of the design"), the resulting page should mirror that document's layout and content structure. Confidence: 0.7
 - When rebuilding an existing page, prefers a clean, modern, self-contained design over preserving the legacy Bootstrap 3/AdminLTE look — keep the reference's information structure but restyle it modern and print-friendly (system fonts, CSS variables, `@media print` rules). Confidence: 0.85
 - Prefers configuration-driven values (e.g., API keys from settings) over hard-coded keys/secrets in client-side code. Confidence: 0.75
+- On long timelines/lists (e.g., shipment history), prefers progressive disclosure: show only the most recent items (e.g., latest 5) by default and collapse older ones behind an expandable "view older" toggle, to keep focus on current updates. Confidence: 0.7
