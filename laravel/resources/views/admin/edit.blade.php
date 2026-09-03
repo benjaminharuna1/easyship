@@ -86,7 +86,7 @@
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Type of Shipment</label>
                                 <select class="form-control" name="type_of_shipment">
-                                    <option value="">Select Type</option>
+                                    <option value="">Select</option>
                                     <option value="Express" {{ old('type_of_shipment', $shipment->type_of_shipment) == 'Express' ? 'selected' : '' }}>Express</option>
                                     <option value="Standard" {{ old('type_of_shipment', $shipment->type_of_shipment) == 'Standard' ? 'selected' : '' }}>Standard</option>
                                 </select>
@@ -110,7 +110,7 @@
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Total Cost</label>
-                                <input type="text" class="form-control" name="total_cost" value="{{ old('total_cost', $shipment->total_cost) }}" required>
+                                <input type="number" step="any" class="form-control" name="total_cost" value="{{ old('total_cost', $shipment->total_cost) }}" required>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Carrier</label>
@@ -122,6 +122,8 @@
                                     <option value="{{ $settings->sitename }}" {{ old('carrier', $shipment->carrier) == $settings->sitename ? 'selected' : '' }}>{{ $settings->sitename }}</option>
                                 </select>
                             </div>
+                        </div>
+                        <div class="row mt-3">
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Courier</label>
                                 <select class="form-control" name="courier">
@@ -129,6 +131,7 @@
                                     <option value="DHL" {{ old('courier', $shipment->courier) == 'DHL' ? 'selected' : '' }}>DHL</option>
                                     <option value="UPS" {{ old('courier', $shipment->courier) == 'UPS' ? 'selected' : '' }}>UPS</option>
                                     <option value="FedEx" {{ old('courier', $shipment->courier) == 'FedEx' ? 'selected' : '' }}>FedEx</option>
+                                    <option value="{{ $settings->sitename }}" {{ old('courier', $shipment->courier) == $settings->sitename ? 'selected' : '' }}>{{ $settings->sitename }}</option>
                                 </select>
                             </div>
                             <div class="col-md-4 mb-3">
@@ -144,6 +147,8 @@
                                 <label class="form-label">Origin</label>
                                 <input type="text" class="form-control" name="dispatchlocation" value="{{ old('dispatchlocation', $shipment->dispatch_location) }}" required>
                             </div>
+                        </div>
+                        <div class="row mt-3">
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Destination</label>
                                 <input type="text" class="form-control" name="destination" value="{{ old('destination', $shipment->destination) }}" required>
@@ -156,6 +161,8 @@
                                 <label class="form-label">Packages count</label>
                                 <input type="number" class="form-control" name="quantity" value="{{ old('quantity', $shipment->quantity) }}" required>
                             </div>
+                        </div>
+                        <div class="row mt-3">
                             <div class="col-md-8 mb-3">
                                 <label class="form-label">Product description</label>
                                 <input type="text" class="form-control @error('packagedescription') is-invalid @enderror" name="packagedescription" value="{{ old('packagedescription', $shipment->package_discription) }}" required>
@@ -163,12 +170,10 @@
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Total Freight</label>
-                                <input type="text" class="form-control" name="total_freight" value="{{ old('total_freight', $shipment->total_freight) }}" required>
+                                <input type="number" step="any" class="form-control" name="total_freight" value="{{ old('total_freight', $shipment->total_freight) }}" required>
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">Carrier Reference No.</label>
-                                <input type="text" class="form-control" name="carrierreferencenumber" value="{{ old('carrierreferencenumber', $shipment->carrier_refrence_number) }}" required>
-                            </div>
+                        </div>
+                        <div class="row mt-3">
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Dispatch Date</label>
                                 <input type="date" class="form-control" name="dispatch_date" value="{{ old('dispatch_date', $shipment->dispatch_date) }}" required>
@@ -177,18 +182,31 @@
                                 <label class="form-label">Expected Delivery Date</label>
                                 <input type="date" class="form-control" name="estimateddeliverydate" value="{{ old('estimateddeliverydate', $shipment->estimated_delivery_date) }}" required>
                             </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Carrier Reference No.</label>
+                                <input type="text" class="form-control" name="carrierreferencenumber" value="{{ old('carrierreferencenumber', $shipment->carrier_refrence_number) }}" required>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
                             <div class="col-md-12 mb-3">
                                 <label class="form-label">Comments</label>
                                 <textarea class="form-control" name="comments" rows="3">{{ old('comments', $shipment->comments) }}</textarea>
                             </div>
+                        </div>
+                        <div class="row mt-3">
                             <div class="col-md-12 mb-3">
                                 <label class="form-label">Package Image</label>
+                                <input type="file" class="form-control" name="image" accept="image/*" onchange="previewImage(event)">
+                                <input type="hidden" name="current_image" value="{{ $shipment->image }}">
+                                <input type="hidden" name="remove_image" id="remove_image" value="0">
                                 @if($shipment->image)
-                                    <div class="mb-2">
+                                    <div class="mt-2">
                                         <img src="{{ asset('uploads/' . $shipment->image) }}" style="max-width:200px; max-height:200px;" class="rounded">
                                     </div>
+                                    <div class="mt-2">
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="removeCurrentImage()">Remove Image</button>
+                                    </div>
                                 @endif
-                                <input type="file" class="form-control" name="image" accept="image/*" onchange="previewImage(event)">
                             </div>
                             <div class="col-md-12">
                                 <img id="image_preview" src="#" alt="Image Preview" style="display: none; max-width: 200px; max-height: 200px;">

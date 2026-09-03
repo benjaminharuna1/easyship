@@ -61,6 +61,18 @@
                         <input type="text" class="form-control" value="{{ $shipment->weight }}" readonly>
                     </div>
                     <div class="col-12 mb-3">
+                        <label class="form-label">Volumetric Weight (kg)</label>
+                        <input type="text" class="form-control" value="{{ $shipment->total_volumetric_weight ?? 'N/A' }}" readonly>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label class="form-label">Actual Weight (kg)</label>
+                        <input type="text" class="form-control" value="{{ $shipment->total_actual_weight ?? 'N/A' }}" readonly>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label class="form-label">Total Freight</label>
+                        <input type="text" class="form-control" value="{{ $shipment->total_freight !== null ? ($settings->site_currency ?? '$') . number_format((float)$shipment->total_freight, 2) : 'N/A' }}" readonly>
+                    </div>
+                    <div class="col-12 mb-3">
                         <label class="form-label">Payment Mode</label>
                         <input type="text" class="form-control" value="{{ $shipment->payment_mode }}" readonly>
                     </div>

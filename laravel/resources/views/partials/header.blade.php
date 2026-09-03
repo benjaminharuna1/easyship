@@ -64,15 +64,26 @@
 <!--End Main Header One -->
 
 <style>
-    /* Only show the navigation hamburger on mobile */
+    /* Hide the offcanvas trigger by default; it is only for the desktop offcanvas */
     .main-header-style4__middle .side-content-button-one {
         display: none;
     }
     @media (max-width: 991.98px) {
-        .main-header-style4__middle .side-content-button-one {
-            display: block;
-        }
+        /* Show the hamburger that opens the slide-in mobile menu */
         .main-header-style4__middle .mobile-nav-toggler {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            width: 46px;
+            height: 46px;
+            background: var(--thm-primary, #f6a400);
+            color: #fff;
+            border-radius: 6px;
+            font-size: 22px;
+            cursor: pointer;
+        }
+        /* Hide the desktop offcanvas trigger on mobile so only one hamburger shows */
+        .main-header-style4__middle .side-content-button-one {
             display: none !important;
         }
     }

@@ -43,7 +43,7 @@
             display: inline-flex; align-items: center; gap: 8px;
             background: none; border: 1px dashed #c8cdd5; color: #041e42;
             font-size: 14px; font-weight: 600; padding: 8px 18px;
-            border-radius: 8px; margin: 0 0 20px 10px; cursor: pointer;
+            border-radius: 8px; cursor: pointer;
             transition: all .2s ease;
         }
         .history-more-btn:hover { border-color: #041e42; background: #f5f7fa; }
@@ -91,6 +91,14 @@
                     @endphp
 
                     @if($history->isNotEmpty())
+                    @if($oldCount > 0)
+                    <div style="display:flex; justify-content:flex-end; margin-bottom:10px;">
+                        <button type="button" class="history-more-btn" id="history-more-btn" aria-expanded="false" aria-controls="history-list" data-old-count="{{ $oldCount }}">
+                            <span class="chev">&#9660;</span>
+                            <span class="more-label">View Older Updates ({{ $oldCount }})</span>
+                        </button>
+                    </div>
+                    @endif
                     <ul class="timeline-list" id="history-list">
                         @foreach($history as $index => $h)
                         @php $isRecent = $index >= $history->count() - 5; @endphp
@@ -105,13 +113,6 @@
                         </li>
                         @endforeach
                     </ul>
-
-                    @if($oldCount > 0)
-                    <button type="button" class="history-more-btn" id="history-more-btn" aria-expanded="false" aria-controls="history-list" data-old-count="{{ $oldCount }}">
-                        <span class="chev">&#9660;</span>
-                        <span class="more-label">View Older Updates ({{ $oldCount }})</span>
-                    </button>
-                    @endif
                     @else
                         <p>No tracking history available yet for this shipment.</p>
                     @endif
