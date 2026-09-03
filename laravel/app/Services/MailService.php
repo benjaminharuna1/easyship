@@ -19,7 +19,7 @@ class MailService
      * @param array $data Data passed to the view
      * @param array $attachmentPaths Array of absolute file paths to attach
      */
-    public function send(string $email, string $subject, string $view, array $data = [], array $attachmentPaths = []): bool
+    public function send(string $email, string $subject, string $view, array $data = [], array $attachmentPaths = [], array $smtpOverride = []): bool
     {
         $settings = Setting::find(1);
         if (!$settings) {
@@ -31,12 +31,16 @@ class MailService
 
         try {
             // Temporarily swap the default mailer's SMTP config for this request.
+            // Prefer per-call overrides (used by the "test email" tool so unsaved
+            // form values can be validated) and fall back to the stored settings.
             config([
-                'mail.mailers.smtp.host' => $settings->smtp_host,
-                'mail.mailers.smtp.username' => $settings->smtp_username,
-                'mail.mailers.smtp.password' => $settings->smtp_password,
-                'mail.mailers.smtp.port' => (int) $settings->smtp_port,
-                'mail.mailers.smtp.encryption' => $settings->smtp_secure ?: null,
+                'mail.mailers.smtp.host' => $smtpOverride['host'] ?? $settings->smtp_host,
+                'mail.mailers.smtp.username' => $smtpOverride['username'] ?? $settings->smtp_username,
+                'mail.mailers.smtp.password' => array_key_exists('password', $smtpOverride)
+                    ? $smtpOverride['password']
+                    : $settings->smtp_password,
+                'mail.mailers.smtp.port' => (int) ($smtpOverride['port'] ?? $settings->smtp_port),
+                'mail.mailers.smtp.encryption' => $smtpOverride['encryption'] ?? $settings->smtp_secure ?: null,
             ]);
 
             Mail::send($view, $data, function ($message) use ($email, $subject, $fromName, $fromEmail, $attachmentPaths) {

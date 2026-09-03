@@ -63,7 +63,7 @@
     <div class="card radius-10 mt-3">
         <div class="card-body">
             <div class="d-flex align-items-center mb-3">
-                <h5 class="mb-0">Recent Shipments</h5>
+                <h5 class="mb-0">Recently Updated Shipments</h5>
                 <a href="{{ route('admin.shipments.list') }}" class="btn btn-primary btn-sm ms-auto">View All Shipments</a>
             </div>
             <div class="table-responsive">
@@ -75,7 +75,7 @@
                             <th>Package name</th>
                             <th>Tracking Number</th>
                             <th>Status</th>
-                            <th>Date Added</th>
+                            <th>Last Updated</th>
                             <th>View</th>
                             <th>Edit</th>
                             <th>Delete</th>
@@ -98,7 +98,7 @@
                                 </td>
                                 <td>{{ $row->tracking_id }}</td>
                                 <td>{{ $row->status }}</td>
-                                <td>{{ $row->date_added }}</td>
+                                <td>{{ $row->updated_at ? $row->updated_at->format('d M Y H:i') : ($row->date_added ?: 'N/A') }}</td>
                                 <td>
                                     <a class="badge rounded-pill bg-info p-2 text-white text-decoration-none" href="{{ route('admin.shipments.show', $row->tracking_id) }}">View</a>
                                 </td>

@@ -134,15 +134,24 @@ class SettingsController extends Controller
             'smtp-password' => ['nullable', 'string'],
             'smtp-port' => ['required', 'integer'],
             'smtp-secure' => ['nullable', 'string'],
+            'email_name' => ['nullable', 'string'],
+            'email_address' => ['nullable', 'email'],
+            'email_primary_color' => ['nullable', 'string'],
+            'email_footer_text' => ['nullable', 'string'],
         ]);
 
         $settings = Setting::findOrFail(1);
+
         $settings->update([
             'smtp_host' => $validated['smtp-host'],
             'smtp_username' => $validated['smtp-username'],
             'smtp_password' => $validated['smtp-password'] ?? $settings->smtp_password,
             'smtp_port' => $validated['smtp-port'],
             'smtp_secure' => $validated['smtp-secure'] ?? null,
+            'email_name' => $validated['email_name'] ?? $settings->email_name,
+            'email_address' => $validated['email_address'] ?? $settings->email_address,
+            'email_primary_color' => $validated['email_primary_color'] ?? $settings->email_primary_color,
+            'email_footer_text' => $validated['email_footer_text'] ?? $settings->email_footer_text,
         ]);
 
         session()->flash('success_message', 'Email settings updated successfully.');

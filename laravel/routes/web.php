@@ -89,7 +89,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Email
         Route::get('/send-email', [App\Http\Controllers\Admin\EmailController::class, 'sendForm'])->name('email.send-form');
         Route::post('/send-email', [App\Http\Controllers\Admin\EmailController::class, 'send'])->name('email.send');
-        Route::get('/test-email', [App\Http\Controllers\Admin\EmailController::class, 'testForm'])->name('email.test-form');
         Route::post('/test-email', [App\Http\Controllers\Admin\EmailController::class, 'testSend'])->name('email.test-send');
 
         // Profile

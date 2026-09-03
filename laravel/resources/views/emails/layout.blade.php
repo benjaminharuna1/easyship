@@ -7,7 +7,7 @@
 </head>
 <body style="margin:0; padding:0; background-color:#f4f6f9; font-family:Arial, Helvetica, sans-serif;">
     <div style="max-width:600px; margin:0 auto; background-color:#ffffff;">
-        <div style="background:#041e42; padding:24px 30px; text-align:center;">
+        <div style="background:{{ $settings->email_primary_color ?: '#041e42' }}; padding:24px 30px; text-align:center;">
             @if(!empty($settings->site_logo))
                 <img src="{{ asset($settings->site_logo) }}" alt="{{ $settings->sitename }}" style="max-height:60px; display:inline-block;">
             @else
@@ -25,7 +25,10 @@
                 <p style="margin:0 0 4px;">{!! nl2br(e($settings->site_address)) !!}</p>
             @endif
             @if(!empty($settings->email_address))
-                <p style="margin:0;">{{ $settings->email_address }}</p>
+                <p style="margin:0 0 4px;">{{ $settings->email_address }}</p>
+            @endif
+            @if(!empty($settings->email_footer_text))
+                <p style="margin:8px 0 0; padding-top:8px; border-top:1px solid #e2e6ea; color:#aaa;">{{ $settings->email_footer_text }}</p>
             @endif
         </div>
     </div>

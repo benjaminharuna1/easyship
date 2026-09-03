@@ -53,29 +53,46 @@ class EmailController extends Controller
         return redirect()->route('admin.email.send-form');
     }
 
-    public function testForm()
-    {
-        return view('admin.test_email');
-    }
-
     public function testSend(Request $request)
     {
         $request->validate([
             'test_email' => ['required', 'email'],
+            'smtp-host' => ['nullable', 'string'],
+            'smtp-port' => ['nullable', 'integer'],
+            'smtp-username' => ['nullable', 'string'],
+            'smtp-password' => ['nullable', 'string'],
+            'smtp-secure' => ['nullable', 'string'],
         ]);
+
+        $smtpOverride = [
+            'host' => $request->input('smtp-host'),
+            'port' => $request->input('smtp-port'),
+            'username' => $request->input('smtp-username'),
+            'password' => $request->input('smtp-password'),
+            'encryption' => $request->input('smtp-secure'),
+        ];
 
         $sent = (new MailService())->send(
             $request->test_email,
             'Test Email - SMTP Configuration',
-            'emails.test_email'
+            'emails.test_email',
+            [],
+            [],
+            $smtpOverride
         );
 
         if ($sent) {
             session()->flash('success_message', 'Test email sent successfully to ' . $request->test_email);
+            if ($request->wantsJson()) {
+                return response()->json(['status' => 'success', 'message' => 'Test email sent successfully to ' . $request->test_email]);
+            }
         } else {
             session()->flash('error_message', 'Failed to send test email. Please check your SMTP settings and logs.');
+            if ($request->wantsJson()) {
+                return response()->json(['status' => 'error', 'message' => 'Failed to send test email. Please check your SMTP settings and logs.'], 422);
+            }
         }
 
-        return redirect()->route('admin.email.test-form');
+        return redirect()->route('admin.settings')->with('anchor', 'email-settings');
     }
 }

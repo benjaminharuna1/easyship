@@ -15,7 +15,7 @@ class DashboardController extends Controller
         $inTransit = Addtracking::where('status', 'In Transit')->count();
         $delivered = Addtracking::where('status', 'Delivered')->count();
         $supportMessages = SupportMessage::orderBy('created_at', 'desc')->take(5)->get();
-        $shipments = Addtracking::orderBy('created_at', 'desc')->take(5)->get();
+        $shipments = Addtracking::orderBy('updated_at', 'desc')->take(5)->get();
 
         return view('admin.dashboard', compact(
             'totalShipments',

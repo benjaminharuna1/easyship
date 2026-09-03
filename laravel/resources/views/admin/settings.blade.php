@@ -71,7 +71,7 @@
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Geocode API Key</label>
                                 <input type="text" class="form-control" name="geocode_api_key" value="{{ old('geocode_api_key', $settings->geocode_api_key) }}">
-                                <small class="text-muted">LocationIQ API key used for location mapping.</small>
+                                <small class="text-muted">LocationIQ API key used for location mapping. If you don't have one, click <a href="https://locationiq.com" target="_blank" rel="noopener">https://locationiq.com</a> to get an API access token.</small>
                             </div>
                             <div class="col-md-12 mb-3">
                                 <label class="form-label">Site Address</label>
@@ -196,7 +196,7 @@
         </div>
 
         <div class="tab-pane fade" id="email-settings" role="tabpanel" aria-labelledby="tab-email">
-            <form method="POST" action="{{ route('admin.settings.email') }}">
+            <form method="POST" action="{{ route('admin.settings.email') }}" enctype="multipart/form-data">
                 @csrf
                 <div class="card">
                     <div class="card-body">
@@ -216,7 +216,11 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">SMTP Password</label>
-                                <input type="password" class="form-control" name="smtp-password" placeholder="Leave blank to keep current">
+                                <div class="input-group">
+                                    <input type="password" class="form-control" name="smtp-password" id="smtp-password" value="{{ old('smtp-password', $settings->smtp_password) }}" autocomplete="new-password">
+                                    <button type="button" class="btn btn-outline-secondary" id="toggle-smtp-password" tabindex="-1"><i class="bx bx-show"></i></button>
+                                </div>
+                                <small class="text-muted">Shows the current/default password. Type a new one to change it.</small>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Encryption</label>
@@ -225,6 +229,62 @@
                                     <option value="tls" {{ old('smtp-secure', $settings->smtp_secure) == 'tls' ? 'selected' : '' }}>TLS</option>
                                     <option value="ssl" {{ old('smtp-secure', $settings->smtp_secure) == 'ssl' ? 'selected' : '' }}>SSL</option>
                                 </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Email Branding</h5>
+                        <p class="text-muted">These settings control how the sender and the email template look.</p>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">From Name</label>
+                                <input type="text" class="form-control" name="email_name" value="{{ old('email_name', $settings->email_name) }}">
+                                <small class="text-muted">Shown as the sender name on outgoing emails.</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">From Email</label>
+                                <input type="email" class="form-control" name="email_address" value="{{ old('email_address', $settings->email_address) }}">
+                                <small class="text-muted">Reply-to / sender address shown in the email footer.</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Logo</label>
+                                @if($settings->site_logo)
+                                    <div class="mb-2">
+                                        <img src="{{ asset($settings->site_logo) }}" style="max-height:60px;" class="rounded border">
+                                    </div>
+                                    <small class="text-muted">Uses the site logo configured under Site Settings.</small>
+                                @else
+                                    <small class="text-muted">No site logo is set. Configure one under <strong>Site Settings</strong>.</small>
+                                @endif
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Primary Color</label>
+                                <input type="color" class="form-control form-control-color" name="email_primary_color" value="{{ old('email_primary_color', $settings->email_primary_color ?: '#041e42') }}" style="width:60px; height:38px;">
+                                <small class="text-muted">Used for the email header background and highlights.</small>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Footer Text</label>
+                                <textarea class="form-control" name="email_footer_text" rows="2">{{ old('email_footer_text', $settings->email_footer_text) }}</textarea>
+                                <small class="text-muted">Optional short text shown at the bottom of outgoing emails.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Test Email</h5>
+                        <p class="text-muted">Send a test email to verify the SMTP settings above are working before saving.</p>
+                        <div class="row align-items-end">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Recipient Email</label>
+                                <input type="email" class="form-control" name="test_email" id="test-email-input" value="{{ session('test_email_value', '') }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <button type="button" class="btn btn-outline-primary" id="send-test-email-btn"><i class="bx bx-send me-1"></i>Send Test Email</button>
                             </div>
                         </div>
                     </div>
@@ -291,5 +351,54 @@
             }
         });
     });
+
+    var smtpToggle = document.getElementById('toggle-smtp-password');
+    if (smtpToggle) {
+        smtpToggle.addEventListener('click', function() {
+            var el = document.getElementById('smtp-password');
+            var show = el.type === 'password';
+            el.type = show ? 'text' : 'password';
+            this.innerHTML = show ? '<i class="bx bx-hide"></i>' : '<i class="bx bx-show"></i>';
+        });
+    }
+
+    var testBtn = document.getElementById('send-test-email-btn');
+    if (testBtn) {
+        testBtn.addEventListener('click', function() {
+            var form = testBtn.closest('form');
+            var recipient = new FormData(form).get('test_email');
+            if (!recipient || recipient.indexOf('@') === -1) {
+                alert('Please enter a recipient email address.');
+                return;
+            }
+            var original = testBtn.innerHTML;
+            testBtn.disabled = true;
+            testBtn.innerHTML = '<i class="bx bx-loader bx-spin me-1"></i>Sending...';
+            fetch('{{ route('admin.email.test-send') }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: new FormData(form)
+            }).then(function(res) {
+                return res.json().catch(function() {
+                    return { status: res.ok ? 'success' : 'error', message: res.ok ? 'Test email sent.' : 'Your session may have expired. Please save and try again.' };
+                });
+            }).then(function(data) {
+                if (data.status === 'success') {
+                    alert(data.message);
+                } else {
+                    alert(data.message || 'Test email could not be sent. Check your SMTP settings and logs.');
+                }
+            }).catch(function() {
+                alert('Test email could not be sent. Check your SMTP settings and logs.');
+            }).finally(function() {
+                testBtn.disabled = false;
+                testBtn.innerHTML = original;
+            });
+        });
+    }
 </script>
 @endpush

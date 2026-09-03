@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Admin Dashboard') | {{ $settings->sitename ?? 'EasyShip' }}</title>
     <link rel="icon" href="{{ asset($settings->site_favicon ?? 'uploads/favicon.png') }}" type="image/png" />
     <link href="{{ asset('admin-assets/plugins/vectormap/jquery-jvectormap-2.0.2.css') }}" rel="stylesheet"/>
@@ -42,6 +43,31 @@
         .sidebar-overlay {
             cursor: pointer;
         }
+
+        /* Topbar / header */
+        .topbar {
+            z-index: 15;
+        }
+        .topbar .navbar {
+            align-items: center;
+        }
+        .topbar-title {
+            white-space: nowrap;
+        }
+        .topbar-title h4 {
+            font-size: 18px;
+            font-weight: 500;
+            margin: 0;
+        }
+        .topbar-user .user-name {
+            color: #fff;
+            font-size: 15px;
+            font-weight: 500;
+        }
+        .topbar-user .dropdown-menu {
+            width: 220px;
+        }
+
         @media (min-width: 1025px) {
             .wrapper.toggled .topbar,
             .wrapper.toggled .page-wrapper,
@@ -50,6 +76,11 @@
             }
             .wrapper.toggled .page-wrapper {
                 margin-left: 70px;
+            }
+        }
+        @media (max-width: 1024px) {
+            .topbar-title {
+                display: none;
             }
         }
     </style>
@@ -101,13 +132,6 @@
                     <a href="{{ route('admin.settings') }}" class="{{ request()->routeIs('admin.settings') ? 'active' : '' }}">
                         <div class="parent-icon"><i class="bx bx-cog fs-5"></i></div>
                         <div class="menu-title">Site Setting</div>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{{ route('admin.email.test-form') }}" class="{{ request()->routeIs('admin.email.test-form') ? 'active' : '' }}">
-                        <div class="parent-icon"><i class="bx bx-mail-send fs-5"></i></div>
-                        <div class="menu-title">Test Email</div>
                     </a>
                 </li>
 
@@ -172,14 +196,27 @@
                 <nav class="navbar navbar-expand gap-3">
                     <div class="mobile-toggle-menu"><i class='bx bx-menu'></i>
                     </div>
+                    <div class="topbar-title">
+                        <h4 class="mb-0 text-white"><i class="bx bx-home-alt-circle me-2"></i>@yield('title', 'Dashboard')</h4>
+                    </div>
                     <div class="top-menu ms-auto">
                         <ul class="navbar-nav align-items-center gap-1">
-                            <li class="nav-item topbar-user dropdown hidden-xs">
+                            <li class="nav-item topbar-user dropdown">
                                 <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <div class="text-center">
                                         <h6 class="user-name mb-0">{{ auth('admin')->user()->email }}</h6>
                                     </div>
                                 </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="{{ route('admin.profile') }}"><i class="bx bx-user me-2"></i>Profile</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <form method="POST" action="{{ route('admin.logout') }}">
+                                            @csrf
+                                            <button type="submit" class="dropdown-item"><i class="bx bx-log-out me-2"></i>Logout</button>
+                                        </form>
+                                    </li>
+                                </ul>
                             </li>
                         </ul>
                     </div>
