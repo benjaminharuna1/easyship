@@ -272,6 +272,12 @@
         </div>
     </form>
 
+    <datalist id="history-status-options">
+        @foreach($statuses as $st)
+            <option value="{{ $st }}"></option>
+        @endforeach
+    </datalist>
+
 @endsection
 
 @push('scripts')
@@ -286,16 +292,8 @@
         }
     }
 
-    const statusOptions = [
-        'Pending', 'In Process', 'In Transit', 'On Hold',
-        'Delivered', 'Completed', 'Cancelled', 'Returned'
-    ];
-
     function statusSelectHtml() {
-        let html = '<select class="form-control" name="history_status[]">';
-        html += '<option value="">Select Status</option>';
-        statusOptions.forEach(function(s) { html += '<option value="' + s + '">' + s + '</option>'; });
-        return html + '</select>';
+        return '<input type="text" class="form-control" name="history_status[]" list="history-status-options" placeholder="Select or type a status">';
     }
 
     $(function() {

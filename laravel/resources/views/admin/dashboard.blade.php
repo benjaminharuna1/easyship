@@ -76,11 +76,7 @@
                             <th>Tracking Number</th>
                             <th>Status</th>
                             <th>Last Updated</th>
-                            <th>View</th>
-                            <th>Edit</th>
-                            <th>Delete</th>
-                            <th>Copy</th>
-                            <th>Print Receipt</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -96,31 +92,36 @@
                                         <h6 class="mb-1 font-14">{{ $row->package_discription }}</h6>
                                     </div>
                                 </td>
-                                <td>{{ $row->tracking_id }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-1">
+                                        <span>{{ $row->tracking_id }}</span>
+                                        <button type="button" class="btn btn-sm btn-link p-0 border-0" title="Copy tracking number" onclick="copyContent('{{ $row->tracking_id }}')"><i class="bx bx-copy"></i></button>
+                                    </div>
+                                </td>
                                 <td>{{ $row->status }}</td>
                                 <td>{{ $row->updated_at ? $row->updated_at->format('d M Y H:i') : ($row->date_added ?: 'N/A') }}</td>
                                 <td>
-                                    <a class="badge rounded-pill bg-info p-2 text-white text-decoration-none" href="{{ route('admin.shipments.show', $row->tracking_id) }}">View</a>
-                                </td>
-                                <td>
-                                    <a class="badge rounded-pill bg-primary p-2 text-white text-decoration-none" href="{{ route('admin.shipments.edit', $row->tracking_id) }}">Update</a>
-                                </td>
-                                <td>
-                                    <form method="POST" action="{{ route('admin.shipments.destroy', $row->tracking_id) }}" onsubmit="return confirm('Do you really want to delete this ?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="badge rounded-pill bg-danger p-2 text-white border-0">Delete</button>
-                                    </form>
-                                </td>
-                                <td>
-                                    <button type="button" class="badge rounded-pill bg-info border-0" onclick="copyContent('{{ $row->tracking_id }}')">Copy Tracking Number</button>
-                                </td>
-                                <td>
-                                    <a class="badge rounded-pill bg-primary p-2 text-white text-decoration-none" target="_blank" href="{{ route('track.print', $row->tracking_id) }}">Print Receipt</a>
+                                    <div class="dropdown">
+                                        <button class="btn btn-light btn-sm dropdown-toggle dropdown-toggle-split" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Actions">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="{{ route('admin.shipments.show', $row->tracking_id) }}"><i class="bx bx-show me-2"></i>View</a></li>
+                                            <li><a class="dropdown-item" href="{{ route('admin.shipments.edit', $row->tracking_id) }}"><i class="bx bx-edit me-2"></i>Edit</a></li>
+                                            <li>
+                                                <form method="POST" action="{{ route('admin.shipments.destroy', $row->tracking_id) }}" onsubmit="return confirm('Do you really want to delete this ?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="dropdown-item text-danger"><i class="bx bx-trash me-2"></i>Delete</button>
+                                                </form>
+                                            </li>
+                                            <li><a class="dropdown-item" target="_blank" href="{{ route('track.print', $row->tracking_id) }}"><i class="bx bx-printer me-2"></i>Print Receipt</a></li>
+                                        </ul>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="11" class="text-center text-muted">No shipments found.</td></tr>
+                            <tr><td colspan="7" class="text-center text-muted">No shipments found.</td></tr>
                         @endforelse
                     </tbody>
                 </table>

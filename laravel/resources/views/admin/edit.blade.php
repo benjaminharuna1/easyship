@@ -292,11 +292,7 @@
                                     <td><input type="time" class="form-control" name="history_time[]" value="{{ $h->time }}"></td>
                                     <td><input type="text" class="form-control" name="history_location[]" value="{{ $h->location }}"></td>
                                     <td>
-                                        <select class="form-control" name="history_status[]">
-                                            @foreach($statuses as $st)
-                                            <option value="{{ $st }}" {{ $st === $h->status ? 'selected' : '' }}>{{ $st }}</option>
-                                            @endforeach
-                                        </select>
+                                        <input type="text" class="form-control" name="history_status[]" list="history-status-options" value="{{ $h->status }}" placeholder="Select or type a status">
                                     </td>
                                     <td><input type="text" class="form-control" name="history_updated_by[]" value="{{ $h->updated_by }}"></td>
                                     <td><input type="text" class="form-control" name="history_remarks[]" value="{{ $h->remarks }}"></td>
@@ -322,6 +318,12 @@
             </div>
         </div>
     </form>
+
+    <datalist id="history-status-options">
+        @foreach($statuses as $st)
+            <option value="{{ $st }}"></option>
+        @endforeach
+    </datalist>
 
     <!-- Notify User of Update modal -->
     <div class="modal fade" id="notifyModal" tabindex="-1" aria-labelledby="notifyModalLabel" aria-hidden="true">
@@ -475,11 +477,7 @@
     const statusOptions = @json($statuses);
 
     function statusSelectHtml(selected) {
-        let html = '<select class="form-control" name="history_status[]">';
-        statusOptions.forEach(function(s) {
-            html += '<option value="' + s + '"' + (s === selected ? ' selected' : '') + '>' + s + '</option>';
-        });
-        return html + '</select>';
+        return '<input type="text" class="form-control" name="history_status[]" list="history-status-options" value="' + (selected || '') + '" placeholder="Select or type a status">';
     }
 
     $(function() {

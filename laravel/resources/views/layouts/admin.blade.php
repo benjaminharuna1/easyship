@@ -84,6 +84,17 @@
             }
         }
 
+        /* Let Bootstrap action dropdowns open without being clipped inside .table-responsive */
+        .table-responsive { overflow: visible !important; }
+        .card .dropdown-menu {
+            background-color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .card .dropdown-item { color: #212529; }
+        .card .dropdown-item:hover,
+        .card .dropdown-item:focus { background-color: #f1f3f5; color: #212529; }
+        .card .dropdown-item.text-danger { color: #dc3545 !important; }
+
         /* Dark theme text visibility: Bootstrap default label/muted/form-hint colors are
            dark and unreadable on the dark modal & card backgrounds. Force them lighter. */
         .admin-form .form-label,
