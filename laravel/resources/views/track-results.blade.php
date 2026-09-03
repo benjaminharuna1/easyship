@@ -144,7 +144,6 @@
                             <tr><th>Name:</th><td>{{ $shipment->sender_name }}</td></tr>
                             <tr><th>Email:</th><td>{{ $shipment->sender_email }}</td></tr>
                             <tr><th>Address:</th><td>{{ $shipment->sender_address }}</td></tr>
-                            <tr><th>Mobile:</th><td>{{ $shipment->sender_contact }}</td></tr>
                         </table>
                     </div>
 
@@ -154,7 +153,6 @@
                             <tr><th>Name:</th><td>{{ $shipment->receiver_name }}</td></tr>
                             <tr><th>Email:</th><td>{{ $shipment->receiver_email }}</td></tr>
                             <tr><th>Address:</th><td>{{ $shipment->receiver_address }}</td></tr>
-                            <tr><th>Mobile:</th><td>{{ $shipment->receiver_contact }}</td></tr>
                         </table>
                     </div>
                 </div>

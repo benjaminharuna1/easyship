@@ -9,7 +9,7 @@
             <!--Start Banner One-->
             <section class="banner-one">
                 <div class="banner-one__bg wow fadeInRight" data-wow-delay="0ms" data-wow-duration="1500ms"
-                    style="background-image: url({{ asset('assets/img/slider/banner-one__mian-img.jpg') }});">
+                    style="background-image: url({{ asset($settings->home_banner_image ?: 'assets/img/slider/banner-one__mian-img.jpg') }});">
                 </div>
 
                 <div class="banner-one__bg-shape wow fadeInRight" data-wow-delay="0ms" data-wow-duration="1500ms">

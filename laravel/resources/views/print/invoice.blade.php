@@ -90,11 +90,11 @@
             font-size: 58px;
             font-weight: 800;
             letter-spacing: 4px;
-            color: rgba(180, 180, 180, 0.18);
+            color: rgba(140, 150, 165, 0.22);
             white-space: nowrap;
             pointer-events: none;
             user-select: none;
-            z-index: 0;
+            z-index: 9999;
         }
         .invoice-body > * { position: relative; z-index: 1; }
 
@@ -135,8 +135,6 @@
             border-radius: 3px;
             margin: 0 0 10px;
         }
-        .doc-title .tracking-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
-        .doc-title .tracking-no { font-size: 22px; font-weight: 800; color: var(--red); margin: 2px 0 0; }
 
         /* Party + summary columns */
         .parties {
@@ -200,6 +198,13 @@
             font-weight: 700;
             letter-spacing: 2px;
             color: var(--navy);
+        }
+        .barcode-box .bc-hint {
+            display: block;
+            margin-top: 6px;
+            font-size: 10px;
+            color: var(--muted);
+            word-break: break-all;
         }
         .summary-box {
             border: 1px solid var(--border);
@@ -285,12 +290,48 @@
         }
 
         @media print {
-            @page { size: A4; margin: 12mm; }
-            body { background: #fff; }
+            @page { size: A4 portrait; margin: 0; }
+            html, body { margin: 0 !important; padding: 0 !important; background: #fff; }
             .invoice-toolbar, .no-print { display: none !important; }
-            .sheet { width: 100%; margin: 0; border-radius: 0; box-shadow: none; }
-            .invoice-body { padding: 0; }
-            .watermark { color: rgba(180, 180, 180, 0.16); }
+
+            /* Keep the sheet filling the printable area instead of stretching the
+               fixed-width 800px design, so the on-screen proportions are preserved. */
+            .sheet {
+                width: 210mm;
+                max-width: 100%;
+                margin: 0;
+                border-radius: 0;
+                box-shadow: none;
+                overflow: visible;
+            }
+            .invoice-body { padding: 12mm; }
+
+            /* Scale the fixed-pixel column so it never overflows the narrower paper */
+            .meta-row { grid-template-columns: 200px 1fr; }
+            .parties { grid-template-columns: 1fr 1fr; }
+            .invoice-foot { grid-template-columns: 1fr 1fr; }
+
+            /* Keep images/tables inside their containers */
+            table.items-table { width: 100%; table-layout: auto; }
+            .items-table td { word-break: break-word; }
+            .barcode-box img { max-width: 90%; }
+            .brand img, .foot-box img { max-width: 100%; }
+
+            /* Don't let boxes or table rows split across pages */
+            .party-card,
+            .barcode-box,
+            .summary-box,
+            .invoice-foot,
+            .items h3,
+            table.items-table thead {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                page-break-after: avoid;
+            }
+            table.items-table { page-break-inside: avoid; }
+            table.items-table thead { display: table-header-group; }
+
+            .watermark { color: rgba(140, 150, 165, 0.14); }
             a { color: inherit; text-decoration: none; }
         }
     </style>
@@ -302,7 +343,7 @@
             Shipment Receipt
             <small>{{ $shipment->tracking_id }}</small>
         </span>
-        <button type="button" class="btn-print" onclick="window.print()">&#128438; Print / Save PDF</button>
+        <button type="button" class="btn-print" onclick="printInvoice()">&#128438; Print / Save PDF</button>
     </div>
 
     <div class="sheet">
@@ -331,8 +372,6 @@
                 </div>
                 <div class="doc-title">
                     <p class="doc-name">Shipment Receipt / Invoice</p>
-                    <div class="tracking-label">Tracking Number</div>
-                    <div class="tracking-no">{{ $shipment->tracking_id }}</div>
                 </div>
             </div>
 
@@ -343,7 +382,6 @@
                     <div class="party-card">
                         <p class="party-name">{{ $shipment->sender_name }}</p>
                         <div class="detail"><span class="k">Address:</span> {{ $shipment->sender_address }}</div>
-                        <div class="detail"><span class="k">Phone No:</span> {{ $shipment->sender_contact }}</div>
                         <div class="detail"><span class="k">Origin:</span> {{ $shipment->dispatch_location }}</div>
                     </div>
                 </div>
@@ -352,17 +390,17 @@
                     <div class="party-card">
                         <p class="party-name">{{ $shipment->receiver_name }}</p>
                         <div class="detail"><span class="k">Address:</span> {{ $shipment->receiver_address }}</div>
-                        <div class="detail"><span class="k">Phone No:</span> {{ $shipment->receiver_contact }}</div>
                         <div class="detail"><span class="k">Destination:</span> {{ $shipment->destination }}</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Barcode + summary -->
+            <!-- QR code + summary -->
             <div class="meta-row">
                 <div class="barcode-box">
-                    <img src="{{ asset('track-image/barcode810e.png') }}" alt="Barcode">
+                    <img src="{{ $qrCode }}" alt="QR Code">
                     <span class="bc-number">{{ $shipment->tracking_id }}</span>
+                    <small class="bc-hint">Scan to track | {{ $trackingUrl }}</small>
                 </div>
                 <div class="summary-box">
                     <div class="summary-row"><span class="k">Order ID</span><span class="v">{{ $shipment->tracking_id }}</span></div>
@@ -424,6 +462,35 @@
 
         </div>
     </div>
+
+    <script>
+        // Auto-scale the invoice so the whole sheet fits on a single A4 page.
+        function printInvoice() {
+            var sheet = document.querySelector('.sheet');
+            if (!sheet) { window.print(); return; }
+
+            // Render size at the on-screen design width (800px layout).
+            var w = sheet.offsetWidth || 800;
+            var h = sheet.offsetHeight;
+
+            // A4 = 210 x 297 mm -> 794 x 1123 px @ 96dpi. Leave a small margin.
+            var pageW = 794;
+            var pageH = 1123;
+            var scale = Math.min(pageW / w, pageH / h);
+
+            // Only down-scale; never blow it up.
+            if (scale < 1 && scale > 0) {
+                document.body.style.zoom = scale;
+            }
+
+            window.print();
+
+            // Restore the screen view after the dialog closes.
+            setTimeout(function () {
+                document.body.style.zoom = '';
+            }, 600);
+        }
+    </script>
 
 </body>
 </html>

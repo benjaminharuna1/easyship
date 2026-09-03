@@ -35,7 +35,7 @@ class ShipmentController extends Controller
 
     public function list()
     {
-        $shipments = Addtracking::orderBy('created_at', 'desc')->paginate(15);
+        $shipments = Addtracking::orderBy('updated_at', 'desc')->paginate(15);
 
         return view('admin.shipments-list', compact('shipments'));
     }
@@ -266,7 +266,15 @@ class ShipmentController extends Controller
             ->firstOrFail();
         $statuses = $this->statuses;
         $settings = Setting::find(1);
-        return view('admin.edit', compact('shipment', 'statuses', 'settings'));
+
+        $defaultNotifyBody = '<p>Dear {name},</p>'
+            . '<p>We would like to let you know that there has been an update to your shipment '
+            . '<strong>{tracking_id}</strong>. The current status is <strong>{status}</strong>.</p>'
+            . '<p>Click the link below to view the latest tracking information:</p>'
+            . '<p>{link}</p>'
+            . '<p>Thank you,<br>{site_name}</p>';
+
+        return view('admin.edit', compact('shipment', 'statuses', 'settings', 'defaultNotifyBody'));
     }
 
     public function update(Request $request, string $trackingId)
@@ -366,6 +374,86 @@ class ShipmentController extends Controller
 
         session()->flash('success_message', 'Shipment updated successfully.');
         return redirect()->route('admin.shipments.edit', $trackingId);
+    }
+
+    /**
+     * Manually notify the user(s) of a shipment update with a custom, rich-text
+     * message. The message supports dynamic tags that are replaced with the
+     * shipment's details before sending.
+     */
+    public function notifyUpdate(Request $request, string $trackingId)
+    {
+        $shipment = Addtracking::where('tracking_id', $trackingId)->firstOrFail();
+        $settings = Setting::find(1);
+
+        $validated = $request->validate([
+            'body' => ['required', 'string'],
+            'recipient' => ['required', 'in:receiver,shipper,both'],
+        ]);
+
+        $trackingUrl = route('track.show', $shipment->tracking_id);
+
+        $targets = [
+            'receiver' => ['email' => $shipment->receiver_email, 'name' => $shipment->receiver_name],
+            'shipper'  => ['email' => $shipment->sender_email,    'name' => $shipment->sender_name],
+        ];
+
+        $mailService = new MailService();
+        $sentTo = [];
+        $allSent = true;
+
+        foreach ($targets as $key => $target) {
+            if ($key !== $validated['recipient'] && $validated['recipient'] !== 'both') {
+                continue;
+            }
+
+            $html = $this->renderNotificationBody(
+                $validated['body'],
+                $shipment,
+                $target['name'],
+                $trackingUrl,
+                $settings
+            );
+
+            $ok = $mailService->send(
+                $target['email'],
+                'Shipment Update: ' . $shipment->tracking_id,
+                'emails.custom',
+                ['body' => $html]
+            );
+
+            if ($ok) {
+                $sentTo[] = $target['email'];
+            } else {
+                $allSent = false;
+            }
+        }
+
+        if (!$allSent || empty($sentTo)) {
+            return response()->json(['status' => 'error', 'message' => 'Failed to send the notification. Please check your SMTP settings and logs.'], 422);
+        }
+
+        return response()->json(['status' => 'success', 'message' => 'Notification sent successfully to ' . implode(', ', $sentTo)]);
+    }
+
+    /**
+     * Replace the dynamic tags in a notification body with the shipment's
+     * actual values.
+     */
+    protected function renderNotificationBody(string $body, Addtracking $shipment, string $name, string $trackingUrl, Setting $settings): string
+    {
+        $linkHtml = '<a href="' . e($trackingUrl) . '" style="color:#f6a400; font-weight:bold;">' . e($trackingUrl) . '</a>';
+
+        $replacements = [
+            '{name}'         => $name,
+            '{tracking_id}'  => $shipment->tracking_id,
+            '{status}'       => $shipment->status,
+            '{site_name}'    => $settings->sitename ?? 'EasyShip',
+            '{link}'         => $linkHtml,
+            '{tracking_link}' => e($trackingUrl),
+        ];
+
+        return strtr($body, $replacements);
     }
 
     public function destroy(string $trackingId)

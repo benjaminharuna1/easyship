@@ -21,7 +21,7 @@
                             <th>Package name</th>
                             <th>Tracking Number</th>
                             <th>Status</th>
-                            <th>Date Added</th>
+                            <th>Last Updated</th>
                             <th>View</th>
                             <th>Edit</th>
                             <th>Delete</th>
@@ -44,7 +44,7 @@
                                 </td>
                                 <td>{{ $row->tracking_id }}</td>
                                 <td>{{ $row->status }}</td>
-                                <td>{{ $row->date_added }}</td>
+                                <td>{{ $row->updated_at ? $row->updated_at->format('d M Y H:i') : ($row->date_added ?: 'N/A') }}</td>
                                 <td>
                                     <a class="badge rounded-pill bg-info p-2 text-white text-decoration-none" href="{{ route('admin.shipments.show', $row->tracking_id) }}">View</a>
                                 </td>

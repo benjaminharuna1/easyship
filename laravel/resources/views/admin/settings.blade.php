@@ -158,6 +158,45 @@
 
                 <div class="card mt-3">
                     <div class="card-body">
+                        <h5 class="card-title mb-3">Banners</h5>
+                        <p class="text-muted">Set the banner images shown on the public pages. The Home Banner is the hero image on the home page; the Page Banner is used on the About Us, Services, Track and Contact pages.</p>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Home Banner</label>
+                                @if($settings->home_banner_image)
+                                    <div class="mb-2">
+                                        <img src="{{ asset($settings->home_banner_image) }}" style="max-width:100%; max-height:140px;" class="rounded border">
+                                        <div class="mt-1">
+                                            <input type="hidden" name="remove_home_banner_image" id="remove_home_banner_image" value="0">
+                                            <button type="button" class="btn btn-outline-danger btn-sm remove-image-btn" data-target="remove_home_banner_image"><i class="bx bx-trash"></i> Mark image for removal</button>
+                                        </div>
+                                    </div>
+                                @else
+                                    <small class="text-muted d-block mb-2">No home banner set. The default theme banner is used.</small>
+                                @endif
+                                <input type="file" class="form-control" name="home_banner_image" accept="image/*">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Page Banner (About / Services / Track / Contact)</label>
+                                @if($settings->page_banner_image)
+                                    <div class="mb-2">
+                                        <img src="{{ asset($settings->page_banner_image) }}" style="max-width:100%; max-height:140px;" class="rounded border">
+                                        <div class="mt-1">
+                                            <input type="hidden" name="remove_page_banner_image" id="remove_page_banner_image" value="0">
+                                            <button type="button" class="btn btn-outline-danger btn-sm remove-image-btn" data-target="remove_page_banner_image"><i class="bx bx-trash"></i> Mark image for removal</button>
+                                        </div>
+                                    </div>
+                                @else
+                                    <small class="text-muted d-block mb-2">No page banner set. The default theme banner is used.</small>
+                                @endif
+                                <input type="file" class="form-control" name="page_banner_image" accept="image/*">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-body">
                         <h5 class="card-title mb-3">Achievements / Counters</h5>
                         <div class="row">
                             <div class="col-md-4 mb-3">
@@ -311,6 +350,13 @@
                         <div class="form-check form-switch mb-3">
                             <input class="form-check-input" type="checkbox" name="search_engine_indexing" id="search_engine_indexing" value="1" {{ (int)($settings->search_engine_indexing ?? 1) === 1 ? 'checked' : '' }}>
                             <label class="form-check-label" for="search_engine_indexing">Allow Search Engine Indexing</label>
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" name="show_contact_map" id="show_contact_map" value="1" {{ (int)($settings->show_contact_map ?? 1) === 1 ? 'checked' : '' }}>
+                            <label class="form-check-label" for="show_contact_map">
+                                Show Map on Contact Page
+                                <small class="text-muted d-block" style="font-weight:400;">When on, the Google Map is visible on the public contact page. When off, it is hidden.</small>
+                            </label>
                         </div>
                     </div>
                 </div>

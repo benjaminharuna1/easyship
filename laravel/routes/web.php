@@ -62,6 +62,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('/shipments/{trackingId}', [App\Http\Controllers\Admin\ShipmentController::class, 'update'])->name('shipments.update');
         Route::delete('/shipments/{trackingId}', [App\Http\Controllers\Admin\ShipmentController::class, 'destroy'])->name('shipments.destroy');
         Route::get('/shipments/{trackingId}', [App\Http\Controllers\Admin\ShipmentController::class, 'viewDetails'])->name('shipments.show');
+        Route::post('/shipments/{trackingId}/notify', [App\Http\Controllers\Admin\ShipmentController::class, 'notifyUpdate'])->name('shipments.notify');
 
         // Settings
         Route::get('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('settings');

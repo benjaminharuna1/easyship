@@ -13,7 +13,12 @@
                 <div class="card">
                     <div class="card-body d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">Edit Shipment</h5>
-                        <a class="btn btn-outline-secondary btn-sm" href="{{ route('admin.shipments.show', $shipment->tracking_id) }}">View Details</a>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-outline-light btn-sm notify-toggle-btn" data-bs-toggle="modal" data-bs-target="#notifyModal">
+                                <i class="bx bx-mail-send me-1"></i>Notify User of Update
+                            </button>
+                            <a class="btn btn-outline-secondary btn-sm" href="{{ route('admin.shipments.show', $shipment->tracking_id) }}">View Details</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -318,7 +323,142 @@
         </div>
     </form>
 
+    <!-- Notify User of Update modal -->
+    <div class="modal fade" id="notifyModal" tabindex="-1" aria-labelledby="notifyModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form id="notify-form">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="notifyModalLabel">Notify User of Update</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Send To</label>
+                            <select name="recipient" class="form-control">
+                                <option value="receiver">Receiver</option>
+                                <option value="shipper">Shipper</option>
+                                <option value="both">Both Receiver and Shipper</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Available Tags</label>
+                            <div class="d-flex flex-wrap gap-2 notify-tags-list">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" data-insert-tag="{name}"><code>{name}</code></button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" data-insert-tag="{tracking_id}"><code>{tracking_id}</code></button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" data-insert-tag="{status}"><code>{status}</code></button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" data-insert-tag="{link}"><code>{link}</code></button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" data-insert-tag="{site_name}"><code>{site_name}</code></button>
+                            </div>
+                            <small class="text-muted d-block mt-1">Click a tag to insert it at the cursor. Tags are replaced with the shipment's details when sent. <code>{link}</code> becomes the tracking link to /track/{{ $shipment->tracking_id }}.</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Message</label>
+                            <textarea id="notify-body" name="body" rows="8">{!! $defaultNotifyBody !!}</textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <span id="notify-result" class="me-auto"></span>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" id="notify-send-btn" class="btn btn-primary"><i class="bx bx-send me-1"></i>Send Update Notification</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 @endsection
+
+@push('styles')
+<style>
+    /* White "Notify User of Update" button (invisible as blue-on-blue before) */
+    .notify-toggle-btn,
+    .notify-toggle-btn:hover,
+    .notify-toggle-btn:focus,
+    .notify-toggle-btn:active {
+        color: #ffffff !important;
+        border-color: #ffffff !important;
+        background-color: transparent !important;
+    }
+    .notify-toggle-btn i {
+        color: #ffffff !important;
+    }
+
+    /* Make the notify modal light so its content is readable */
+    #notifyModal .modal-content {
+        background-color: #ffffff;
+        color: #212529;
+        border: 1px solid #dee2e6;
+    }
+    #notifyModal .modal-header,
+    #notifyModal .modal-footer {
+        border-color: #dee2e6;
+    }
+    #notifyModal .modal-title {
+        color: #212529;
+    }
+    #notifyModal .form-label,
+    #notifyModal .form-check-label {
+        color: #212529;
+    }
+    #notifyModal .text-muted {
+        color: #6c757d !important;
+    }
+    #notifyModal .form-control,
+    #notifyModal .form-select {
+        color: #212529;
+        background-color: #ffffff;
+        border-color: #ced4da;
+    }
+    #notifyModal .form-control:focus,
+    #notifyModal .form-select:focus {
+        color: #212529;
+        background-color: #ffffff;
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 .25rem rgba(13, 110, 253, .25);
+    }
+    #notifyModal .btn-close {
+        filter: none;
+    }
+    #notifyModal .notify-tags-list .btn-outline-secondary {
+        color: #6c757d;
+        border-color: #6c757d;
+        background-color: #ffffff;
+    }
+    #notifyModal .notify-tags-list .btn-outline-secondary:hover {
+        color: #fff;
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+    #notifyModal .notify-tags-list code {
+        color: inherit;
+    }
+    #notifyModal .note-editor.note-frame {
+        border-color: #ced4da;
+    }
+    #notifyModal .note-editor .note-toolbar {
+        background-color: #f5f5f5;
+        border-color: #ced4da;
+    }
+    #notifyModal .note-editor .note-toolbar .note-btn {
+        color: #212529 !important;
+        background-color: #ffffff !important;
+        border-color: #ced4da;
+    }
+    #notifyModal .note-editor .note-toolbar .note-btn:hover {
+        background-color: #e9ecef !important;
+    }
+    #notifyModal .note-editor.note-frame .note-editing-area .note-editable {
+        background-color: #ffffff;
+        color: #212529;
+    }
+    #notifyModal .note-placeholder {
+        color: #6c757d;
+    }
+</style>
+@endpush
 
 @push('scripts')
 <script>
@@ -387,6 +527,67 @@
         $(document).on('click', '.remove_row', function() {
             $(this).closest('tr').remove();
         });
+    });
+
+    $(function() {
+        var notifyModalEl = document.getElementById('notifyModal');
+        if (notifyModalEl) {
+            var notifyBody = $('#notify-body');
+            var notifyForm = document.getElementById('notify-form');
+            var notifyResult = document.getElementById('notify-result');
+
+            function sendNotify() {
+                var csrf = document.querySelector('meta[name="csrf-token"]').content;
+                var btn = document.getElementById('notify-send-btn');
+                notifyResult.textContent = '';
+                notifyResult.style.color = '';
+                btn.disabled = true;
+                var original = btn.innerHTML;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Sending...';
+
+                var fd = new FormData();
+                fd.append('body', notifyBody.summernote('code'));
+                fd.append('recipient', notifyForm.recipient.value);
+
+                fetch('{{ route('admin.shipments.notify', $shipment->tracking_id) }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrf,
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: fd
+                }).then(function(res) {
+                    return res.json().catch(function() {
+                        return { status: res.ok ? 'success' : 'error', message: res.ok ? 'Notification sent.' : 'Failed to send the notification.' };
+                    });
+                }).then(function(data) {
+                    notifyResult.textContent = data.message;
+                    notifyResult.style.color = data.status === 'success' ? 'green' : 'red';
+                }).catch(function() {
+                    notifyResult.textContent = 'Failed to send the notification. Please try again.';
+                    notifyResult.style.color = 'red';
+                }).finally(function() {
+                    btn.disabled = false;
+                    btn.innerHTML = original;
+                });
+            }
+
+            $(notifyModalEl).on('shown.bs.modal', function() {
+                notifyBody.summernote({ height: 300 });
+            }).on('hidden.bs.modal', function() {
+                notifyBody.summernote('destroy');
+            });
+
+            $('.notify-tags-list [data-insert-tag]').on('click', function() {
+                notifyBody.summernote('insertText', $(this).data('insert-tag'));
+            });
+
+            $('#notify-form').on('submit', function(e) {
+                e.preventDefault();
+                sendNotify();
+            });
+        }
     });
 </script>
 @endpush

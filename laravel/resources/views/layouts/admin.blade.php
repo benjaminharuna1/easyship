@@ -83,6 +83,69 @@
                 display: none;
             }
         }
+
+        /* Dark theme text visibility: Bootstrap default label/muted/form-hint colors are
+           dark and unreadable on the dark modal & card backgrounds. Force them lighter. */
+        .admin-form .form-label,
+        .modal .form-label,
+        .card .card-form .form-label {
+            color: rgb(255 255 255 / 85%);
+            font-weight: 500;
+        }
+        .modal .text-muted,
+        .card .text-muted,
+        .form-text {
+            color: rgb(255 255 255 / 55%) !important;
+        }
+        .modal .form-check-label,
+        .card .form-check-label {
+            color: rgb(255 255 255 / 80%);
+        }
+        .modal .form-select,
+        .modal .form-control,
+        .card .form-select,
+        .card .form-control {
+            color: #fff;
+            background-color: rgb(0 0 0 / 15%);
+            border-color: rgb(255 255 255 / 15%);
+        }
+        .modal .form-control::placeholder {
+            color: rgb(255 255 255 / 40%);
+        }
+        .modal .modal-title {
+            color: #fff;
+        }
+        .modal .btn-close {
+            filter: invert(1);
+        }
+
+        /* Summernote in dark theme: keep the editing pane light so text is readable,
+           but make its toolbar/icons visible on the dark modal/card header. */
+        .note-editor.note-frame {
+            border-color: rgb(255 255 255 / 15%);
+        }
+        .note-editor .note-toolbar,
+        .note-toolbar {
+            background-color: rgb(255 255 255 / 8%);
+            border-color: rgb(255 255 255 / 15%);
+        }
+        .note-editor .note-btn,
+        .note-toolbar .note-btn {
+            color: #fff !important;
+            background-color: transparent !important;
+            border-color: rgb(255 255 255 / 20%);
+        }
+        .note-editor .note-btn:hover,
+        .note-toolbar .note-btn:hover {
+            background-color: rgb(255 255 255 / 15%) !important;
+        }
+        .note-editor.note-frame .note-editing-area .note-editable {
+            background-color: #ffffff;
+            color: #212529;
+        }
+        .note-editor .note-placeholder {
+            color: #6c757d;
+        }
     </style>
 
     @stack('styles')

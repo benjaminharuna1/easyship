@@ -6,15 +6,6 @@
                 <div class="footer-logo-box">
                     <img src="{{ asset($settings->site_logo ?? '') }}" style="width: 170px;" alt="Site Logo">
                 </div>
-                <div class="phone-number-box {{ isset($footerVariant) ? 'phone-number-box--style2' : '' }}">
-                    <div class="icon">
-                        <span class="icon-phone-call-1"></span>
-                    </div>
-                    <div class="text">
-                        <p>Need help?</p>
-                        <p><a href="tel:{{ $settings->phone_number }}">{{ $settings->phone_number }}</a></p>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

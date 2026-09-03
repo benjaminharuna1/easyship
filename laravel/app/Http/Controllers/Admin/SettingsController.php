@@ -104,6 +104,26 @@ class SettingsController extends Controller
             $file->move(public_path('uploads'), basename($videoBgImage));
         }
 
+        // Banner image upload/removal (home hero + shared subpage banner)
+        $bannerFields = [
+            'home_banner_image' => 'home_banner_image',
+            'page_banner_image' => 'page_banner_image',
+        ];
+        foreach ($bannerFields as $column) {
+            $current = $settings->{$column};
+
+            if (!empty($request->input('remove_' . $column))) {
+                $this->deleteImage($current);
+                $settings->update([$column => '']);
+            } elseif ($request->hasFile($column)) {
+                $file = $request->file($column);
+                $filename = 'uploads/' . time() . '_' . basename($file->getClientOriginalName());
+                $file->move(public_path('uploads'), basename($filename));
+                $this->deleteImage($current);
+                $settings->update([$column => $filename]);
+            }
+        }
+
         $settings->update([
             'hero_subtitle' => $validated['hero_subtitle'] ?? null,
             'hero_title' => $validated['hero_title'] ?? null,
@@ -164,6 +184,7 @@ class SettingsController extends Controller
         $settings->update([
             'maintenance_mode' => $request->boolean('maintenance_mode'),
             'search_engine_indexing' => $request->boolean('search_engine_indexing'),
+            'show_contact_map' => $request->boolean('show_contact_map'),
         ]);
 
         // Write robots.txt

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Addtracking;
 use App\Models\Setting;
 use Illuminate\Support\Carbon;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class PrintController extends Controller
 {
@@ -32,6 +33,14 @@ class PrintController extends Controller
             }
         }
 
-        return view('print.invoice', compact('settings', 'shipment', 'creationDate'));
+        $trackingUrl = route('track.show', $trackingId);
+        $qrSvg = QrCode::format('svg')
+            ->size(210)
+            ->margin(1)
+            ->color(4, 30, 66)
+            ->generate($trackingUrl);
+        $qrCode = 'data:image/svg+xml;base64,' . base64_encode($qrSvg);
+
+        return view('print.invoice', compact('settings', 'shipment', 'creationDate', 'qrCode', 'trackingUrl'));
     }
 }
