@@ -52,7 +52,6 @@
                                             <i class="bx bx-dots-vertical-rounded"></i>
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a class="dropdown-item" href="{{ route('admin.shipments.show', $row->tracking_id) }}"><i class="bx bx-show me-2"></i>View</a></li>
                                             <li><a class="dropdown-item" href="{{ route('admin.shipments.edit', $row->tracking_id) }}"><i class="bx bx-edit me-2"></i>Edit</a></li>
                                             <li>
                                                 <form method="POST" action="{{ route('admin.shipments.destroy', $row->tracking_id) }}" onsubmit="return confirm('Do you really want to delete this ?')">

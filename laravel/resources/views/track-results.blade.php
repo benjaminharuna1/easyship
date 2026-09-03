@@ -107,7 +107,7 @@
                                 {{ \Illuminate\Support\Carbon::parse($h->date)->format('F dS, Y') }},
                                 {{ \Illuminate\Support\Carbon::parse($h->time)->format('g:i A') }}
                             </div>
-                            <div><strong>{{ $h->remarks }}</strong><br>Customer</div>
+                            <div><strong>{{ $h->remarks }}</strong><br>{{ $h->updated_by ?? '' }}</div>
                             <div>{{ $h->location }}</div>
                             <span class="tl-status">{{ $h->status }}</span>
                         </li>

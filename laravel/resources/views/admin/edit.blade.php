@@ -17,7 +17,6 @@
                             <button type="button" class="btn btn-outline-light btn-sm notify-toggle-btn" data-bs-toggle="modal" data-bs-target="#notifyModal">
                                 <i class="bx bx-mail-send me-1"></i>Notify User of Update
                             </button>
-                            <a class="btn btn-outline-secondary btn-sm" href="{{ route('admin.shipments.show', $shipment->tracking_id) }}">View Details</a>
                         </div>
                     </div>
                 </div>
