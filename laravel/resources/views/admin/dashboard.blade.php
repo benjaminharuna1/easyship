@@ -76,6 +76,7 @@
                             <th>Tracking Number</th>
                             <th>Status</th>
                             <th>Date Added</th>
+                            <th>View</th>
                             <th>Edit</th>
                             <th>Delete</th>
                             <th>Copy</th>
@@ -99,6 +100,9 @@
                                 <td>{{ $row->status }}</td>
                                 <td>{{ $row->date_added }}</td>
                                 <td>
+                                    <a class="badge rounded-pill bg-info p-2 text-white text-decoration-none" href="{{ route('admin.shipments.show', $row->tracking_id) }}">View</a>
+                                </td>
+                                <td>
                                     <a class="badge rounded-pill bg-primary p-2 text-white text-decoration-none" href="{{ route('admin.shipments.edit', $row->tracking_id) }}">Update</a>
                                 </td>
                                 <td>
@@ -116,7 +120,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="10" class="text-center text-muted">No shipments found.</td></tr>
+                            <tr><td colspan="11" class="text-center text-muted">No shipments found.</td></tr>
                         @endforelse
                     </tbody>
                 </table>

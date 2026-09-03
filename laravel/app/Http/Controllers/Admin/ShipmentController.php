@@ -389,6 +389,8 @@ class ShipmentController extends Controller
         $shipment = Addtracking::with(['packageItems', 'shipmentHistory'])
             ->where('tracking_id', $trackingId)
             ->firstOrFail();
-        return view('admin.view-details', compact('shipment'));
+        $settings = Setting::find(1);
+        $statuses = $this->statuses;
+        return view('admin.view-details', compact('shipment', 'settings', 'statuses'));
     }
 }

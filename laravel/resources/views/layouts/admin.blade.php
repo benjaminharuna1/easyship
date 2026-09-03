@@ -19,6 +19,41 @@
     <link href="{{ asset('admin-assets/css/icons.css') }}" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.css" rel="stylesheet">
 
+    <style>
+        /* Style for the desktop sidebar collapse/expand button */
+        .sidebar-collapse-trigger {
+            font-size: 22px;
+            cursor: pointer;
+            color: #ffffff;
+            line-height: 1;
+            background: transparent;
+            border: 0;
+            padding: 0;
+        }
+        /* Keep the desktop collapse button visible even when the sidebar is collapsed,
+           so the user can always restore it. */
+        .wrapper.toggled:not(.sidebar-hovered) .sidebar-wrapper .sidebar-header .sidebar-collapse-trigger {
+            display: inline-flex !important;
+        }
+        .wrapper.toggled:not(.sidebar-hovered) .sidebar-wrapper .sidebar-header {
+            justify-content: center !important;
+        }
+        /* Mobile: the slide-in sidebar should sit above the overlay */
+        .sidebar-overlay {
+            cursor: pointer;
+        }
+        @media (min-width: 1025px) {
+            .wrapper.toggled .topbar,
+            .wrapper.toggled .page-wrapper,
+            .wrapper.toggled .page-footer {
+                left: 70px;
+            }
+            .wrapper.toggled .page-wrapper {
+                margin-left: 70px;
+            }
+        }
+    </style>
+
     @stack('styles')
 </head>
 
@@ -29,7 +64,7 @@
                 <div>
                     <img src="{{ asset($settings->site_logo ?? '') }}" class="logo-icon" alt="logo" style="height:38px; width:auto;">
                 </div>
-                <div class="toggle-icon ms-auto"><i class='bx bx-arrow-back'></i>
+                <div class="ms-auto sidebar-collapse-trigger"><i class='bx bx-arrow-back'></i>
                 </div>
             </div>
 
@@ -181,7 +216,7 @@
             </div>
         </div>
 
-        <div class="overlay toggle-icon"></div>
+        <div class="overlay sidebar-overlay"></div>
         <a href="javaScript:;" class="back-to-top"><i class='bx bxs-up-arrow-alt'></i></a>
 
         <footer class="page-footer">
@@ -198,6 +233,68 @@
     <script src="{{ asset('admin-assets/js/app.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.js"></script>
     <script src="{{ asset('admin-assets/js/index.js') }}"></script>
+
+    <script>
+        // Robust sidebar toggle (desktop collapse + mobile hamburger) that overrides
+        // the fragile stock handler in app.js.
+        $(function () {
+            var $wrapper = $(".wrapper");
+            var $overlay = $(".sidebar-overlay");
+            var $collapseBtn = $(".sidebar-collapse-trigger");
+            var $collapseIcon = $collapseBtn.find("i");
+            var $mobileBtn = $(".mobile-toggle-menu");
+            var iconIn = "bx-arrow-back";      // sidebar open / hamburger is a menu icon
+            var iconOut = "bx-arrow-forward";   // sidebar collapsed / wants to close
+
+            // Drop the stock app.js handlers so only ours run.
+            $(".mobile-toggle-menu, .toggle-icon").off("click");
+
+            // Desktop: collapse/expand the sidebar
+            $collapseBtn.on("click", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var collapsed = $wrapper.hasClass("toggled") && !$wrapper.hasClass("sidebar-hovered");
+                if (collapsed) {
+                    $wrapper.removeClass("toggled sidebar-hovered");
+                    $collapseIcon.removeClass(iconOut).addClass(iconIn);
+                } else {
+                    $wrapper.addClass("toggled");
+                    $collapseIcon.removeClass(iconIn).addClass(iconOut);
+                }
+                return false;
+            });
+
+            // Desktop: hover over the collapsed rail temporarily reveals the full menu,
+            // but moving away returns to the icon rail (toggle button stays visible).
+            $wrapper.off("mouseenter.sidebar mouseleave.sidebar")
+                .on("mouseenter.sidebar", function () {
+                    if ($wrapper.hasClass("toggled")) {
+                        $wrapper.addClass("sidebar-hovered");
+                    }
+                })
+                .on("mouseleave.sidebar", function () {
+                    if ($wrapper.hasClass("toggled")) {
+                        $wrapper.removeClass("sidebar-hovered");
+                        if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                            $collapseIcon.removeClass(iconIn).addClass(iconOut);
+                        }
+                    }
+                });
+
+            // Mobile: hamburger opens AND closes the slide-in sidebar
+            $mobileBtn.on("click", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                $wrapper.toggleClass("toggled");
+                return false;
+            });
+
+            // Clicking the overlay closes the mobile menu
+            $overlay.on("click", function () {
+                $wrapper.removeClass("toggled sidebar-hovered");
+            });
+        });
+    </script>
 
     @stack('scripts')
 </body>
